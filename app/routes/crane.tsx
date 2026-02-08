@@ -137,7 +137,7 @@ export default function CraneDemo() {
 
   const getClawAngle = () => {
     if (animationPhase === 2 || animationPhase === 7) return 45;
-    return 8;
+    return 1;
   };
 
   const getItemX = () => {
@@ -173,9 +173,9 @@ export default function CraneDemo() {
         
         {/* Item */}
         <motion.div
-          className="absolute w-12 h-12 bg-amber-500 rounded-lg shadow-lg"
+          className="absolute w-16 h-16 bg-amber-500 rounded-lg shadow-lg"
           animate={{
-            x: getItemX() + 400 - 24,
+            x: getItemX() + 400 - 32,
             y: getItemY(),
           }}
           transition={{
