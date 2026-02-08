@@ -146,8 +146,9 @@ export default function CraneDemo() {
   };
 
   const getCraneY = () => {
-    if (animationPhase === 3) return 50;
-    if (animationPhase === 4 || animationPhase === 5) return 50;
+    // Phase 3: Lowering, Phase 4: Grabbing - crane stays lowered
+    if (animationPhase === 3 || animationPhase === 4) return 50;
+    // Phase 5: Lifting and beyond - crane is lifted
     return 0;
   };
 
