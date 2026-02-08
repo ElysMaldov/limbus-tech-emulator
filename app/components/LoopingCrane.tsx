@@ -20,6 +20,7 @@ interface LoopingCraneProps {
   className?: string;
   serialNumber?: string;
   hideStatusOverlay?: boolean;
+  isBroken?: boolean;
 }
 
 function LoopingCraneInner({
@@ -27,7 +28,8 @@ function LoopingCraneInner({
   showStatus = true,
   className = "",
   serialNumber = "???",
-  hideStatusOverlay = false
+  hideStatusOverlay = false,
+  isBroken = false
 }: LoopingCraneProps) {
   const [craneX, setCraneX] = useState(0);
   const [cableExtension, setCableExtension] = useState(0);
@@ -133,6 +135,7 @@ function LoopingCraneInner({
   };
 
   const getStatusText = () => {
+    if (isBroken) return "DESTROYED";
     if (!isPowered) return "OFF";
     if (loopState === "idle") return "READY";
     return loopState.replace(/-/g, " ").toUpperCase();
@@ -141,23 +144,23 @@ function LoopingCraneInner({
   return (
     <div className={`relative bg-[#E0E0E0] border-2 border-black overflow-hidden ${className}`}>
       {/* Track/Rail */}
-      <div className="absolute top-4 left-0 right-0 h-3 bg-[#C0C0C0] border-b border-black" />
+      <div className={`absolute top-4 left-0 right-0 h-3 border-b border-black ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`} />
 
       {/* Grab Zone Marker */}
-      <div className="absolute bottom-0 left-[15%] sm:left-[20%] w-16 sm:w-20 md:w-24 h-3 sm:h-4 bg-[#22c55e]/50 rounded-t-lg border-t border-x border-black" />
-      <div className="absolute bottom-[12%] sm:bottom-10 left-[12%] sm:left-[18%] text-[#15803d] text-[10px] sm:text-xs font-semibold">
+      <div className={`absolute bottom-0 left-[15%] sm:left-[20%] w-16 sm:w-20 md:w-24 h-3 sm:h-4 rounded-t-lg border-t border-x border-black ${isBroken ? 'bg-red-900/30' : 'bg-[#22c55e]/50'}`} />
+      <div className={`absolute bottom-[12%] sm:bottom-10 left-[12%] sm:left-[18%] text-[10px] sm:text-xs font-semibold ${isBroken ? 'text-red-800' : 'text-[#15803d]'}`}>
         GRAB
       </div>
 
       {/* Drop Zone Marker */}
-      <div className="absolute bottom-0 right-[15%] sm:right-[20%] w-16 sm:w-20 md:w-24 h-3 sm:h-4 bg-[#ef4444]/50 rounded-t-lg border-t border-x border-black" />
-      <div className="absolute bottom-[12%] sm:bottom-10 right-[12%] sm:right-[18%] text-[#dc2626] text-[10px] sm:text-xs font-semibold">
+      <div className={`absolute bottom-0 right-[15%] sm:right-[20%] w-16 sm:w-20 md:w-24 h-3 sm:h-4 rounded-t-lg border-t border-x border-black ${isBroken ? 'bg-red-900/30' : 'bg-[#ef4444]/50'}`} />
+      <div className={`absolute bottom-[12%] sm:bottom-10 right-[12%] sm:right-[18%] text-[10px] sm:text-xs font-semibold ${isBroken ? 'text-red-800' : 'text-[#dc2626]'}`}>
         DROP
       </div>
 
       {/* Item */}
       <motion.div
-        className="absolute w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg shadow-lg border-2 border-black bg-[#F7931E]"
+        className={`absolute w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg shadow-lg border-2 border-black ${isBroken ? 'bg-red-800 rotate-45' : 'bg-[#F7931E]'}`}
         animate={{
           x: getItemX(),
           y: getItemY()
@@ -172,15 +175,19 @@ function LoopingCraneInner({
           marginTop: "-24px"
         }}
       >
-        <div className="absolute inset-1 sm:inset-2 border border-[#D06000] rounded" />
-        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#D06000]" />
-        <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#D06000]" />
+        {!isBroken && (
+          <>
+            <div className="absolute inset-1 sm:inset-2 border border-[#D06000] rounded" />
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#D06000]" />
+            <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#D06000]" />
+          </>
+        )}
       </motion.div>
 
       {/* Crane Assembly */}
       <motion.div
-        className="absolute top-5"
-        animate={{ x: craneX }}
+        className={`absolute top-5 ${isBroken ? 'opacity-40' : ''}`}
+        animate={isBroken ? {} : { x: craneX }}
         transition={{ duration: TIMING.move, ease: "easeInOut" }}
         style={{ left: "50%", marginLeft: "-50px" }}
       >
@@ -236,8 +243,8 @@ function LoopingCraneInner({
       </motion.div>
 
       {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-6 sm:h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center">
-        <span className="text-[10px] sm:text-xs font-bold text-[#D06000]">
+      <div className={`absolute bottom-0 left-0 right-0 h-6 sm:h-8 border-t border-black flex items-center justify-center ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`}>
+        <span className={`text-[10px] sm:text-xs font-bold ${isBroken ? 'text-red-800 line-through' : 'text-[#D06000]'}`}>
           Looping Crane #{serialNumber}
         </span>
       </div>

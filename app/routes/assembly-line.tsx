@@ -9,13 +9,14 @@ import { LoopingConveyor } from "~/components/LoopingConveyor";
 // ============================================
 
 type RobotType = "crane" | "conveyor";
-type RobotState = "idle" | "working" | "error";
+type RobotState = "idle" | "working" | "error" | "destroyed";
 
 interface Robot {
   id: string;
   type: RobotType;
   serialNumber: string;
   state: RobotState;
+  isDestroyed?: boolean;
 }
 
 interface AssemblyLine {
@@ -23,6 +24,8 @@ interface AssemblyLine {
   name: string;
   robots: Robot[];
   isRunning: boolean;
+  isDestroyed?: boolean;
+  showExplosion?: boolean;
 }
 
 // ============================================
@@ -39,6 +42,82 @@ function delay(ms: number): Promise<void> {
 }
 
 // ============================================
+// EXPLOSION EFFECT COMPONENT
+// ============================================
+
+function ExplosionEffect({ isPlaying }: { isPlaying: boolean }) {
+  if (!isPlaying) return null;
+  
+  return (
+    <div className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden">
+      {/* Shockwave rings */}
+      {[...Array(5)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full border-4 border-red-600"
+          initial={{ width: 50, height: 50, opacity: 1 }}
+          animate={{ 
+            width: 800, 
+            height: 800, 
+            opacity: 0 
+          }}
+          transition={{ 
+            duration: 1, 
+            delay: i * 0.1,
+            ease: "easeOut" 
+          }}
+        />
+      ))}
+      
+      {/* Explosion particles */}
+      {[...Array(30)].map((_, i) => {
+        const angle = (i / 30) * Math.PI * 2;
+        const distance = 300 + Math.random() * 200;
+        return (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute w-4 h-4 rounded-full"
+            style={{
+              backgroundColor: i % 2 === 0 ? "#F7931E" : "#DC2626",
+            }}
+            initial={{ x: 0, y: 0, scale: 1 }}
+            animate={{ 
+              x: Math.cos(angle) * distance,
+              y: Math.sin(angle) * distance,
+              scale: 0,
+              opacity: 0
+            }}
+            transition={{ 
+              duration: 0.8,
+              ease: "easeOut"
+            }}
+          />
+        );
+      })}
+      
+      {/* BOOM text */}
+      <motion.div
+        className="absolute text-8xl font-black text-red-600"
+        style={{ textShadow: "4px 4px 0 #000, -2px -2px 0 #F7931E" }}
+        initial={{ scale: 0, rotate: -20 }}
+        animate={{ scale: [0, 1.5, 1.2], rotate: [-20, 10, 0] }}
+        transition={{ duration: 0.5 }}
+      >
+        BOOM!
+      </motion.div>
+      
+      {/* Flash effect */}
+      <motion.div
+        className="absolute inset-0 bg-white"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      />
+    </div>
+  );
+}
+
+// ============================================
 // ASSEMBLY LINE CARD COMPONENT
 // ============================================
 
@@ -47,11 +126,13 @@ function AssemblyLineCard({
   onAddRobot,
   onDestroy,
   onToggleRun,
+  onSelfDestruct,
 }: {
   line: AssemblyLine;
   onAddRobot: (lineId: string, type: RobotType) => void;
   onDestroy: (lineId: string) => void;
   onToggleRun: (lineId: string) => void;
+  onSelfDestruct: (lineId: string) => void;
 }) {
   return (
     <motion.div
@@ -59,32 +140,53 @@ function AssemblyLineCard({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.5 }}
-      className="bg-white border-2 border-black overflow-hidden"
+      className={`bg-white border-2 border-black overflow-hidden relative ${line.isDestroyed ? 'opacity-75' : ''}`}
     >
+      {/* Explosion Effect */}
+      <ExplosionEffect isPlaying={!!line.showExplosion} />
+      
       {/* Header */}
-      <div className="bg-[#F7931E] border-b-2 border-black px-4 py-2 flex items-center justify-between">
+      <div className={`border-b-2 border-black px-4 py-2 flex items-center justify-between ${line.isDestroyed ? 'bg-red-900' : 'bg-[#F7931E]'}`}>
         <div className="flex items-center gap-3">
-          <span className="font-bold text-black">{line.name}</span>
-          <span className="text-xs text-black/70">({line.robots.length} robots)</span>
+          <span className={`font-bold ${line.isDestroyed ? 'text-white line-through' : 'text-black'}`}>{line.name}</span>
+          <span className={`text-xs ${line.isDestroyed ? 'text-white/70' : 'text-black/70'}`}>({line.robots.length} robots)</span>
+          {line.isDestroyed && (
+            <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">
+              DESTROYED
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Run/Stop button */}
-          <button
-            onClick={() => onToggleRun(line.id)}
-            className={`px-3 py-1 text-xs font-bold border-2 border-black transition-colors ${
-              line.isRunning
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-green-500 text-white hover:bg-green-600"
-            }`}
-          >
-            {line.isRunning ? "STOP" : "RUN"}
-          </button>
+          {/* Self Destruct button - only show if not destroyed */}
+          {!line.isDestroyed && (
+            <button
+              onClick={() => onSelfDestruct(line.id)}
+              className="px-3 py-1 text-xs font-bold border-2 border-black bg-orange-600 text-white hover:bg-orange-700 transition-colors"
+              title="Self destruct - breaks all robots in this line"
+            >
+              💥 SELF DESTRUCT
+            </button>
+          )}
+          
+          {/* Run/Stop button - only show if not destroyed */}
+          {!line.isDestroyed && (
+            <button
+              onClick={() => onToggleRun(line.id)}
+              className={`px-3 py-1 text-xs font-bold border-2 border-black transition-colors ${
+                line.isRunning
+                  ? "bg-red-500 text-white hover:bg-red-600"
+                  : "bg-green-500 text-white hover:bg-green-600"
+              }`}
+            >
+              {line.isRunning ? "STOP" : "RUN"}
+            </button>
+          )}
           
           {/* Destroy button */}
           <button
             onClick={() => onDestroy(line.id)}
             className="w-6 h-6 bg-red-600 border border-black text-white text-xs font-bold hover:bg-red-700 transition-colors flex items-center justify-center"
-            title="Destroy assembly line"
+            title="Remove assembly line"
           >
             ×
           </button>
@@ -103,10 +205,10 @@ function AssemblyLineCard({
               <div key={robot.id} className="flex items-center gap-2">
                 <div className={`flex-shrink-0 ${robot.type === "crane" ? "w-64 sm:w-80 md:w-96" : "w-48 sm:w-56 md:w-64"}`}>
                   {/* Robot Header */}
-                  <div className="bg-[#E0E0E0] border-x-2 border-t-2 border-black px-3 py-1.5">
+                  <div className={`border-x-2 border-t-2 border-black px-3 py-1.5 ${robot.isDestroyed ? 'bg-red-900' : 'bg-[#E0E0E0]'}`}>
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono truncate">{robot.serialNumber}</span>
-                      <div className={`w-2.5 h-2.5 rounded-full ${robot.state === "working" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+                      <span className={`text-[10px] font-mono truncate ${robot.isDestroyed ? 'text-white line-through' : ''}`}>{robot.serialNumber}</span>
+                      <div className={`w-2.5 h-2.5 rounded-full ${robot.isDestroyed ? 'bg-red-600' : robot.state === "working" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
                     </div>
                   </div>
                   
@@ -114,28 +216,30 @@ function AssemblyLineCard({
                   <div className="border-2 border-black">
                     {robot.type === "crane" ? (
                       <LoopingCrane
-                        isPowered={line.isRunning}
+                        isPowered={line.isRunning && !line.isDestroyed}
                         serialNumber={robot.serialNumber}
                         hideStatusOverlay={true}
                         showStatus={false}
+                        isBroken={robot.isDestroyed}
                         className="h-52"
                       />
                     ) : (
                       <LoopingConveyor
-                        isPowered={line.isRunning}
+                        isPowered={line.isRunning && !line.isDestroyed}
                         serialNumber={robot.serialNumber}
                         hideStatusOverlay={true}
                         showStatus={false}
                         itemCount={3}
+                        isBroken={robot.isDestroyed}
                         className="h-40"
                       />
                     )}
                   </div>
                   
                   {/* Status badge */}
-                  <div className="bg-[#F0F0F0] border-x-2 border-b-2 border-black px-3 py-1.5">
-                    <div className={`text-[10px] text-center uppercase font-bold ${robot.state === "working" ? "text-green-600" : "text-gray-500"}`}>
-                      {robot.state}
+                  <div className={`border-x-2 border-b-2 border-black px-3 py-1.5 ${robot.isDestroyed ? 'bg-red-900' : 'bg-[#F0F0F0]'}`}>
+                    <div className={`text-[10px] text-center uppercase font-bold ${robot.isDestroyed ? 'text-red-400' : robot.state === "working" ? "text-green-600" : "text-gray-500"}`}>
+                      {robot.isDestroyed ? "DESTROYED" : robot.state}
                     </div>
                   </div>
                 </div>
@@ -172,20 +276,22 @@ function AssemblyLineCard({
                 <span className="font-bold">{line.robots.filter(r => r.type === "crane").length}</span>
               </span>
             </div>
-            <span className="text-[#F7931E] font-bold">
-              {line.isRunning ? "● RUNNING" : "○ STOPPED"}
+            <span className={`font-bold ${line.isDestroyed ? 'text-red-600' : 'text-[#F7931E]'}`}>
+              {line.isDestroyed ? "💥 DESTROYED" : line.isRunning ? "● RUNNING" : "○ STOPPED"}
             </span>
           </div>
         </div>
       )}
 
       {/* Add Robot Buttons */}
-      <div className="bg-[#F5F5F5] border-t-2 border-black px-4 py-3">
-        <div className="text-xs text-gray-600 mb-2 uppercase tracking-wider font-bold">Add Robot:</div>
+      <div className={`border-t-2 border-black px-4 py-3 ${line.isDestroyed ? 'bg-red-900/20' : 'bg-[#F5F5F5]'}`}>
+        <div className={`text-xs mb-2 uppercase tracking-wider font-bold ${line.isDestroyed ? 'text-red-800' : 'text-gray-600'}`}>
+          {line.isDestroyed ? '🔧 Repairs needed - Remove line to rebuild' : 'Add Robot:'}
+        </div>
         <div className="flex gap-2">
           <button
             onClick={() => onAddRobot(line.id, "conveyor")}
-            disabled={line.robots.length >= 6}
+            disabled={line.robots.length >= 6 || line.isDestroyed}
             className="flex-1 px-3 py-2 bg-[#E0E0E0] border-2 border-black text-xs font-medium hover:bg-[#D0D0D0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <div className="flex items-center justify-center gap-1">
@@ -195,7 +301,7 @@ function AssemblyLineCard({
           </button>
           <button
             onClick={() => onAddRobot(line.id, "crane")}
-            disabled={line.robots.length >= 6}
+            disabled={line.robots.length >= 6 || line.isDestroyed}
             className="flex-1 px-3 py-2 bg-[#E0E0E0] border-2 border-black text-xs font-medium hover:bg-[#D0D0D0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <div className="flex items-center justify-center gap-1">
@@ -267,6 +373,7 @@ export default function AssemblyLine() {
   const toggleRun = (lineId: string) => {
     setAssemblyLines(prev => prev.map(line => {
       if (line.id !== lineId) return line;
+      if (line.isDestroyed) return line; // Can't run if destroyed
       
       const newIsRunning = !line.isRunning;
       
@@ -279,6 +386,39 @@ export default function AssemblyLine() {
         }))
       };
     }));
+  };
+
+  // Self destruct an assembly line - shows boom effect and breaks all robots
+  const selfDestruct = (lineId: string) => {
+    setAssemblyLines(prev => prev.map(line => {
+      if (line.id !== lineId) return line;
+      
+      // Show explosion
+      return {
+        ...line,
+        showExplosion: true,
+        isRunning: false
+      };
+    }));
+    
+    // After explosion animation, mark as destroyed
+    setTimeout(() => {
+      setAssemblyLines(prev => prev.map(line => {
+        if (line.id !== lineId) return line;
+        
+        return {
+          ...line,
+          isDestroyed: true,
+          showExplosion: false,
+          isRunning: false,
+          robots: line.robots.map(robot => ({
+            ...robot,
+            state: "destroyed",
+            isDestroyed: true
+          }))
+        };
+      }));
+    }, 500);
   };
 
   // Client-side only rendering for animations
@@ -374,7 +514,7 @@ export default function AssemblyLine() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-green-600 font-bold">✓</span>
-                    <span><strong>Collaboration:</strong> Multiple objects work toward a common goal</span>
+                    <span><strong>Instance Isolation:</strong> Each assembly line is independent - destroying one doesn't affect others!</span>
                   </li>
                 </ul>
               </div>
@@ -477,6 +617,7 @@ export default function AssemblyLine() {
                     onAddRobot={addRobot}
                     onDestroy={destroyAssemblyLine}
                     onToggleRun={toggleRun}
+                    onSelfDestruct={selfDestruct}
                   />
                 ))}
               </AnimatePresence>

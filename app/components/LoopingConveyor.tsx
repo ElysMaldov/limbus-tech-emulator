@@ -159,7 +159,8 @@ function LoopingConveyorInner({
   className = "",
   serialNumber = "???",
   itemCount = 3,
-  hideStatusOverlay = false
+  hideStatusOverlay = false,
+  isBroken = false
 }: LoopingConveyorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
@@ -195,7 +196,7 @@ function LoopingConveyorInner({
 
   // Animation loop - move items continuously
   useEffect(() => {
-    if (!isPowered) return;
+    if (!isPowered || isBroken) return;
 
     let animationId: number;
     let lastTime = performance.now();
@@ -236,13 +237,13 @@ function LoopingConveyorInner({
       style={{ aspectRatio: "16/10" }}
     >
       {/* Entry/Exit markers */}
-      <div className="absolute bottom-0 left-[10%] sm:left-[15%] w-12 sm:w-16 md:w-20 h-3 sm:h-4 bg-[#22c55e]/30 rounded-t-lg border-t border-x border-black" />
-      <div className="absolute bottom-[12%] sm:bottom-14 left-[8%] sm:left-[12%] text-[#15803d] text-[8px] sm:text-xs font-semibold">
+      <div className={`absolute bottom-0 left-[10%] sm:left-[15%] w-12 sm:w-16 md:w-20 h-3 sm:h-4 rounded-t-lg border-t border-x border-black ${isBroken ? 'bg-red-900/30' : 'bg-[#22c55e]/30'}`} />
+      <div className={`absolute bottom-[12%] sm:bottom-14 left-[8%] sm:left-[12%] text-[8px] sm:text-xs font-semibold ${isBroken ? 'text-red-800' : 'text-[#15803d]'}`}>
         ENTRY
       </div>
 
-      <div className="absolute bottom-0 right-[10%] sm:right-[15%] w-12 sm:w-16 md:w-20 h-3 sm:h-4 bg-[#ef4444]/30 rounded-t-lg border-t border-x border-black" />
-      <div className="absolute bottom-[12%] sm:bottom-14 right-[8%] sm:right-[12%] text-[#dc2626] text-[8px] sm:text-xs font-semibold">
+      <div className={`absolute bottom-0 right-[10%] sm:right-[15%] w-12 sm:w-16 md:w-20 h-3 sm:h-4 rounded-t-lg border-t border-x border-black ${isBroken ? 'bg-red-900/30' : 'bg-[#ef4444]/30'}`} />
+      <div className={`absolute bottom-[12%] sm:bottom-14 right-[8%] sm:right-[12%] text-[8px] sm:text-xs font-semibold ${isBroken ? 'text-red-800' : 'text-[#dc2626]'}`}>
         EXIT
       </div>
 
@@ -258,7 +259,7 @@ function LoopingConveyorInner({
       </div>
 
       {/* Items on conveyor */}
-      {items.map((item) => (
+      {!isBroken && items.map((item) => (
         <motion.div
           key={item.id}
           className="absolute rounded-lg shadow-lg border-2 border-black"
@@ -279,8 +280,8 @@ function LoopingConveyorInner({
       ))}
 
       {/* Ground/Support surface */}
-      <div className="absolute bottom-0 left-0 right-0 h-4 sm:h-6 md:h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center">
-        <span className="text-[10px] sm:text-xs md:text-sm font-bold text-[#D06000]">
+      <div className={`absolute bottom-0 left-0 right-0 h-4 sm:h-6 md:h-8 border-t border-black flex items-center justify-center ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`}>
+        <span className={`text-[10px] sm:text-xs md:text-sm font-bold ${isBroken ? 'text-red-800 line-through' : 'text-[#D06000]'}`}>
           Looping Conveyor #{serialNumber}
         </span>
       </div>
