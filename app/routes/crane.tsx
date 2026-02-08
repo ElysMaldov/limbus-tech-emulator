@@ -173,9 +173,9 @@ export default function CraneDemo() {
         
         {/* Item */}
         <motion.div
-          className="absolute w-16 h-16 bg-amber-500 rounded-lg shadow-lg"
+          className="absolute w-20 h-20 bg-amber-500 rounded-lg shadow-lg"
           animate={{
-            x: getItemX() + 400 - 32,
+            x: getItemX() + 400 - 40,
             y: getItemY(),
           }}
           transition={{
