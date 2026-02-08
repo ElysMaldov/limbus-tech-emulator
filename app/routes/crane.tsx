@@ -251,7 +251,7 @@ export default function CraneDemo() {
 
         {/* Drop Zone Marker */}
         <div className="absolute bottom-0 right-[180px] w-24 h-4 bg-green-500/50 rounded-t-lg" />
-        <div className="absolute bottom-6 right-[195px] text-green-400 text-sm font-semibold">
+        <div className="absolute bottom-12 right-[195px] text-green-400 text-sm font-semibold">
           DROP ZONE
         </div>
 
