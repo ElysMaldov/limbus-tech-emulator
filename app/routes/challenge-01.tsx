@@ -549,10 +549,41 @@ export default function Challenge01() {
           <CraneRobot
             state={craneState}
             onSubStateChange={setSubState}
+            showStatus={false}
           />
 
           {/* Controls */}
           <div className="mt-8 w-[800px] space-y-4">
+            {/* Status Card */}
+            <div className="bg-[#C0C0C0] border-2 border-black p-6">
+              <div className="flex items-center gap-6">
+                {/* Power Indicator */}
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                      craneState !== "power-off"
+                        ? "bg-[#F7931E] shadow-[0_0_15px_rgba(247,147,30,0.8)]"
+                        : "bg-gray-500 shadow-none"
+                    }`}
+                  />
+                  <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-[#F7931E]" : "text-gray-500"}`}>
+                    {craneState !== "power-off" ? "ON" : "OFF"}
+                  </span>
+                </div>
+                <div className="h-10 w-px bg-black" />
+                {/* State Info */}
+                <div>
+                  <div className="text-sm text-gray-700 uppercase tracking-wider mb-1">
+                    State
+                  </div>
+                  <div className="text-2xl font-mono font-bold text-[#D06000]">
+                    {STATE_DEFINITIONS.find((s) => s.id === craneState)?.label ?? "Unknown"}
+                    {subState && <span className="text-lg text-gray-600 ml-2">({subState})</span>}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* State Buttons */}
             <div className="grid grid-cols-3 gap-3">
               {STATE_DEFINITIONS.map((stateDef) => {
