@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
+    <div className="min-h-screen bg-[#F0F0F0] flex flex-col">
       {/* Header Bar - Orange like the image */}
       <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
         <div className="flex items-center justify-between">
@@ -19,13 +19,13 @@ export default function Home() {
           </h1>
           {/* Window-style buttons */}
           <div className="flex items-center gap-1">
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <div className="w-3 h-0.5 bg-black"></div>
             </div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <div className="w-3 h-3 border border-black"></div>
             </div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-lg leading-none">×</span>
             </div>
           </div>
@@ -33,7 +33,7 @@ export default function Home() {
       </header>
 
       {/* Navigation Bar */}
-      <nav className="bg-[#C0C0C0] border-b-2 border-black px-4 py-2">
+      <nav className="bg-[#E8E8E8] border-b-2 border-black px-4 py-2">
         <div className="flex items-center gap-8">
           <span className="font-bold text-black tracking-wider">Home</span>
           <Link to="/crane" className="text-black hover:underline tracking-wider">
@@ -70,7 +70,7 @@ export default function Home() {
           <div className="flex justify-center mb-16">
             <Link
               to="/crane"
-              className="px-12 py-3 bg-[#C0C0C0] border-2 border-black text-black font-medium hover:bg-[#B0B0B0] transition-colors tracking-wider"
+              className="px-12 py-3 bg-[#E8E8E8] border-2 border-black text-black font-medium hover:bg-[#D8D8D8] transition-colors tracking-wider"
             >
               Start
             </Link>
@@ -84,7 +84,7 @@ export default function Home() {
             <div className="space-y-3">
               <Link
                 to="/crane"
-                className="flex items-center justify-center gap-3 w-full p-4 bg-[#C0C0C0] border-2 border-black text-black hover:bg-[#B0B0B0] transition-colors"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#E8E8E8] border-2 border-black text-black hover:bg-[#D8D8D8] transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ export default function Home() {
 
               <Link
                 to="/challenge-01"
-                className="flex items-center justify-center gap-3 w-full p-4 bg-[#C0C0C0] border-2 border-black text-black hover:bg-[#B0B0B0] transition-colors"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#E8E8E8] border-2 border-black text-black hover:bg-[#D8D8D8] transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -134,15 +134,15 @@ export default function Home() {
       </main>
 
       {/* Footer Bar - like the navigation bar at bottom of image */}
-      <footer className="bg-[#C0C0C0] border-t-2 border-black px-4 py-2">
+      <footer className="bg-[#E8E8E8] border-t-2 border-black px-4 py-2">
         <div className="flex items-center justify-between">
           <span className="text-black text-sm">Limbus Tech Emulator © 2025</span>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">◀</span>
             </div>
-            <div className="w-32 h-5 bg-[#A0A0A0] border-2 border-black"></div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-32 h-5 bg-[#C0C0C0] border-2 border-black"></div>
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">▶</span>
             </div>
           </div>

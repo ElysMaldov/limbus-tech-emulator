@@ -421,11 +421,11 @@ export function CraneRobot({
 
   return (
     <div
-      className={`relative bg-[#E0E0E0] border-2 border-black overflow-hidden ${className}`}
+      className={`relative bg-[#F5F5F5] border-2 border-black overflow-hidden ${className}`}
       style={{ width, height }}
     >
       {/* Track/Rail */}
-      <div className="absolute top-16 left-0 right-0 h-4 bg-[#A0A0A0] border-b border-black" />
+      <div className="absolute top-16 left-0 right-0 h-4 bg-[#C0C0C0] border-b border-black" />
 
       {/* Drop Zone Marker */}
       <div className="absolute bottom-0 right-[180px] w-24 h-4 bg-[#F7931E]/50 rounded-t-lg border-t border-x border-black" />
@@ -480,20 +480,20 @@ export function CraneRobot({
       </motion.div>
 
       {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#A0A0A0] border-t border-black flex items-center justify-center">
-        <span className="text-xs font-mono text-gray-700">
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center">
+        <span className="text-sm font-bold text-[#D06000]">
           Crane Robot #{showSerialNumber ? serialNumber : "???"}
         </span>
       </div>
 
       {/* Status Indicator */}
       {showStatus && (
-        <div className="absolute top-4 left-4 bg-[#C0C0C0] px-4 py-2 border-2 border-black">
+        <div className="absolute top-4 left-4 bg-[#E0E0E0] px-4 py-2 border-2 border-black">
           <div className="flex items-center gap-3">
             <PowerIndicator isOn={isPowered} />
             <div className="h-4 w-px bg-black" />
             <div>
-              <div className="text-xs text-gray-700 uppercase tracking-wider">
+              <div className="text-xs text-gray-900 uppercase tracking-wider">
                 State
               </div>
               <div className="text-sm font-mono text-[#D06000]">
@@ -613,7 +613,7 @@ function PropertyQuestion({
   }
 
   return (
-    <div className="bg-[#F0F0F0] border-2 border-black p-4">
+    <div className="bg-[#F8F8F8] border-2 border-black p-4">
       <div className="flex items-start gap-3">
         <span className="text-[#F7931E] font-bold text-lg">{questionNumber}.</span>
         <div className="flex-1">
@@ -634,7 +634,7 @@ function PropertyQuestion({
           )}
           <button
             onClick={handleSubmit}
-            className="mt-3 px-4 py-2 bg-[#C0C0C0] border-2 border-black text-black font-medium hover:bg-[#B0B0B0] active:bg-[#A0A0A0]"
+            className="mt-3 px-4 py-2 bg-[#E0E0E0] border-2 border-black text-black font-medium hover:bg-[#D0D0D0] active:bg-[#C0C0C0]"
           >
             Check Answer
           </button>
@@ -717,7 +717,7 @@ export default function Challenge01() {
   const [showBlueprint, setShowBlueprint] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
+    <div className="min-h-screen bg-[#F0F0F0] flex flex-col">
       {/* Header Bar - Orange */}
       <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
         <div className="flex items-center justify-between">
@@ -726,13 +726,13 @@ export default function Challenge01() {
           </h1>
           {/* Window-style buttons */}
           <div className="flex items-center gap-1">
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <div className="w-3 h-0.5 bg-black"></div>
             </div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <div className="w-3 h-3 border border-black"></div>
             </div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-lg leading-none">×</span>
             </div>
           </div>
@@ -740,7 +740,7 @@ export default function Challenge01() {
       </header>
 
       {/* Navigation Bar */}
-      <nav className="bg-[#C0C0C0] border-b-2 border-black px-4 py-2">
+      <nav className="bg-[#E8E8E8] border-b-2 border-black px-4 py-2">
         <div className="flex items-center gap-8">
           <Link to="/" className="text-black hover:underline tracking-wider">
             Home
@@ -778,11 +778,13 @@ export default function Challenge01() {
             {/* Controls */}
             <div className="mt-4 space-y-4">
               {/* Status Card - With ??? placeholders */}
-              <div className="bg-[#C0C0C0] border-2 border-black p-6">
+              <div className="bg-[#E0E0E0] border-2 border-black p-6">
                 <div className="flex items-center justify-around">
                   {/* Power Status */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-700 uppercase tracking-wider">Power</div>
+                    <div className="text-xs text-gray-900 uppercase tracking-wider">
+                      {revealedProperties.power ? "Power" : "???"}
+                    </div>
                     {revealedProperties.power ? (
                       <div className="flex items-center gap-2">
                         <div
@@ -803,7 +805,9 @@ export default function Challenge01() {
                   <div className="h-12 w-px bg-black" />
                   {/* Claw Position */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-700 uppercase tracking-wider">Claw Position</div>
+                    <div className="text-xs text-gray-900 uppercase tracking-wider">
+                      {revealedProperties.position ? "Claw Position" : "???"}
+                    </div>
                     {revealedProperties.position ? (
                       <div className="text-2xl font-mono font-bold text-[#D06000]">
                         {getPositionLabel(cranePosition)}
@@ -815,7 +819,9 @@ export default function Challenge01() {
                   <div className="h-12 w-px bg-black" />
                   {/* Holding Item */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-700 uppercase tracking-wider">Holding Item</div>
+                    <div className="text-xs text-gray-900 uppercase tracking-wider">
+                      {revealedProperties.hold ? "Holding Item" : "???"}
+                    </div>
                     {revealedProperties.hold ? (
                       <div className="flex items-center gap-2">
                         <div
@@ -871,7 +877,7 @@ export default function Challenge01() {
                             px-4 py-3 font-medium transition-all text-left border-2
                             ${isActive
                               ? "bg-[#F7931E] text-black border-black"
-                              : "bg-[#C0C0C0] text-black border-black hover:bg-[#B0B0B0]"
+                              : "bg-[#E8E8E8] text-black border-black hover:bg-[#D8D8D8]"
                             }
                             ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                           `}
@@ -916,10 +922,10 @@ export default function Challenge01() {
 
           {/* Right Column - Questions */}
           <div className="self-start">
-            <div className="bg-[#F5F5F5] border-2 border-black">
+            <div className="bg-[#FAFAFA] border-2 border-black">
               <button
                 onClick={() => setShowProperties(!showProperties)}
-                className="w-full px-6 py-4 flex items-center justify-between bg-[#E0E0E0] hover:bg-[#D0D0D0] transition-colors"
+                className="w-full px-6 py-4 flex items-center justify-between bg-[#F0F0F0] hover:bg-[#E0E0E0] transition-colors"
               >
                 <h2 className="text-xl font-bold text-black">PROPERTIES</h2>
                 <span className={`text-2xl transition-transform duration-300 ${showProperties ? "rotate-180" : ""}`}>
@@ -937,7 +943,7 @@ export default function Challenge01() {
                     className="overflow-hidden"
                   >
                     <div className="p-6 pt-4">
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-900 mb-6">
               In Object-Oriented Programming, <strong>properties</strong> are the object's characteristics - the data that an object needs to keep track of. 
               Help define the properties for our Crane Robot!
             </p>
@@ -1069,7 +1075,7 @@ export default function Challenge01() {
                 disabled={!allPropertiesRevealed}
                 className={`w-full px-6 py-4 flex items-center justify-between transition-colors ${
                   allPropertiesRevealed 
-                    ? "bg-[#E0E0E0] hover:bg-[#D0D0D0] cursor-pointer" 
+                    ? "bg-[#F0F0F0] hover:bg-[#E0E0E0] cursor-pointer" 
                     : "bg-gray-300 cursor-not-allowed"
                 }`}
               >
@@ -1092,7 +1098,7 @@ export default function Challenge01() {
                     className="overflow-hidden"
                   >
                     <div className="p-6 pt-4">
-                      <p className="text-gray-700 mb-6">
+                      <p className="text-gray-900 mb-6">
                         In Object-Oriented Programming, <strong>methods</strong> (object functions/behavior) are the actions that an object can perform. 
                         They define the behavior of the object. Help define the methods for our Crane Robot!
                       </p>
@@ -1275,15 +1281,15 @@ export default function Challenge01() {
       <BlueprintDialog isOpen={showBlueprint} onClose={() => setShowBlueprint(false)} />
 
       {/* Footer Bar */}
-      <footer className="bg-[#C0C0C0] border-t-2 border-black px-4 py-2">
+      <footer className="bg-[#E8E8E8] border-t-2 border-black px-4 py-2">
         <div className="flex items-center justify-between">
           <span className="text-black text-sm">Challenge 01 - Limbus Tech Emulator</span>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">◀</span>
             </div>
-            <div className="w-32 h-5 bg-[#A0A0A0] border-2 border-black"></div>
-            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+            <div className="w-32 h-5 bg-[#C0C0C0] border-2 border-black"></div>
+            <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">▶</span>
             </div>
           </div>
@@ -1388,7 +1394,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
           <h2 className="text-xl font-bold text-black">📋 Crane Robot Blueprint</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 bg-[#C0C0C0] border-2 border-black flex items-center justify-center hover:bg-[#B0B0B0]"
+            className="w-8 h-8 bg-[#E0E0E0] border-2 border-black flex items-center justify-center hover:bg-[#D0D0D0]"
           >
             <span className="text-black text-lg">×</span>
           </button>
