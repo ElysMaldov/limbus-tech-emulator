@@ -1182,6 +1182,12 @@ export default function Challenge02() {
             Challenge 01
           </Link>
           <span className="font-bold text-black tracking-wider">Challenge 02</span>
+          <Link
+            to="/crane-factory"
+            className="text-black hover:underline tracking-wider"
+          >
+            Crane Factory
+          </Link>
         </div>
       </nav>
 

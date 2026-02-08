@@ -45,6 +45,9 @@ export default function Home() {
           <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
             Challenge 02
           </Link>
+          <Link to="/crane-factory" className="text-black hover:underline tracking-wider">
+            Crane Factory
+          </Link>
         </div>
       </nav>
 
@@ -151,6 +154,29 @@ export default function Home() {
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 Challenge 02 - Encapsulation
+              </Link>
+
+              <Link
+                to="/crane-factory"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#E8E8E8] border-2 border-black text-black hover:bg-[#D8D8D8] transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 22h20" />
+                  <path d="M6 22V11l8-6 8 6v11" />
+                  <path d="M10 22v-5h4v5" />
+                  <path d="M14 9a2 2 0 0 0-2-2" />
+                </svg>
+                Crane Factory - Class Blueprints
               </Link>
             </div>
           </div>

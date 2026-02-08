@@ -618,6 +618,9 @@ export default function CraneDemo() {
             <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
               Challenge
             </Link>
+            <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Factory
+            </Link>
           </div>
         </nav>
         <main className="flex-1 bg-white border-2 border-black m-2 sm:m-4 p-4 sm:p-8 flex items-center justify-center">
@@ -659,6 +662,9 @@ export default function CraneDemo() {
           <span className="font-bold text-black tracking-wider text-sm sm:text-base">Crane</span>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Challenge
+          </Link>
+          <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Factory
           </Link>
         </div>
       </nav>
