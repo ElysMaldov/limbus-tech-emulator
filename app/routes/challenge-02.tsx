@@ -111,6 +111,124 @@ function useAnimatedValue(targetValue: number, duration: number) {
   return currentValue;
 }
 
+// Private Overlay Component - Shows when sensitive data is protected
+function PrivateOverlay({ 
+  isBiosPasswordPrivate, 
+  isSystemMaintenancePrivate,
+  hasFullProtection 
+}: { 
+  isBiosPasswordPrivate: boolean;
+  isSystemMaintenancePrivate: boolean;
+  hasFullProtection: boolean;
+}) {
+  const [showOverlay, setShowOverlay] = useState(true);
+  
+  // Auto-hide after 5 seconds
+  useEffect(() => {
+    if (isBiosPasswordPrivate || isSystemMaintenancePrivate) {
+      setShowOverlay(true);
+      const timer = setTimeout(() => {
+        setShowOverlay(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isBiosPasswordPrivate, isSystemMaintenancePrivate]);
+  
+  if ((!isBiosPasswordPrivate && !isSystemMaintenancePrivate) || !showOverlay) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-40 flex flex-col items-center justify-center overflow-hidden">
+      {/* Animated lock icons floating up */}
+      <AnimatePresence>
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-4xl"
+            initial={{ 
+              y: 100, 
+              x: (i - 2) * 60, 
+              opacity: 0,
+              scale: 0.5
+            }}
+            animate={{ 
+              y: -150, 
+              opacity: [0, 1, 1, 0],
+              scale: [0.5, 1.2, 1, 0.8]
+            }}
+            transition={{ 
+              duration: 2,
+              delay: i * 0.3,
+              repeat: Infinity,
+              repeatDelay: 1
+            }}
+          >
+            🔒
+          </motion.div>
+        ))}
+      </AnimatePresence>
+
+      {/* Main overlay badge */}
+      <motion.div
+        initial={{ scale: 0, rotate: -10 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        className={`
+          px-8 py-4 border-4 border-black shadow-2xl transform -rotate-6
+          ${hasFullProtection 
+            ? "bg-green-500" 
+            : "bg-[#F7931E]"
+          }
+        `}
+      >
+        <motion.div
+          animate={{ 
+            scale: [1, 1.05, 1],
+          }}
+          transition={{ 
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="text-center"
+        >
+          <div className="text-5xl mb-2">
+            {hasFullProtection ? "🔒🔒" : "🔒"}
+          </div>
+          <div className="text-3xl font-black text-black uppercase tracking-widest">
+            {hasFullProtection ? "FULLY SECURED!" : "PRIVATE!"}
+          </div>
+          <div className="text-sm font-bold text-black mt-1">
+            {isBiosPasswordPrivate && "BiosPassword"}
+            {isBiosPasswordPrivate && isSystemMaintenancePrivate && " + "}
+            {isSystemMaintenancePrivate && "SystemMaintenance()"}
+          </div>
+          <div className="text-xs text-black/70 mt-1">
+            {hasFullProtection 
+              ? "All sensitive data is now protected!" 
+              : "Protected from unauthorized access!"
+            }
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Shield pulse effect */}
+      <motion.div
+        className="absolute inset-0 border-8 border-green-500/0"
+        animate={{
+          borderColor: hasFullProtection 
+            ? ["rgba(34,197,94,0)", "rgba(34,197,94,0.5)", "rgba(34,197,94,0)"] 
+            : ["rgba(247,147,30,0)", "rgba(247,147,30,0.5)", "rgba(247,147,30,0)"],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    </div>
+  );
+}
+
 // Explosion Animation Component
 function ExplosionEffect({ isPlaying }: { isPlaying: boolean }) {
   if (!isPlaying) return null;
@@ -863,6 +981,12 @@ export default function Challenge02() {
   // Check if all answers are correct
   const allCorrect = Object.values(correctAnswers).every(v => v === true);
   
+  // Check which sensitive fields are set to private
+  const isBiosPasswordPrivate = accessModifiers.biosPassword === "private" && correctAnswers.biosPassword === true;
+  const isSystemMaintenancePrivate = accessModifiers.systemMaintenance === "private" && correctAnswers.systemMaintenance === true;
+  const hasAnyPrivateProtection = isBiosPasswordPrivate || isSystemMaintenancePrivate;
+  const hasFullProtection = isBiosPasswordPrivate && isSystemMaintenancePrivate;
+  
   // Accordion state
   const [showEncapsulation, setShowEncapsulation] = useState(true);
   
@@ -1036,6 +1160,15 @@ export default function Challenge02() {
                 isBroken={isDestroyed}
               />
               
+              {/* Private Overlay - Shows when sensitive data is protected */}
+              {!isDestroyed && (
+                <PrivateOverlay 
+                  isBiosPasswordPrivate={isBiosPasswordPrivate}
+                  isSystemMaintenancePrivate={isSystemMaintenancePrivate}
+                  hasFullProtection={hasFullProtection}
+                />
+              )}
+              
               {/* Explosion Effect */}
               <ExplosionEffect isPlaying={showExplosion} />
             </div>
@@ -1101,9 +1234,17 @@ export default function Challenge02() {
                   
                   {/* BIOS Password */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-red-700 uppercase tracking-wider font-bold">BIOS Password</div>
-                    <div className="text-2xl font-mono font-bold text-red-600">
-                      {biosPassword}
+                    <div className={`text-xs uppercase tracking-wider font-bold ${isBiosPasswordPrivate ? 'text-green-700' : 'text-red-700'}`}>
+                      {isBiosPasswordPrivate ? '🔒 SECURED' : 'BIOS Password'}
+                    </div>
+                    <div className={`text-2xl font-mono font-bold ${isBiosPasswordPrivate ? 'text-green-600' : 'text-red-600'}`}>
+                      {isBiosPasswordPrivate ? (
+                        <span className="flex items-center gap-1">
+                          <span>••••</span>
+                        </span>
+                      ) : (
+                        biosPassword
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1150,18 +1291,25 @@ export default function Challenge02() {
               {/* System Maintenance Button - Styled to look like a regular control */}
               <motion.button
                 onClick={handleSystemMaintenanceClick}
-                disabled={isDestroyed}
-                whileHover={!isDestroyed ? { scale: 1.02 } : {}}
-                whileTap={!isDestroyed ? { scale: 0.98 } : {}}
+                disabled={isDestroyed || isSystemMaintenancePrivate}
+                whileHover={!isDestroyed && !isSystemMaintenancePrivate ? { scale: 1.02 } : {}}
+                whileTap={!isDestroyed && !isSystemMaintenancePrivate ? { scale: 0.98 } : {}}
                 className={`
                   w-full py-4 font-medium text-lg border-2 transition-all
                   ${isDestroyed
                     ? "bg-gray-300 border-gray-400 text-gray-500 cursor-not-allowed"
+                    : isSystemMaintenancePrivate
+                    ? "bg-green-100 border-green-600 text-green-700 cursor-not-allowed"
                     : "bg-[#E8E8E8] border-black text-black hover:bg-[#D8D8D8]"
                   }
                 `}
               >
-                {isDestroyed ? "☠️ SYSTEM DESTROYED ☠️" : "System Maintenance"}
+                {isDestroyed 
+                  ? "☠️ SYSTEM DESTROYED ☠️" 
+                  : isSystemMaintenancePrivate 
+                  ? "🔒 System Maintenance (Protected)"
+                  : "System Maintenance"
+                }
               </motion.button>
               
               {isDestroyed && (
