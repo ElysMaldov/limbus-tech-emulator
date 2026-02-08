@@ -39,6 +39,9 @@ export default function Home() {
           <Link to="/crane" className="text-black hover:underline tracking-wider">
             Crane
           </Link>
+          <Link to="/conveyor" className="text-black hover:underline tracking-wider">
+            Conveyor
+          </Link>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
             Challenge 01
           </Link>
@@ -109,6 +112,30 @@ export default function Home() {
                   <path d="m5 12-3 3 3 3" />
                 </svg>
                 Crane Robot Control
+              </Link>
+
+              <Link
+                to="/conveyor"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#E8E8E8] border-2 border-black text-black hover:bg-[#D8D8D8] transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect width="16" height="6" x="4" y="12" rx="2" />
+                  <path d="M2 12h20" />
+                  <path d="M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
+                  <path d="M6 12v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" />
+                  <path d="m9 8 3-3 3 3" />
+                </svg>
+                Conveyor Robot Demo
               </Link>
 
               <Link
