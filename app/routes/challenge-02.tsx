@@ -1513,28 +1513,22 @@ function PasswordModal({
         onClick={onClose}
       />
       
-      {/* Dialog */}
+      {/* Dialog - Styled like the rest of the app */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative bg-[#282828] border-4 border-red-600 rounded-lg w-full max-w-md overflow-hidden shadow-2xl shadow-red-900/50"
+        className="relative bg-white border-2 border-black w-full max-w-md overflow-hidden shadow-xl"
       >
-        {/* Header */}
-        <div className="bg-red-600 border-b-4 border-red-800 px-6 py-4">
+        {/* Header - Orange like app header */}
+        <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-3xl">⚠️</span>
-              <div>
-                <h2 className="text-xl font-black text-white uppercase tracking-wider">
-                  SECURITY ALERT
-                </h2>
-                <p className="text-red-100 text-sm">Restricted Access Required</p>
-              </div>
-            </div>
+            <h2 className="text-xl font-bold text-black">
+              System Maintenance
+            </h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 bg-red-700 border-2 border-red-900 flex items-center justify-center hover:bg-red-800 text-white"
+              className="w-8 h-8 bg-[#E0E0E0] border-2 border-black flex items-center justify-center hover:bg-[#D0D0D0] text-black"
             >
               <span className="text-lg">×</span>
             </button>
@@ -1543,20 +1537,17 @@ function PasswordModal({
 
         {/* Content */}
         <div className="p-6 space-y-4">
-          {/* Warning Message */}
-          <div className="bg-red-900/30 border-2 border-red-600 p-4 rounded">
-            <p className="text-red-300 text-sm font-medium text-center">
-              This will run system diagnostics and maintenance procedures.
-            </p>
-            <p className="text-red-300 text-sm text-center mt-2">
-              This action will permanently destroy the robot!
+          {/* Info Message */}
+          <div className="bg-[#F0F0F0] border-2 border-black p-4">
+            <p className="text-black text-sm text-center">
+              Enter the maintenance code to run system diagnostics.
             </p>
           </div>
 
           {/* Password Input */}
           <div className="space-y-2">
-            <label className="block text-gray-300 text-sm font-bold uppercase tracking-wider">
-              Enter BIOS Password
+            <label className="block text-black text-sm font-bold">
+              Access Code
             </label>
             <input
               type="password"
@@ -1567,13 +1558,13 @@ function PasswordModal({
                 onPasswordChange(value);
               }}
               onKeyDown={onKeyDown}
-              placeholder="••••"
+              placeholder="0000"
               maxLength={4}
-              className="w-full px-4 py-3 bg-gray-900 border-2 border-red-600 text-white text-center text-2xl font-mono tracking-widest rounded focus:outline-none focus:border-red-500 placeholder-gray-700"
+              className="w-full px-4 py-3 bg-white border-2 border-black text-black text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-[#F7931E] placeholder-gray-400"
               autoFocus
             />
-            <p className="text-gray-500 text-xs text-center">
-              4-digit security code required
+            <p className="text-gray-500 text-xs">
+              4-digit code shown in system status panel
             </p>
           </div>
 
@@ -1584,38 +1575,35 @@ function PasswordModal({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-red-900/50 border-2 border-red-600 p-3 rounded"
+                className="bg-[#F0F0F0] border-2 border-black p-3"
               >
-                <p className="text-red-400 text-sm font-bold text-center flex items-center justify-center gap-2">
-                  <span>🚫</span>
-                  {error}
+                <p className="text-black text-sm text-center">
+                  Invalid code. Please try again.
                 </p>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Security Warning - Shows after failed attempt */}
+          {/* Hint - Shows after failed attempt */}
           <AnimatePresence>
             {showSecurityWarning && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="bg-yellow-900/30 border-2 border-yellow-600 p-4 rounded"
+                className="bg-[#F0F0F0] border-2 border-black p-4"
               >
-                <p className="text-yellow-400 text-sm font-bold mb-2 flex items-center gap-2">
-                  <span>🔓</span>
-                  SECURITY VULNERABILITY DETECTED!
+                <p className="text-black text-sm font-medium mb-2">
+                  💡 Tip: The access code is displayed in the system status panel above.
                 </p>
-                <p className="text-yellow-300/80 text-xs leading-relaxed">
-                  The BIOS password is currently visible in the state card above: <strong className="text-yellow-400 font-mono">{actualPassword}</strong>
+                <p className="text-gray-700 text-xs leading-relaxed">
+                  Current code: <strong className="text-black font-mono text-lg">{actualPassword}</strong>
                 </p>
-                <p className="text-yellow-300/80 text-xs mt-2 leading-relaxed">
-                  This demonstrates why sensitive data should be <strong className="text-yellow-400">private</strong>! 
-                  Anyone can see it and use it to destroy the robot.
+                <p className="text-gray-600 text-xs mt-2 leading-relaxed">
+                  Notice how easily accessible this code is? This is why sensitive data should be properly encapsulated with private access!
                 </p>
-                <p className="text-green-400 text-xs mt-2 font-medium">
-                  💡 Hint: Set <code className="bg-yellow-900/50 px-1 rounded">BiosPassword</code> to private in the encapsulation challenge!
+                <p className="text-[#F7931E] text-xs mt-2 font-medium">
+                  Try setting <code className="bg-gray-200 px-1">BiosPassword</code> to private in the challenge.
                 </p>
               </motion.div>
             )}
@@ -1625,22 +1613,22 @@ function PasswordModal({
           <div className="flex gap-3 pt-2">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-gray-700 border-2 border-gray-600 text-white font-bold hover:bg-gray-600 transition-colors"
+              className="flex-1 px-4 py-3 bg-[#E0E0E0] border-2 border-black text-black font-bold hover:bg-[#D0D0D0] transition-colors"
             >
-              CANCEL
+              Cancel
             </button>
             <button
               onClick={onSubmit}
               disabled={password.length !== 4}
-              className="flex-1 px-4 py-3 bg-red-600 border-2 border-red-800 text-white font-bold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex-1 px-4 py-3 bg-[#F7931E] border-2 border-black text-black font-bold hover:bg-[#E08000] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              CONFIRM
+              Submit
             </button>
           </div>
         </div>
 
-        {/* Bottom decorative line */}
-        <div className="h-1 bg-gradient-to-r from-red-600 via-orange-500 to-red-600" />
+        {/* Footer bar */}
+        <div className="h-2 bg-[#E8E8E8] border-t-2 border-black" />
       </motion.div>
     </div>
   );
