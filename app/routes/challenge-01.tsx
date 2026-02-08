@@ -555,6 +555,124 @@ function playSuccessSound() {
   }
 }
 
+// Confetti Particle Component
+function ConfettiParticle({ color, delay }: { color: string; delay: number }) {
+  const randomX = (Math.random() - 0.5) * 300;
+  const randomRotation = Math.random() * 720 - 360;
+  const randomScale = 0.5 + Math.random() * 0.5;
+  
+  return (
+    <motion.div
+      className="absolute w-3 h-3 rounded-sm"
+      style={{ backgroundColor: color }}
+      initial={{ 
+        x: 0, 
+        y: 0, 
+        scale: 0,
+        rotate: 0,
+        opacity: 1 
+      }}
+      animate={{ 
+        x: randomX, 
+        y: [0, -100, 200],
+        scale: [0, randomScale, 0],
+        rotate: randomRotation,
+        opacity: [1, 1, 0]
+      }}
+      transition={{ 
+        duration: 1.5,
+        delay: delay,
+        ease: "easeOut"
+      }}
+    />
+  );
+}
+
+// Success Animation Component
+function SuccessAnimation({ type }: { type: "property" | "method" }) {
+  const colors = ["#F7931E", "#22C55E", "#3B82F6", "#EAB308", "#EC4899"];
+  
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+      {/* Confetti burst */}
+      {[...Array(20)].map((_, i) => (
+        <ConfettiParticle 
+          key={i} 
+          color={colors[i % colors.length]} 
+          delay={i * 0.02}
+        />
+      ))}
+      
+      {/* Star burst */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const distance = 80;
+        return (
+          <motion.div
+            key={`star-${i}`}
+            className="absolute text-2xl"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ 
+              scale: [0, 1.5, 0],
+              opacity: [0, 1, 0],
+              x: Math.cos(angle) * distance,
+              y: Math.sin(angle) * distance
+            }}
+            transition={{ 
+              duration: 0.8,
+              delay: 0.1,
+              ease: "easeOut"
+            }}
+          >
+            ⭐
+          </motion.div>
+        );
+      })}
+      
+      {/* Main badge */}
+      <motion.div
+        className="absolute"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: [0, 1.2, 1], rotate: 0 }}
+        transition={{ 
+          type: "spring",
+          stiffness: 200,
+          damping: 15,
+          delay: 0.2
+        }}
+      >
+        <motion.div
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 5, -5, 0]
+          }}
+          transition={{ 
+            duration: 0.5,
+            delay: 0.5
+          }}
+          className={`px-6 py-3 border-4 border-black shadow-xl ${
+            type === "method" ? "bg-purple-500" : "bg-green-500"
+          }`}
+        >
+          <span className="text-white font-black text-xl uppercase tracking-wider">
+            {type === "method" ? "🔓 Method Unlocked!" : "🔓 Property Found!"}
+          </span>
+        </motion.div>
+      </motion.div>
+      
+      {/* Floating emojis */}
+      <motion.div
+        className="absolute text-4xl"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: -100, opacity: [0, 1, 0] }}
+        transition={{ duration: 1.5, delay: 0.3 }}
+      >
+        {type === "method" ? "⚙️" : "📦"}
+      </motion.div>
+    </div>
+  );
+}
+
 // Property Question Component
 interface PropertyQuestionProps {
   questionNumber: number;
@@ -582,13 +700,17 @@ function PropertyQuestion({
   const [answer, setAnswer] = useState("");
   const [showError, setShowError] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   const handleSubmit = () => {
     if (validateAnswer(answer.toLowerCase())) {
       setIsCorrect(true);
       setShowError(false);
+      setShowAnimation(true);
       playSuccessSound();
       onCorrect();
+      // Hide animation after 2 seconds
+      setTimeout(() => setShowAnimation(false), 2000);
     } else {
       setShowError(true);
     }
@@ -602,22 +724,62 @@ function PropertyQuestion({
 
   if (isRevealed || isCorrect) {
     return (
-      <div className="bg-green-50 border-2 border-green-500 p-4 rounded">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+      <motion.div 
+        className="bg-green-50 border-2 border-green-500 p-4 rounded relative overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        {showAnimation && <SuccessAnimation type={type} />}
+        <motion.div 
+          className="flex items-center gap-2 mb-2"
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <motion.div 
+            className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-lg font-bold"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 400, delay: 0.4 }}
+          >
             ✓
-          </div>
-          <span className="text-green-700 font-semibold">{type === "method" ? "Method Unlocked!" : "Property Unlocked!"}</span>
-        </div>
-        {revealedContent}
-      </div>
+          </motion.div>
+          <motion.span 
+            className="text-green-700 font-bold text-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            {type === "method" ? "Method Unlocked!" : "Property Unlocked!"}
+          </motion.span>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          {revealedContent}
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="bg-[#F8F8F8] border-2 border-black p-4">
+    <motion.div 
+      className="bg-[#F8F8F8] border-2 border-black p-4"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex items-start gap-3">
-        <span className="text-[#F7931E] font-bold text-lg">{questionNumber}.</span>
+        <motion.span 
+          className="text-[#F7931E] font-bold text-lg"
+          animate={{ rotate: [0, -10, 10, 0] }}
+          transition={{ duration: 0.5, delay: questionNumber * 0.1 }}
+        >
+          {questionNumber}.
+        </motion.span>
         <div className="flex-1">
           <p className="text-black mb-3">{question}</p>
           <input
@@ -629,20 +791,31 @@ function PropertyQuestion({
             }}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="w-full px-3 py-2 bg-white border-2 border-black text-black placeholder-gray-400 focus:outline-none focus:border-[#F7931E]"
+            className="w-full px-3 py-2 bg-white border-2 border-black text-black placeholder-gray-400 focus:outline-none focus:border-[#F7931E] transition-colors"
           />
-          {showError && (
-            <p className="text-red-600 text-sm mt-2">{errorMessage}</p>
-          )}
-          <button
+          <AnimatePresence>
+            {showError && (
+              <motion.p 
+                className="text-red-600 text-sm mt-2 flex items-center gap-1"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <span>❌</span> {errorMessage}
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <motion.button
             onClick={handleSubmit}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className="mt-3 px-4 py-2 bg-[#E0E0E0] border-2 border-black text-black font-medium hover:bg-[#D0D0D0] active:bg-[#C0C0C0]"
           >
             Check Answer
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
