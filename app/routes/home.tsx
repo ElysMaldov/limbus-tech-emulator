@@ -10,26 +10,75 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <main className="flex items-center justify-center pt-16 pb-4 min-h-screen bg-slate-900">
-      <div className="flex-1 flex flex-col items-center gap-16 min-h-0 max-w-2xl mx-auto px-4">
-        <header className="flex flex-col items-center gap-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-white text-center">
+    <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
+      {/* Header Bar - Orange like the image */}
+      <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-black tracking-wide">
             Limbus Tech Emulator
           </h1>
-          <p className="text-slate-400 text-center text-lg">
-            Welcome to the Crane Robot Control Simulator
-          </p>
-        </header>
+          {/* Window-style buttons */}
+          <div className="flex items-center gap-1">
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <div className="w-3 h-0.5 bg-black"></div>
+            </div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <div className="w-3 h-3 border border-black"></div>
+            </div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-lg leading-none">×</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <div className="w-full max-w-md space-y-6">
-          <nav className="rounded-2xl border border-slate-700 bg-slate-800/50 p-8 space-y-6">
-            <p className="text-slate-300 text-center text-lg font-medium">
+      {/* Navigation Bar */}
+      <nav className="bg-[#C0C0C0] border-b-2 border-black px-4 py-2">
+        <div className="flex items-center gap-8">
+          <span className="font-bold text-black tracking-wider">Home</span>
+          <Link to="/crane" className="text-black hover:underline tracking-wider">
+            Crane
+          </Link>
+          <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
+            Challenge
+          </Link>
+        </div>
+      </nav>
+
+      {/* Main Content - White background like image */}
+      <main className="flex-1 bg-white border-2 border-black m-4 p-8">
+        <div className="max-w-2xl mx-auto">
+          {/* Title Section */}
+          <div className="text-center mb-12 pt-8">
+            <p className="text-black text-xl mb-4 tracking-wider">Basics of</p>
+            <h2 className="text-[#F7931E] text-4xl md:text-5xl font-bold uppercase tracking-wide mb-2">
+              Object Oriented
+            </h2>
+            <h2 className="text-[#F7931E] text-4xl md:text-5xl font-bold uppercase tracking-wide mb-6">
+              Programming (OOP)
+            </h2>
+            <p className="text-black text-lg">Reyhan Ardiya</p>
+          </div>
+
+          {/* Start Button - Gray with black border like image */}
+          <div className="flex justify-center mb-16">
+            <Link
+              to="/crane"
+              className="px-12 py-3 bg-[#C0C0C0] border-2 border-black text-black font-medium hover:bg-[#B0B0B0] transition-colors tracking-wider"
+            >
+              Start
+            </Link>
+          </div>
+
+          {/* Mode Selection */}
+          <div className="space-y-4 max-w-md mx-auto">
+            <p className="text-black text-center text-lg font-medium mb-6">
               Select a Mode
             </p>
             <div className="space-y-3">
               <Link
                 to="/crane"
-                className="flex items-center justify-center gap-3 w-full p-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#C0C0C0] border-2 border-black text-black hover:bg-[#B0B0B0] transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -52,7 +101,7 @@ export default function Home() {
 
               <Link
                 to="/challenge-01"
-                className="flex items-center justify-center gap-3 w-full p-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium transition-colors"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#C0C0C0] border-2 border-black text-black hover:bg-[#B0B0B0] transition-colors"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -74,13 +123,25 @@ export default function Home() {
                 Challenge 01
               </Link>
             </div>
-          </nav>
+          </div>
         </div>
+      </main>
 
-        <footer className="text-slate-500 text-sm">
-          Limbus Tech Emulator © 2025
-        </footer>
-      </div>
-    </main>
+      {/* Footer Bar - like the navigation bar at bottom of image */}
+      <footer className="bg-[#C0C0C0] border-t-2 border-black px-4 py-2">
+        <div className="flex items-center justify-between">
+          <span className="text-black text-sm">Limbus Tech Emulator © 2025</span>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-xs">◀</span>
+            </div>
+            <div className="w-32 h-5 bg-[#A0A0A0] border-2 border-black"></div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-xs">▶</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
