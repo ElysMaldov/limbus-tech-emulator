@@ -1181,13 +1181,13 @@ export default function Challenge02() {
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
             Challenge 01
           </Link>
-          <span className="font-bold text-black tracking-wider">Challenge 02</span>
           <Link
             to="/crane-factory"
             className="text-black hover:underline tracking-wider"
           >
             Crane Factory
           </Link>
+          <span className="font-bold text-black tracking-wider">Challenge 02</span>
         </div>
       </nav>
 

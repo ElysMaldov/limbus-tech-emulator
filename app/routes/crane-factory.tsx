@@ -560,10 +560,10 @@ export default function CraneFactory() {
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
             Challenge 01
           </Link>
+          <span className="font-bold text-black tracking-wider">Crane Factory</span>
           <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
             Challenge 02
           </Link>
-          <span className="font-bold text-black tracking-wider">Crane Factory</span>
         </div>
       </nav>
 
