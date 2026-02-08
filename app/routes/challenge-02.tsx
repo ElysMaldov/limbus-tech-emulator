@@ -785,6 +785,53 @@ function playSuccessSound() {
   }
 }
 
+// Play a gentle error sound with decrescendo - sad descending chime
+function playErrorSound() {
+  try {
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    
+    // Main oscillator - sine wave for smoothness
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Descending: G4 down to C4
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(392, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(261.63, audioContext.currentTime + 0.4);
+    
+    // Decrescendo volume envelope
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.25, audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+    
+    // Second oscillator for harmony
+    const oscillator2 = audioContext.createOscillator();
+    const gainNode2 = audioContext.createGain();
+    
+    oscillator2.connect(gainNode2);
+    gainNode2.connect(audioContext.destination);
+    
+    oscillator2.type = "triangle";
+    oscillator2.frequency.setValueAtTime(311.13, audioContext.currentTime);
+    oscillator2.frequency.exponentialRampToValueAtTime(196, audioContext.currentTime + 0.4);
+    
+    gainNode2.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode2.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
+    gainNode2.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.45);
+    
+    oscillator2.start(audioContext.currentTime);
+    oscillator2.stop(audioContext.currentTime + 0.45);
+  } catch {
+    // Silently fail
+  }
+}
+
 // Play explosion sound
 function playExplosionSound() {
   try {
@@ -1008,6 +1055,8 @@ export default function Challenge02() {
     
     if (isCorrect) {
       playSuccessSound();
+    } else {
+      playErrorSound();
     }
   };
 
@@ -1046,6 +1095,7 @@ export default function Challenge02() {
     } else {
       // Wrong password
       setPasswordError("Incorrect password! Access denied.");
+      playErrorSound();
       // Show security warning after first failed attempt
       setShowSecurityWarning(true);
     }

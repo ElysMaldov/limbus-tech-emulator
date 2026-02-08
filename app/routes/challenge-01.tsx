@@ -675,6 +675,72 @@ function playSuccessSound() {
   }
 }
 
+// Play a gentle error sound with decrescendo - sad descending chime
+function playErrorSound() {
+  try {
+    const audioContext = new (
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext
+    )();
+
+    // Main oscillator - sine wave for smoothness (like success sound)
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Descending decrescendo: G4 (392Hz) down to C4 (261.63Hz)
+    // This is the reverse direction of the success sound
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(392, audioContext.currentTime); // G4
+    oscillator.frequency.exponentialRampToValueAtTime(
+      261.63,
+      audioContext.currentTime + 0.4
+    ); // C4 - descending
+
+    // Decrescendo volume envelope - fades out smoothly
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.25, audioContext.currentTime + 0.05); // Quick attack
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioContext.currentTime + 0.5
+    ); // Long smooth fade out
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+
+    // Second oscillator for harmony - perfect 5th below (descending)
+    // Eb4 (311.13Hz) down to G3 (196Hz)
+    const oscillator2 = audioContext.createOscillator();
+    const gainNode2 = audioContext.createGain();
+
+    oscillator2.connect(gainNode2);
+    gainNode2.connect(audioContext.destination);
+
+    oscillator2.type = "triangle";
+    oscillator2.frequency.setValueAtTime(311.13, audioContext.currentTime); // Eb4
+    oscillator2.frequency.exponentialRampToValueAtTime(
+      196,
+      audioContext.currentTime + 0.4
+    ); // G3 - descending
+
+    // Decrescendo for second oscillator
+    gainNode2.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode2.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
+    gainNode2.gain.exponentialRampToValueAtTime(
+      0.001,
+      audioContext.currentTime + 0.45
+    );
+
+    oscillator2.start(audioContext.currentTime);
+    oscillator2.stop(audioContext.currentTime + 0.45);
+  } catch {
+    // Silently fail if audio is not supported
+  }
+}
+
 // Confetti Particle Component
 function ConfettiParticle({ color, delay }: { color: string; delay: number }) {
   const randomX = (Math.random() - 0.5) * 300;
@@ -833,6 +899,7 @@ function PropertyQuestion({
       setTimeout(() => setShowAnimation(false), 2000);
     } else {
       setShowError(true);
+      playErrorSound();
     }
   };
 
