@@ -286,12 +286,11 @@ export function CraneRobot({
     setDropSubState("dropping");
     onSubStateChange?.("dropping");
     setClawAngle(45);
-    // Wait for claws to open BEFORE releasing item
-    await delay(TIMING.openClawsDrop * 1000 + 200);
-    // Now claws are open, release the item
+    // Release item immediately as claws open
     setIsHoldingItem(false);
     setGrabbedAtGround(false);
     setItemX(200); // Item stays at drop zone
+    await delay(TIMING.openClawsDrop * 1000 + 200);
     
     // Close claws after drop
     setClawAngle(1);
