@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 // Animation timing constants
 const TIMING = {
@@ -195,6 +197,8 @@ interface CraneRobotProps {
   onSubStateChange?: (subState: string | null) => void;
   onPositionChange?: (position: number) => void;
   onHoldingChange?: (isHolding: boolean) => void;
+  serialNumber?: string;
+  showSerialNumber?: boolean;
 }
 
 export function CraneRobot({
@@ -205,7 +209,9 @@ export function CraneRobot({
   className = "",
   onSubStateChange,
   onPositionChange,
-  onHoldingChange
+  onHoldingChange,
+  serialNumber = "???",
+  showSerialNumber = false
 }: CraneRobotProps) {
   const isPowered = state !== "power-off";
   
@@ -474,7 +480,11 @@ export function CraneRobot({
       </motion.div>
 
       {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#A0A0A0] border-t border-black" />
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#A0A0A0] border-t border-black flex items-center justify-center">
+        <span className="text-xs font-mono text-gray-700">
+          Crane Robot #{showSerialNumber ? serialNumber : "???"}
+        </span>
+      </div>
 
       {/* Status Indicator */}
       {showStatus && (
@@ -640,12 +650,14 @@ export default function Challenge01() {
   const [subState, setSubState] = useState<string | null>(null);
   const [cranePosition, setCranePosition] = useState<number>(0);
   const [isHoldingItem, setIsHoldingItem] = useState<boolean>(false);
+  const [serialNumber] = useState<string>("CR-2024-" + Math.floor(1000 + Math.random() * 9000));
 
   // Revealed state for properties
   const [revealedProperties, setRevealedProperties] = useState({
     power: false,
     position: false,
-    hold: false
+    hold: false,
+    serial: false
   });
 
   // Revealed state for methods
@@ -700,6 +712,9 @@ export default function Challenge01() {
       setShowMethods(true);
     }
   }, [allPropertiesRevealed]);
+
+  // Blueprint dialog state
+  const [showBlueprint, setShowBlueprint] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
@@ -756,6 +771,8 @@ export default function Challenge01() {
               className="w-full"
               width={700}
               height={480}
+              serialNumber={serialNumber}
+              showSerialNumber={revealedProperties.serial}
             />
 
             {/* Controls */}
@@ -926,9 +943,26 @@ export default function Challenge01() {
             </p>
 
             <div className="space-y-4">
-              {/* Question 1: Power */}
+              {/* Question 1: Serial Number */}
               <PropertyQuestion
                 questionNumber={1}
+                question="The robot needs a unique identifier to distinguish it from other robots. What property should store this identifier?"
+                placeholder="Type your answer..."
+                validateAnswer={(answer) => answer.includes("serial") || answer.includes("id") || answer.includes("number")}
+                onCorrect={() => revealProperty("serial")}
+                isRevealed={revealedProperties.serial}
+                errorMessage="The robot should have a unique identifier like a serial number."
+                revealedContent={
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-mono font-bold text-[#D06000]">{serialNumber}</span>
+                    <span className="text-gray-500 text-sm">(Property: serialNumber)</span>
+                  </div>
+                }
+              />
+
+              {/* Question 2: Power */}
+              <PropertyQuestion
+                questionNumber={2}
                 question="The robot needs to know if it's turned on or off. What property name should we use to store this?"
                 placeholder="Type your answer..."
                 validateAnswer={(answer) => answer.includes("power")}
@@ -952,9 +986,9 @@ export default function Challenge01() {
                 }
               />
 
-              {/* Question 2: Position */}
+              {/* Question 3: Position */}
               <PropertyQuestion
-                questionNumber={2}
+                questionNumber={3}
                 question="The robot needs to track where its claw is located (left, center, or right). What property name should we use?"
                 placeholder="Type your answer..."
                 validateAnswer={(answer) => answer.includes("position")}
@@ -969,9 +1003,9 @@ export default function Challenge01() {
                 }
               />
 
-              {/* Question 3: Hold */}
+              {/* Question 4: Hold */}
               <PropertyQuestion
-                questionNumber={3}
+                questionNumber={4}
                 question="The robot needs to remember whether it's currently holding an item or not. What property name should we use?"
                 placeholder="Type your answer..."
                 validateAnswer={(answer) => answer.includes("hold")}
@@ -1210,9 +1244,35 @@ export default function Challenge01() {
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Print Blueprint Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6"
+            >
+              <button
+                onClick={() => allPropertiesRevealed && allMethodsRevealed && setShowBlueprint(true)}
+                disabled={!allPropertiesRevealed || !allMethodsRevealed}
+                className={`w-full px-6 py-4 border-2 border-black font-bold text-lg transition-colors flex items-center justify-center gap-3 ${
+                  allPropertiesRevealed && allMethodsRevealed
+                    ? "bg-[#F7931E] text-black hover:bg-[#E08000] cursor-pointer"
+                    : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                }`}
+              >
+                <span>🖨️</span>
+                Print Blueprint
+                {(!allPropertiesRevealed || !allMethodsRevealed) && (
+                  <span className="text-sm font-normal ml-2">🔒 Complete all questions</span>
+                )}
+              </button>
+            </motion.div>
           </div>
         </div>
       </main>
+
+      {/* Blueprint Dialog */}
+      <BlueprintDialog isOpen={showBlueprint} onClose={() => setShowBlueprint(false)} />
 
       {/* Footer Bar */}
       <footer className="bg-[#C0C0C0] border-t-2 border-black px-4 py-2">
@@ -1229,6 +1289,198 @@ export default function Challenge01() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// C# Code for the CraneRobot class
+const csharpCode = `public class CraneRobot
+{
+    // Properties
+    private bool isPowered;
+    private string clawPosition;
+    private bool isHoldingItem;
+
+    // Constructor
+    public CraneRobot()
+    {
+        isPowered = false;
+        clawPosition = "Center";
+        isHoldingItem = false;
+    }
+
+    // Methods
+    public void PowerOn()
+    {
+        isPowered = true;
+        Console.WriteLine("Crane powered on");
+    }
+
+    public void PowerOff()
+    {
+        isPowered = false;
+        Console.WriteLine("Crane powered off");
+    }
+
+    public void MoveLeft()
+    {
+        if (isPowered)
+        {
+            clawPosition = "Left";
+            Console.WriteLine("Moving left to item zone");
+        }
+    }
+
+    public void MoveRight()
+    {
+        if (isPowered)
+        {
+            clawPosition = "Right";
+            Console.WriteLine("Moving right to drop zone");
+        }
+    }
+
+    public void GrabItem()
+    {
+        if (isPowered && clawPosition == "Left")
+        {
+            isHoldingItem = true;
+            Console.WriteLine("Item grabbed");
+        }
+    }
+
+    public void DropItem()
+    {
+        if (isPowered && isHoldingItem)
+        {
+            isHoldingItem = false;
+            Console.WriteLine("Item dropped");
+        }
+    }
+}`;
+
+// Blueprint Dialog Component
+interface BlueprintDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/70"
+        onClick={onClose}
+      />
+      
+      {/* Dialog */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="relative bg-[#282828] border-2 border-[#F7931E] rounded-lg w-full max-w-6xl max-h-[90vh] overflow-hidden"
+      >
+        {/* Header */}
+        <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-black">📋 Crane Robot Blueprint</h2>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 bg-[#C0C0C0] border-2 border-black flex items-center justify-center hover:bg-[#B0B0B0]"
+          >
+            <span className="text-black text-lg">×</span>
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 overflow-auto max-h-[calc(90vh-80px)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column - UML */}
+            <div>
+              <h3 className="text-[#F7931E] font-bold text-lg mb-4 border-b border-[#F7931E]/30 pb-2">
+                UML Class Diagram
+              </h3>
+              <div className="bg-[#1d2021] border border-[#504945] rounded p-4 font-mono text-sm">
+                {/* UML Box */}
+                <div className="border-2 border-white/30 rounded overflow-hidden">
+                  {/* Class Name */}
+                  <div className="bg-[#3c3836] border-b-2 border-white/30 p-3 text-center">
+                    <span className="text-[#fabd2f] font-bold text-lg">CraneRobot</span>
+                  </div>
+                  
+                  {/* Properties Section */}
+                  <div className="border-b-2 border-white/30 p-3">
+                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">Properties</div>
+                    <div className="text-[#ebdbb2] space-y-1">
+                      <div>- isPowered: bool</div>
+                      <div>- clawPosition: string</div>
+                      <div>- isHoldingItem: bool</div>
+                    </div>
+                  </div>
+                  
+                  {/* Methods Section */}
+                  <div className="p-3">
+                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">Methods</div>
+                    <div className="text-[#83a598] space-y-1">
+                      <div>+ PowerOn()</div>
+                      <div>+ PowerOff()</div>
+                      <div>+ MoveLeft()</div>
+                      <div>+ MoveRight()</div>
+                      <div>+ GrabItem()</div>
+                      <div>+ DropItem()</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="mt-4 text-xs text-[#a89984]">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[#ebdbb2]">-</span> private
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#83a598]">+</span> public
+                  </div>
+                </div>
+              </div>
+
+              {/* OOP Concepts */}
+              <div className="mt-4 bg-[#3c3836] border border-[#504945] rounded p-4">
+                <h4 className="text-[#fabd2f] font-bold mb-2">OOP Concepts Used</h4>
+                <ul className="text-[#ebdbb2] text-sm space-y-1">
+                  <li>• <strong className="text-[#b8bb26]">Class:</strong> Blueprint for the robot</li>
+                  <li>• <strong className="text-[#b8bb26]">Properties:</strong> Object's state/data</li>
+                  <li>• <strong className="text-[#b8bb26]">Methods:</strong> Object's behavior</li>
+                  <li>• <strong className="text-[#b8bb26]">Encapsulation:</strong> Data + Behavior together</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Right Column - C# Code */}
+            <div>
+              <h3 className="text-[#F7931E] font-bold text-lg mb-4 border-b border-[#F7931E]/30 pb-2">
+                C# Implementation
+              </h3>
+              <div className="rounded overflow-hidden">
+                <SyntaxHighlighter
+                  language="csharp"
+                  style={vscDarkPlus}
+                  customStyle={{
+                    margin: 0,
+                    padding: '1rem',
+                    fontSize: '0.85rem',
+                    lineHeight: '1.5',
+                    backgroundColor: '#1d2021',
+                  }}
+                >
+                  {csharpCode}
+                </SyntaxHighlighter>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
