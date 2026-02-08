@@ -738,10 +738,10 @@ export default function Challenge01() {
       </nav>
 
       {/* Main Content - Two Column Layout */}
-      <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-visible">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Left Column - Crane Robot View */}
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:sticky lg:top-6 z-10">
             <h2 className="text-xl font-bold text-black mb-4 text-center">
               Crane Robot
             </h2>
