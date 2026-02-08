@@ -193,6 +193,8 @@ interface CraneRobotProps {
   showStatus?: boolean;
   className?: string;
   onSubStateChange?: (subState: string | null) => void;
+  onPositionChange?: (position: number) => void;
+  onHoldingChange?: (isHolding: boolean) => void;
 }
 
 export function CraneRobot({
@@ -201,7 +203,9 @@ export function CraneRobot({
   height = 500,
   showStatus = true,
   className = "",
-  onSubStateChange
+  onSubStateChange,
+  onPositionChange,
+  onHoldingChange
 }: CraneRobotProps) {
   const isPowered = state !== "power-off";
   
@@ -261,6 +265,7 @@ export function CraneRobot({
     // Attach the item
     setIsHoldingItem(true);
     setGrabbedAtGround(true);
+    onHoldingChange?.(true);
     
     // Step 5: Lift crane
     setGrabSubState("lifting");
@@ -290,6 +295,7 @@ export function CraneRobot({
     // Release item immediately as claws open
     setIsHoldingItem(false);
     setGrabbedAtGround(false);
+    onHoldingChange?.(false);
     setItemX(200); // Item stays at drop zone
     await delay(TIMING.openClawsDrop * 1000 + 200);
     
@@ -314,6 +320,8 @@ export function CraneRobot({
         setGrabSubState(null);
         setDropSubState(null);
         onSubStateChange?.(null);
+        onPositionChange?.(0);
+        onHoldingChange?.(false);
         break;
         
       case "power-on":
@@ -323,17 +331,20 @@ export function CraneRobot({
         setGrabSubState(null);
         setDropSubState(null);
         onSubStateChange?.(null);
+        onPositionChange?.(0);
         break;
         
       case "move-left":
         if (isPowered) {
           setCraneX(-200);
+          onPositionChange?.(-200);
         }
         break;
         
       case "move-right":
         if (isPowered) {
           setCraneX(200);
+          onPositionChange?.(200);
         }
         break;
         
@@ -353,7 +364,7 @@ export function CraneRobot({
         }
         break;
     }
-  }, [state, isPowered, executeGrabSequence, executeDropSequence, onSubStateChange]);
+  }, [state, isPowered, executeGrabSequence, executeDropSequence, onSubStateChange, onPositionChange, onHoldingChange]);
 
   // Calculate item position
   const getItemX = () => {
@@ -490,6 +501,15 @@ export function CraneRobot({
 export default function Challenge01() {
   const [craneState, setCraneState] = useState<CraneState>("power-off");
   const [subState, setSubState] = useState<string | null>(null);
+  const [cranePosition, setCranePosition] = useState<number>(0);
+  const [isHoldingItem, setIsHoldingItem] = useState<boolean>(false);
+
+  // Get position label
+  const getPositionLabel = (pos: number): string => {
+    if (pos <= -150) return "Left";
+    if (pos >= 150) return "Right";
+    return "Center";
+  };
 
   const handleStateChange = (newState: CraneState) => {
     setCraneState(newState);
@@ -549,6 +569,8 @@ export default function Challenge01() {
           <CraneRobot
             state={craneState}
             onSubStateChange={setSubState}
+            onPositionChange={setCranePosition}
+            onHoldingChange={setIsHoldingItem}
             showStatus={false}
           />
 
@@ -556,29 +578,46 @@ export default function Challenge01() {
           <div className="mt-8 w-[800px] space-y-4">
             {/* Status Card */}
             <div className="bg-[#C0C0C0] border-2 border-black p-6">
-              <div className="flex items-center gap-6">
-                {/* Power Indicator */}
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                      craneState !== "power-off"
-                        ? "bg-[#F7931E] shadow-[0_0_15px_rgba(247,147,30,0.8)]"
-                        : "bg-gray-500 shadow-none"
-                    }`}
-                  />
-                  <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-[#F7931E]" : "text-gray-500"}`}>
-                    {craneState !== "power-off" ? "ON" : "OFF"}
-                  </span>
-                </div>
-                <div className="h-10 w-px bg-black" />
-                {/* State Info */}
-                <div>
-                  <div className="text-sm text-gray-700 uppercase tracking-wider mb-1">
-                    State
+              <div className="flex items-center justify-around">
+                {/* Power Status */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-xs text-gray-700 uppercase tracking-wider">Power</div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                        craneState !== "power-off"
+                          ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
+                          : "bg-gray-500 shadow-none"
+                      }`}
+                    />
+                    <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
+                      {craneState !== "power-off" ? "ON" : "OFF"}
+                    </span>
                   </div>
+                </div>
+                <div className="h-12 w-px bg-black" />
+                {/* Claw Position */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-xs text-gray-700 uppercase tracking-wider">Claw Position</div>
                   <div className="text-2xl font-mono font-bold text-[#D06000]">
-                    {STATE_DEFINITIONS.find((s) => s.id === craneState)?.label ?? "Unknown"}
-                    {subState && <span className="text-lg text-gray-600 ml-2">({subState})</span>}
+                    {getPositionLabel(cranePosition)}
+                  </div>
+                </div>
+                <div className="h-12 w-px bg-black" />
+                {/* Holding Item */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-xs text-gray-700 uppercase tracking-wider">Holding Item</div>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                        isHoldingItem
+                          ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
+                          : "bg-gray-500 shadow-none"
+                      }`}
+                    />
+                    <span className={`text-lg font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
+                      {isHoldingItem ? "YES" : "NO"}
+                    </span>
                   </div>
                 </div>
               </div>
