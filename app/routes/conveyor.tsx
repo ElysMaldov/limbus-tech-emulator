@@ -84,6 +84,9 @@ export default function ConveyorDemo() {
           <Link to="/crane" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Crane
           </Link>
+          <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Assembly Line
+          </Link>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Challenge
           </Link>
