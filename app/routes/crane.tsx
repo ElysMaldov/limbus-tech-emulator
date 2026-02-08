@@ -1,5 +1,6 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { Link } from "react-router";
 
 // Animation timing constants
 const TIMING = {
@@ -55,12 +56,12 @@ function PowerIndicator({ isOn }: { isOn: boolean }) {
       <div
         className={`w-4 h-4 rounded-full transition-all duration-300 ${
           isOn
-            ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]"
-            : "bg-slate-600 shadow-none"
+            ? "bg-[#F7931E] shadow-[0_0_10px_rgba(247,147,30,0.8)]"
+            : "bg-gray-500 shadow-none"
         }`}
       />
       <span
-        className={`text-xs font-medium ${isOn ? "text-yellow-400" : "text-slate-500"}`}
+        className={`text-xs font-medium ${isOn ? "text-[#F7931E]" : "text-gray-500"}`}
       >
         {isOn ? "ON" : "OFF"}
       </span>
@@ -485,27 +486,27 @@ export function CraneRobot({
 
   return (
     <div
-      className={`relative bg-slate-800 rounded-xl border-4 border-slate-700 overflow-hidden ${className}`}
+      className={`relative bg-[#E0E0E0] border-2 border-black overflow-hidden ${className}`}
       style={{ width, height }}
     >
       {/* Track/Rail */}
-      <div className="absolute top-16 left-0 right-0 h-4 bg-slate-600" />
+      <div className="absolute top-16 left-0 right-0 h-4 bg-[#A0A0A0] border-b border-black" />
 
       {/* Drop Zone Marker */}
-      <div className="absolute bottom-0 right-[180px] w-24 h-4 bg-green-500/50 rounded-t-lg" />
-      <div className="absolute bottom-12 right-[195px] text-green-400 text-sm font-semibold">
+      <div className="absolute bottom-0 right-[180px] w-24 h-4 bg-[#F7931E]/50 rounded-t-lg border-t border-x border-black" />
+      <div className="absolute bottom-12 right-[195px] text-[#D06000] text-sm font-semibold">
         DROP ZONE
       </div>
 
       {/* Item Zone Marker */}
-      <div className="absolute bottom-0 left-[180px] w-24 h-4 bg-amber-500/50 rounded-t-lg" />
-      <div className="absolute bottom-12 left-[195px] text-amber-400 text-sm font-semibold">
+      <div className="absolute bottom-0 left-[180px] w-24 h-4 bg-[#F7931E]/50 rounded-t-lg border-t border-x border-black" />
+      <div className="absolute bottom-12 left-[195px] text-[#D06000] text-sm font-semibold">
         ITEM ZONE
       </div>
 
       {/* Item */}
       <motion.div
-        className="absolute w-20 h-20 bg-amber-500 rounded-lg shadow-lg"
+        className="absolute w-20 h-20 bg-[#F7931E] rounded-lg shadow-lg border-2 border-black"
         animate={{
           x: getItemX() + width / 2 - 40,
           y: getItemY()
@@ -519,9 +520,9 @@ export function CraneRobot({
         }}
         style={{ left: 0, top: 0 }}
       >
-        <div className="absolute inset-2 border-2 border-amber-600 rounded" />
-        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-amber-600" />
-        <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-amber-600" />
+        <div className="absolute inset-2 border-2 border-[#D06000] rounded" />
+        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#D06000]" />
+        <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-[#D06000]" />
       </motion.div>
 
       {/* Crane Assembly */}
@@ -544,19 +545,19 @@ export function CraneRobot({
       </motion.div>
 
       {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-slate-700" />
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#A0A0A0] border-t border-black" />
 
       {/* Status Indicator */}
       {showStatus && (
-        <div className="absolute top-4 left-4 bg-slate-900/80 px-4 py-2 rounded-lg">
+        <div className="absolute top-4 left-4 bg-[#C0C0C0] px-4 py-2 border-2 border-black">
           <div className="flex items-center gap-3">
             <PowerIndicator isOn={isPowered} />
-            <div className="h-4 w-px bg-slate-600" />
+            <div className="h-4 w-px bg-black" />
             <div>
-              <div className="text-xs text-slate-400 uppercase tracking-wider">
+              <div className="text-xs text-gray-700 uppercase tracking-wider">
                 State
               </div>
-              <div className="text-sm font-mono text-cyan-400">
+              <div className="text-sm font-mono text-[#D06000]">
                 {statusText}
               </div>
             </div>
@@ -584,97 +585,152 @@ export default function CraneDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center overflow-hidden p-4">
-      <h1 className="text-3xl font-bold text-white mb-8">
-        Crane Robot Control
-      </h1>
-
-      {/* Crane Display */}
-      <CraneRobot
-        state={craneState}
-        onSubStateChange={setSubState}
-      />
-
-      {/* Controls */}
-      <div className="mt-8 w-[800px] space-y-4">
-        {/* State Buttons */}
-        <div className="grid grid-cols-3 gap-3">
-          {STATE_DEFINITIONS.map((stateDef) => {
-            const isActive = craneState === stateDef.id;
-            const isDisabled = isStateDisabled(stateDef.id);
-
-            return (
-              <button
-                key={stateDef.id}
-                onClick={() => handleStateChange(stateDef.id)}
-                disabled={isDisabled}
-                className={`
-                  px-4 py-3 rounded-lg font-medium transition-all text-left
-                  ${
-                    isActive
-                      ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30"
-                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                  }
-                  ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
-                `}
-                title={stateDef.description}
-              >
-                <div className="flex items-center gap-2">
-                  {stateDef.id === "power-off" && (
-                    <div
-                      className={`w-3 h-3 rounded-full ${isActive ? "bg-red-400" : "bg-red-600"}`}
-                    />
-                  )}
-                  {stateDef.id === "power-on" && (
-                    <div
-                      className={`w-3 h-3 rounded-full ${isActive ? "bg-green-400" : "bg-green-600"}`}
-                    />
-                  )}
-                  <span>{stateDef.label}</span>
-                </div>
-                <div className="text-xs opacity-70 mt-1">
-                  {stateDef.description}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-slate-800 px-4 py-3 rounded-lg">
-          <div className="text-slate-300 font-medium mb-2">Quick Actions</div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleStateChange("power-off")}
-              className="flex-1 px-4 py-2 bg-red-900/50 hover:bg-red-900/70 text-red-200 rounded-lg font-medium transition-colors"
-            >
-              Emergency Stop
-            </button>
-            <button
-              onClick={() => handleStateChange("power-on")}
-              disabled={craneState !== "power-off"}
-              className="flex-1 px-4 py-2 bg-green-900/50 hover:bg-green-900/70 disabled:opacity-50 disabled:cursor-not-allowed text-green-200 rounded-lg font-medium transition-colors"
-            >
-              Power On
-            </button>
+    <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
+      {/* Header Bar - Orange */}
+      <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-black tracking-wide">
+            Crane Robot Control
+          </h1>
+          {/* Window-style buttons */}
+          <div className="flex items-center gap-1">
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <div className="w-3 h-0.5 bg-black"></div>
+            </div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <div className="w-3 h-3 border border-black"></div>
+            </div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-lg leading-none">×</span>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Status Info */}
-        <div className="bg-slate-800/50 px-4 py-3 rounded-lg text-sm text-slate-400">
-          <p>
-            <strong className="text-slate-300">Current State:</strong>{" "}
-            {craneState} {subState && `→ ${subState}`}
-          </p>
-          <p className="mt-1">
-            {craneState === "power-off"
-              ? "System is powered down. Press 'Power On' to start."
-              : subState
-                ? "Executing sequence... Please wait."
-                : "Ready for next command."}
-          </p>
+      {/* Navigation Bar */}
+      <nav className="bg-[#C0C0C0] border-b-2 border-black px-4 py-2">
+        <div className="flex items-center gap-8">
+          <Link to="/" className="text-black hover:underline tracking-wider">
+            Home
+          </Link>
+          <span className="font-bold text-black tracking-wider">Crane</span>
+          <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
+            Challenge
+          </Link>
         </div>
-      </div>
+      </nav>
+
+      {/* Main Content - White background */}
+      <main className="flex-1 bg-white border-2 border-black m-4 p-8 overflow-auto">
+        <div className="flex flex-col items-center">
+          <h2 className="text-2xl font-bold text-black mb-8">
+            Crane Robot Control
+          </h2>
+
+          {/* Crane Display */}
+          <CraneRobot
+            state={craneState}
+            onSubStateChange={setSubState}
+          />
+
+          {/* Controls */}
+          <div className="mt-8 w-[800px] space-y-4">
+            {/* State Buttons */}
+            <div className="grid grid-cols-3 gap-3">
+              {STATE_DEFINITIONS.map((stateDef) => {
+                const isActive = craneState === stateDef.id;
+                const isDisabled = isStateDisabled(stateDef.id);
+
+                return (
+                  <button
+                    key={stateDef.id}
+                    onClick={() => handleStateChange(stateDef.id)}
+                    disabled={isDisabled}
+                    className={`
+                      px-4 py-3 font-medium transition-all text-left border-2
+                      ${
+                        isActive
+                          ? "bg-[#F7931E] text-black border-black"
+                          : "bg-[#C0C0C0] text-black border-black hover:bg-[#B0B0B0]"
+                      }
+                      ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                    `}
+                    title={stateDef.description}
+                  >
+                    <div className="flex items-center gap-2">
+                      {stateDef.id === "power-off" && (
+                        <div
+                          className={`w-3 h-3 rounded-full ${isActive ? "bg-red-500" : "bg-red-600"}`}
+                        />
+                      )}
+                      {stateDef.id === "power-on" && (
+                        <div
+                          className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-green-600"}`}
+                        />
+                      )}
+                      <span>{stateDef.label}</span>
+                    </div>
+                    <div className="text-xs opacity-70 mt-1">
+                      {stateDef.description}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-[#C0C0C0] border-2 border-black px-4 py-3">
+              <div className="text-black font-medium mb-2">Quick Actions</div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleStateChange("power-off")}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white border-2 border-black font-medium transition-colors"
+                >
+                  Emergency Stop
+                </button>
+                <button
+                  onClick={() => handleStateChange("power-on")}
+                  disabled={craneState !== "power-off"}
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white border-2 border-black font-medium transition-colors"
+                >
+                  Power On
+                </button>
+              </div>
+            </div>
+
+            {/* Status Info */}
+            <div className="bg-[#C0C0C0] border-2 border-black px-4 py-3 text-sm text-black">
+              <p>
+                <strong className="text-black">Current State:</strong>{" "}
+                {craneState} {subState && `→ ${subState}`}
+              </p>
+              <p className="mt-1">
+                {craneState === "power-off"
+                  ? "System is powered down. Press 'Power On' to start."
+                  : subState
+                    ? "Executing sequence... Please wait."
+                    : "Ready for next command."}
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer Bar */}
+      <footer className="bg-[#C0C0C0] border-t-2 border-black px-4 py-2">
+        <div className="flex items-center justify-between">
+          <span className="text-black text-sm">Crane Robot Control - Limbus Tech Emulator</span>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-xs">◀</span>
+            </div>
+            <div className="w-32 h-5 bg-[#A0A0A0] border-2 border-black"></div>
+            <div className="w-6 h-5 bg-[#C0C0C0] border-2 border-black flex items-center justify-center">
+              <span className="text-black text-xs">▶</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
