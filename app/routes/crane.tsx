@@ -1,76 +1,133 @@
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 // Animation timing constants
 const TIMING = {
-  moveToItem: 2,
+  move: 1.5,
   openClaws: 0.5,
   lowerCrane: 1,
   closeClaws: 0.5,
   liftCrane: 1,
-  moveToDrop: 2,
-  openClawsDrop: 0.5,
-  reset: 1
+  openClawsDrop: 0.5
 };
 
-// Phase definitions with labels
-const PHASES = [
-  { id: 0, label: "Ready", description: "Initial position" },
-  { id: 1, label: "Moving to Item", description: "Move crane to item location" },
-  { id: 2, label: "Opening Claws", description: "Open claws to grab" },
-  { id: 3, label: "Lowering", description: "Lower crane to item" },
-  { id: 4, label: "Grabbing", description: "Close claws on item" },
-  { id: 5, label: "Lifting", description: "Lift item up" },
-  { id: 6, label: "Moving to Drop", description: "Move to drop zone" },
-  { id: 7, label: "Dropping", description: "Open claws to drop" },
-  { id: 8, label: "Resetting", description: "Return to start" }
+// Crane states
+type CraneState =
+  | "power-off"
+  | "power-on"
+  | "move-left"
+  | "move-right"
+  | "grab-item"
+  | "drop-item";
+
+// Sub-states for grab-item sequence
+const GRAB_SUB_STATES = ["opening", "lowering", "grabbing", "lifting"] as const;
+type GrabSubState = (typeof GRAB_SUB_STATES)[number];
+
+// Sub-states for drop-item sequence
+const DROP_SUB_STATES = ["moving", "dropping"] as const;
+type DropSubState = (typeof DROP_SUB_STATES)[number];
+
+// State definitions for UI
+const STATE_DEFINITIONS: { id: CraneState; label: string; description: string }[] = [
+  { id: "power-off", label: "Power Off", description: "Crane is powered down" },
+  { id: "power-on", label: "Power On", description: "Crane is ready" },
+  { id: "move-left", label: "Move Left", description: "Move to item zone" },
+  { id: "move-right", label: "Move Right", description: "Move to drop zone" },
+  { id: "grab-item", label: "Grab Item", description: "Grab sequence" },
+  { id: "drop-item", label: "Drop Item", description: "Drop sequence" }
 ];
 
-// Crane SVG Component - Mounting bracket stays fixed, cable extends with animation
+// Lightbulb Indicator Component
+function PowerIndicator({ isOn }: { isOn: boolean }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div
+        className={`w-4 h-4 rounded-full transition-all duration-300 ${
+          isOn
+            ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]"
+            : "bg-slate-600 shadow-none"
+        }`}
+      />
+      <span className={`text-xs font-medium ${isOn ? "text-yellow-400" : "text-slate-500"}`}>
+        {isOn ? "ON" : "OFF"}
+      </span>
+    </div>
+  );
+}
+
+// Hook to animate a value smoothly
+function useAnimatedValue(targetValue: number, duration: number) {
+  const [currentValue, setCurrentValue] = useState(targetValue);
+  const startRef = useRef<number>(0);
+  const fromRef = useRef<number>(targetValue);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+    
+    fromRef.current = currentValue;
+    startRef.current = performance.now();
+    
+    const animate = (now: number) => {
+      const elapsed = now - startRef.current;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      
+      // easeInOut easing
+      const eased = progress < 0.5 
+        ? 2 * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+      
+      const value = fromRef.current + (targetValue - fromRef.current) * eased;
+      setCurrentValue(value);
+      
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      }
+    };
+    
+    rafRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [targetValue, duration]);
+  
+  return currentValue;
+}
+
+// Crane SVG Component
 function CraneClaw({
   clawAngle,
-  cableExtension
+  cableExtension,
+  isPowered
 }: {
   clawAngle: number;
   cableExtension: number;
+  isPowered: boolean;
 }) {
+  // Animate the claw angle smoothly
+  const animatedClawAngle = useAnimatedValue(clawAngle, TIMING.openClaws);
   return (
     <svg
       width="200"
       height="400"
       viewBox="0 0 100 200"
-      className="overflow-visible"
+      className={`overflow-visible transition-opacity duration-500 ${
+        isPowered ? "opacity-100" : "opacity-40"
+      }`}
     >
       {/* Fixed Mounting Bracket at top */}
-      <rect
-        x="30"
-        y="0"
-        width="40"
-        height="16"
-        rx="2"
-        fill="#64748b"
-      />
-      <circle
-        cx="40"
-        cy="8"
-        r="3"
-        fill="#94a3b8"
-      />
-      <circle
-        cx="60"
-        cy="8"
-        r="3"
-        fill="#94a3b8"
-      />
+      <rect x="30" y="0" width="40" height="16" rx="2" fill="#64748b" />
+      <circle cx="40" cy="8" r="3" fill="#94a3b8" />
+      <circle cx="60" cy="8" r="3" fill="#94a3b8" />
 
       {/* Fixed rod stub */}
-      <rect
-        x="48"
-        y="16"
-        width="4"
-        height="8"
-        fill="#64748b"
-      />
+      <rect x="48" y="16" width="4" height="8" fill="#64748b" />
 
       {/* Extending cable - animated */}
       <motion.rect
@@ -79,60 +136,30 @@ function CraneClaw({
         width="4"
         fill="#64748b"
         animate={{ height: 24 + cableExtension }}
-        transition={{ duration: 1, ease: "easeInOut" }}
+        transition={{ duration: TIMING.lowerCrane, ease: "easeInOut" }}
       />
 
       {/* Moving part - Hub and claws - animated */}
       <motion.g
         animate={{ y: cableExtension }}
-        transition={{ duration: 1, ease: "easeInOut" }}
+        transition={{ duration: TIMING.lowerCrane, ease: "easeInOut" }}
       >
         {/* Central Hub - Outer Ring */}
-        <circle
-          cx="50"
-          cy="54"
-          r="18"
-          fill="#64748b"
-        />
+        <circle cx="50" cy="54" r="18" fill="#64748b" />
 
         {/* Central Hub - Inner Ring */}
-        <circle
-          cx="50"
-          cy="54"
-          r="12"
-          fill="#475569"
-        />
+        <circle cx="50" cy="54" r="12" fill="#475569" />
 
         {/* Central Hub - Center */}
-        <circle
-          cx="50"
-          cy="54"
-          r="6"
-          fill="#94a3b8"
-        />
-        <circle
-          cx="50"
-          cy="54"
-          r="3"
-          fill="#475569"
-        />
+        <circle cx="50" cy="54" r="6" fill="#94a3b8" />
+        <circle cx="50" cy="54" r="3" fill="#475569" />
 
         {/* Left Arm Group - Rotates around hub center */}
-        <g transform={`rotate(${clawAngle}, 50, 54)`}>
+        <g transform={`rotate(${animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path
-            d="M50,54 L35,75"
-            stroke="#64748b"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
+          <path d="M50,54 L35,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
           {/* Joint */}
-          <circle
-            cx="32"
-            cy="78"
-            r="4"
-            fill="#64748b"
-          />
+          <circle cx="32" cy="78" r="4" fill="#64748b" />
           {/* Lower claw - curved inward */}
           <path
             d="M32,78 Q22,95 20,115 Q19,128 28,135 Q35,128 32,115 Q30,100 35,82"
@@ -141,21 +168,11 @@ function CraneClaw({
         </g>
 
         {/* Right Arm Group - Rotates around hub center */}
-        <g transform={`rotate(${-clawAngle}, 50, 54)`}>
+        <g transform={`rotate(${-animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path
-            d="M50,54 L65,75"
-            stroke="#64748b"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
+          <path d="M50,54 L65,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
           {/* Joint */}
-          <circle
-            cx="68"
-            cy="78"
-            r="4"
-            fill="#64748b"
-          />
+          <circle cx="68" cy="78" r="4" fill="#64748b" />
           {/* Lower claw - curved inward */}
           <path
             d="M68,78 Q78,95 80,115 Q81,128 72,135 Q65,128 68,115 Q70,100 65,82"
@@ -167,83 +184,188 @@ function CraneClaw({
   );
 }
 
-// Props for the CraneRobot component
+// Main Crane Robot Component
 interface CraneRobotProps {
-  /** Current animation phase (0-8) */
-  phase: number;
-  /** Width of the container in pixels (default: 800) */
+  state: CraneState;
   width?: number;
-  /** Height of the container in pixels (default: 500) */
   height?: number;
-  /** Whether to show the status indicator overlay */
   showStatus?: boolean;
-  /** Whether to show the legend */
-  showLegend?: boolean;
-  /** Custom className for the container */
   className?: string;
+  onSubStateChange?: (subState: string | null) => void;
 }
 
-// Main Crane Robot Component - can be controlled via props
 export function CraneRobot({
-  phase,
+  state,
   width = 800,
   height = 500,
   showStatus = true,
-  showLegend = true,
-  className = ""
+  className = "",
+  onSubStateChange
 }: CraneRobotProps) {
-  // Derive isHoldingItem from phase
-  const isHoldingItem = phase >= 4 && phase <= 6;
+  const isPowered = state !== "power-off";
+  
+  // Position: -200 = left (item zone), 200 = right (drop zone), 0 = center
+  const [craneX, setCraneX] = useState(0);
+  
+  // Cable extension: 0 = up, 50 = down
+  const [cableExtension, setCableExtension] = useState(0);
+  
+  // Claw angle: 45 = open, 1 = closed
+  const [clawAngle, setClawAngle] = useState(1);
+  
+  // Is holding item
+  const [isHoldingItem, setIsHoldingItem] = useState(false);
+  
+  // Sub-state tracking for complex operations
+  const [grabSubState, setGrabSubState] = useState<GrabSubState | null>(null);
+  const [dropSubState, setDropSubState] = useState<DropSubState | null>(null);
 
-  const getCraneX = () => {
-    if (phase === 0) return 0;
-    if (phase === 1) return -200;
-    if (phase >= 2 && phase <= 5) return -200;
-    if (phase === 6) return 200;
-    if (phase >= 7) return 200;
-    return 0;
-  };
+  // Execute grab sequence
+  const executeGrabSequence = useCallback(async () => {
+    if (!isPowered) return;
+    
+    // Step 1: Open claws
+    setGrabSubState("opening");
+    onSubStateChange?.("opening");
+    setClawAngle(45);
+    await delay(TIMING.openClaws * 1000 + 200);
+    
+    // Step 2: Lower crane
+    setGrabSubState("lowering");
+    onSubStateChange?.("lowering");
+    setCableExtension(50);
+    await delay(TIMING.lowerCrane * 1000);
+    
+    // Step 3: Close claws (grab)
+    setGrabSubState("grabbing");
+    onSubStateChange?.("grabbing");
+    setClawAngle(1);
+    setIsHoldingItem(true);
+    await delay(TIMING.closeClaws * 1000 + 200);
+    
+    // Step 4: Lift crane
+    setGrabSubState("lifting");
+    onSubStateChange?.("lifting");
+    setCableExtension(0);
+    await delay(TIMING.liftCrane * 1000);
+    
+    setGrabSubState(null);
+    onSubStateChange?.(null);
+  }, [isPowered, onSubStateChange]);
 
-  const getCraneY = () => {
-    // Phase 3: Lowering, Phase 4: Grabbing - crane stays lowered
-    if (phase === 3 || phase === 4) return 50;
-    // Phase 5: Lifting and beyond - crane is lifted
-    return 0;
-  };
+  // Execute drop sequence
+  const executeDropSequence = useCallback(async () => {
+    if (!isPowered) return;
+    
+    // Step 1: Move to drop zone (if not already there)
+    setDropSubState("moving");
+    onSubStateChange?.("moving");
+    setCraneX(200);
+    await delay(TIMING.move * 1000);
+    
+    // Step 2: Open claws (drop)
+    setDropSubState("dropping");
+    onSubStateChange?.("dropping");
+    setClawAngle(45);
+    setIsHoldingItem(false);
+    await delay(TIMING.openClawsDrop * 1000 + 200);
+    
+    // Close claws after drop
+    setClawAngle(1);
+    await delay(TIMING.closeClaws * 1000);
+    
+    setDropSubState(null);
+    onSubStateChange?.(null);
+  }, [isPowered, onSubStateChange]);
 
-  const getClawAngle = () => {
-    // Open during opening phase (2), lowering (3), and dropping (7)
-    if (phase === 2 || phase === 3 || phase === 7) return 45;
-    // Closed during grabbing (4), lifting (5), and moving (6)
-    return 1;
-  };
+  // Handle state changes
+  useEffect(() => {
+    switch (state) {
+      case "power-off":
+        setCraneX(0);
+        setCableExtension(0);
+        setClawAngle(1);
+        setIsHoldingItem(false);
+        setGrabSubState(null);
+        setDropSubState(null);
+        onSubStateChange?.(null);
+        break;
+        
+      case "power-on":
+        setCraneX(0);
+        setCableExtension(0);
+        setClawAngle(1);
+        setGrabSubState(null);
+        setDropSubState(null);
+        onSubStateChange?.(null);
+        break;
+        
+      case "move-left":
+        if (isPowered) {
+          setCraneX(-200);
+        }
+        break;
+        
+      case "move-right":
+        if (isPowered) {
+          setCraneX(200);
+        }
+        break;
+        
+      case "grab-item":
+        if (isPowered && craneX !== -200) {
+          // Move to left first if not there
+          setCraneX(-200);
+          setTimeout(() => {
+            executeGrabSequence();
+          }, TIMING.move * 1000);
+        } else if (isPowered) {
+          executeGrabSequence();
+        }
+        break;
+        
+      case "drop-item":
+        if (isPowered && !isHoldingItem) {
+          // Can't drop if not holding
+          break;
+        }
+        if (isPowered) {
+          executeDropSequence();
+        }
+        break;
+    }
+  }, [state, isPowered, craneX, isHoldingItem, executeGrabSequence, executeDropSequence, onSubStateChange]);
 
+  // Calculate item position
   const getItemX = () => {
     if (isHoldingItem) {
-      if (phase === 6) return 200;
-      if (phase >= 7) return 200;
-      return -200;
+      return craneX;
     }
-    if (phase >= 7) return 200;
+    // Item stays where it was dropped or at original position
     return -200;
   };
 
   const getItemY = () => {
-    // When holding the item, it moves with the crane
     if (isHoldingItem) {
-      // Base ground position (320) minus how much the crane has lowered
-      // When crane is at getCraneY() = 50 (lowered), item is at ground (320)
-      // When crane is at getCraneY() = 0 (lifted), item is lifted much higher to fit inside claw
-      return 320 - (50 - getCraneY()) - 45;
+      // Item moves with crane height
+      return 320 - (50 - cableExtension) - 45;
     }
-    // Item stays on ground when not being held
+    // Item on ground
     return 320;
   };
 
-  const currentPhaseLabel = PHASES.find(p => p.id === phase)?.label ?? "Unknown";
+  const currentStateDef = STATE_DEFINITIONS.find((s) => s.id === state);
+  
+  // Build status text
+  let statusText = currentStateDef?.label ?? "Unknown";
+  if (grabSubState) {
+    statusText += ` (${grabSubState})`;
+  } else if (dropSubState) {
+    statusText += ` (${dropSubState})`;
+  }
 
   return (
-    <div 
+    <div
       className={`relative bg-slate-800 rounded-xl border-4 border-slate-700 overflow-hidden ${className}`}
       style={{ width, height }}
     >
@@ -256,6 +378,12 @@ export function CraneRobot({
         DROP ZONE
       </div>
 
+      {/* Item Zone Marker */}
+      <div className="absolute bottom-0 left-[180px] w-24 h-4 bg-amber-500/50 rounded-t-lg" />
+      <div className="absolute bottom-12 left-[195px] text-amber-400 text-sm font-semibold">
+        ITEM ZONE
+      </div>
+
       {/* Item */}
       <motion.div
         className="absolute w-20 h-20 bg-amber-500 rounded-lg shadow-lg"
@@ -264,18 +392,9 @@ export function CraneRobot({
           y: getItemY()
         }}
         transition={{
-          x: {
-            duration:
-              isHoldingItem && phase === 6 ? TIMING.moveToDrop : 0.3,
-            ease: "easeInOut"
-          },
+          x: { duration: isHoldingItem ? TIMING.move : 0.3, ease: "easeInOut" },
           y: {
-            duration:
-              isHoldingItem && (phase === 5 || phase === 3)
-                ? TIMING.liftCrane
-                : phase === 3 || phase === 5
-                  ? TIMING.lowerCrane
-                  : 0.3,
+            duration: isHoldingItem ? TIMING.liftCrane : 0.3,
             ease: "easeInOut"
           }
         }}
@@ -290,23 +409,18 @@ export function CraneRobot({
       <motion.div
         className="absolute"
         animate={{
-          x: getCraneX() + width / 2 - 100
+          x: craneX + width / 2 - 100
         }}
         transition={{
-          duration:
-            phase === 1
-              ? TIMING.moveToItem
-              : phase === 6
-                ? TIMING.moveToDrop
-                : 0.3,
+          duration: TIMING.move,
           ease: "easeInOut"
         }}
         style={{ top: 20, left: 0 }}
       >
-        {/* The Crane SVG - mounting bracket stays fixed, cable extends */}
         <CraneClaw
-          clawAngle={getClawAngle()}
-          cableExtension={getCraneY()}
+          clawAngle={clawAngle}
+          cableExtension={cableExtension}
+          isPowered={isPowered}
         />
       </motion.div>
 
@@ -316,26 +430,12 @@ export function CraneRobot({
       {/* Status Indicator */}
       {showStatus && (
         <div className="absolute top-4 left-4 bg-slate-900/80 px-4 py-2 rounded-lg">
-          <div className="text-xs text-slate-400 uppercase tracking-wider">
-            Phase
-          </div>
-          <div className="text-sm font-mono text-cyan-400">
-            {currentPhaseLabel}
-          </div>
-        </div>
-      )}
-
-      {/* Legend */}
-      {showLegend && (
-        <div className="absolute bottom-4 left-4 bg-slate-900/80 px-4 py-2 rounded-lg">
-          <div className="flex items-center gap-4 text-xs text-slate-300">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-amber-500 rounded" />
-              <span>Item</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500/50 rounded" />
-              <span>Drop Zone</span>
+          <div className="flex items-center gap-3">
+            <PowerIndicator isOn={isPowered} />
+            <div className="h-4 w-px bg-slate-600" />
+            <div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider">State</div>
+              <div className="text-sm font-mono text-cyan-400">{statusText}</div>
             </div>
           </div>
         </div>
@@ -344,123 +444,104 @@ export function CraneRobot({
   );
 }
 
-// Demo page with manual controls and optional animation loop
+// Demo page with controls
 export default function CraneDemo() {
-  const [animationPhase, setAnimationPhase] = useState(0);
-  const [showAnimationLoop, setShowAnimationLoop] = useState(false);
+  const [craneState, setCraneState] = useState<CraneState>("power-off");
+  const [subState, setSubState] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!showAnimationLoop) return;
+  const handleStateChange = (newState: CraneState) => {
+    setCraneState(newState);
+  };
 
-    const runAnimation = async () => {
-      await delay(500);
-      setAnimationPhase(1);
-      await delay(TIMING.moveToItem * 1000);
-
-      setAnimationPhase(2);
-      await delay(TIMING.openClaws * 1000 + 300);
-
-      setAnimationPhase(3);
-      await delay(TIMING.lowerCrane * 1000);
-
-      setAnimationPhase(4);
-      await delay(TIMING.closeClaws * 1000 + 300);
-
-      setAnimationPhase(5);
-      await delay(TIMING.liftCrane * 1000);
-
-      setAnimationPhase(6);
-      await delay(TIMING.moveToDrop * 1000);
-
-      setAnimationPhase(7);
-      await delay(TIMING.openClawsDrop * 1000 + 500);
-
-      setAnimationPhase(8);
-      await delay(TIMING.reset * 1000);
-
-      setAnimationPhase(0);
-    };
-
-    runAnimation();
-    const interval = setInterval(runAnimation, 10000);
-    return () => clearInterval(interval);
-  }, [showAnimationLoop]);
+  const isStateDisabled = (stateId: CraneState) => {
+    if (stateId === "power-off") return false;
+    if (craneState === "power-off" && stateId !== "power-on") return true;
+    if (subState !== null) return true; // Disable during sequences
+    return false;
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center overflow-hidden p-4">
-      <h1 className="text-3xl font-bold text-white mb-8">Crane Robot Demo</h1>
+      <h1 className="text-3xl font-bold text-white mb-8">Crane Robot Control</h1>
 
       {/* Crane Display */}
-      <CraneRobot phase={animationPhase} />
+      <CraneRobot
+        state={craneState}
+        onSubStateChange={setSubState}
+      />
 
       {/* Controls */}
       <div className="mt-8 w-[800px] space-y-4">
-        {/* Animation Loop Toggle */}
-        <div className="flex items-center justify-between bg-slate-800 px-4 py-3 rounded-lg">
-          <span className="text-slate-300 font-medium">Animation Loop</span>
-          <button
-            onClick={() => setShowAnimationLoop(!showAnimationLoop)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              showAnimationLoop
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-slate-600 hover:bg-slate-500 text-slate-200"
-            }`}
-          >
-            {showAnimationLoop ? "ON" : "OFF"}
-          </button>
-        </div>
-
-        {/* Manual Phase Controls */}
-        <div className="bg-slate-800 px-4 py-4 rounded-lg">
-          <div className="text-slate-300 font-medium mb-3">Manual Phase Control</div>
-          <div className="grid grid-cols-5 gap-2">
-            {PHASES.map((phase) => (
+        {/* State Buttons */}
+        <div className="grid grid-cols-3 gap-3">
+          {STATE_DEFINITIONS.map((stateDef) => {
+            const isActive = craneState === stateDef.id;
+            const isDisabled = isStateDisabled(stateDef.id);
+            
+            return (
               <button
-                key={phase.id}
-                onClick={() => setAnimationPhase(phase.id)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  animationPhase === phase.id
+                key={stateDef.id}
+                onClick={() => handleStateChange(stateDef.id)}
+                disabled={isDisabled}
+                className={`
+                  px-4 py-3 rounded-lg font-medium transition-all text-left
+                  ${isActive
                     ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30"
                     : "bg-slate-700 text-slate-300 hover:bg-slate-600"
-                }`}
-                title={phase.description}
+                  }
+                  ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                `}
+                title={stateDef.description}
               >
-                <div className="text-xs opacity-70 mb-0.5">Phase {phase.id}</div>
-                <div className="text-xs">{phase.label}</div>
+                <div className="flex items-center gap-2">
+                  {stateDef.id === "power-off" && (
+                    <div className={`w-3 h-3 rounded-full ${isActive ? "bg-red-400" : "bg-red-600"}`} />
+                  )}
+                  {stateDef.id === "power-on" && (
+                    <div className={`w-3 h-3 rounded-full ${isActive ? "bg-green-400" : "bg-green-600"}`} />
+                  )}
+                  <span>{stateDef.label}</span>
+                </div>
+                <div className="text-xs opacity-70 mt-1">{stateDef.description}</div>
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
         {/* Quick Actions */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setAnimationPhase(0)}
-            className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg font-medium transition-colors"
-          >
-            Reset to Start
-          </button>
-          <button
-            onClick={() => setAnimationPhase((prev) => Math.max(0, prev - 1))}
-            disabled={animationPhase === 0}
-            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-200 rounded-lg font-medium transition-colors"
-          >
-            ← Prev
-          </button>
-          <button
-            onClick={() => setAnimationPhase((prev) => Math.min(8, prev + 1))}
-            disabled={animationPhase === 8}
-            className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 text-slate-200 rounded-lg font-medium transition-colors"
-          >
-            Next →
-          </button>
+        <div className="bg-slate-800 px-4 py-3 rounded-lg">
+          <div className="text-slate-300 font-medium mb-2">Quick Actions</div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleStateChange("power-off")}
+              className="flex-1 px-4 py-2 bg-red-900/50 hover:bg-red-900/70 text-red-200 rounded-lg font-medium transition-colors"
+            >
+              Emergency Stop
+            </button>
+            <button
+              onClick={() => handleStateChange("power-on")}
+              disabled={craneState !== "power-off"}
+              className="flex-1 px-4 py-2 bg-green-900/50 hover:bg-green-900/70 disabled:opacity-50 disabled:cursor-not-allowed text-green-200 rounded-lg font-medium transition-colors"
+            >
+              Power On
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-6 text-slate-400 text-sm text-center max-w-md">
-        {showAnimationLoop 
-          ? "Animation loop is running. Click the toggle to stop and manually control the crane."
-          : "Manual mode active. Use the phase buttons or Prev/Next to control the crane."}
+        {/* Status Info */}
+        <div className="bg-slate-800/50 px-4 py-3 rounded-lg text-sm text-slate-400">
+          <p>
+            <strong className="text-slate-300">Current State:</strong>{" "}
+            {craneState} {subState && `→ ${subState}`}
+          </p>
+          <p className="mt-1">
+            {craneState === "power-off"
+              ? "System is powered down. Press 'Power On' to start."
+              : subState
+              ? "Executing sequence... Please wait."
+              : "Ready for next command."}
+          </p>
+        </div>
       </div>
     </div>
   );
