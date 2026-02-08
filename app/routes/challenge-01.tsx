@@ -497,6 +497,52 @@ export function CraneRobot({
   );
 }
 
+// Play a satisfying success sound using Web Audio API
+function playSuccessSound() {
+  try {
+    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    
+    // Create oscillator for the main tone
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Configure the sound - a pleasant ascending chime
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+    oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.1); // G5
+    
+    // Volume envelope - quick attack, smooth decay
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+    
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+    
+    // Add a second oscillator for harmony
+    const oscillator2 = audioContext.createOscillator();
+    const gainNode2 = audioContext.createGain();
+    
+    oscillator2.connect(gainNode2);
+    gainNode2.connect(audioContext.destination);
+    
+    oscillator2.type = "triangle";
+    oscillator2.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
+    
+    gainNode2.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode2.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
+    gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+    
+    oscillator2.start(audioContext.currentTime);
+    oscillator2.stop(audioContext.currentTime + 0.4);
+  } catch {
+    // Silently fail if audio is not supported
+  }
+}
+
 // Property Question Component
 interface PropertyQuestionProps {
   questionNumber: number;
@@ -507,6 +553,7 @@ interface PropertyQuestionProps {
   isRevealed: boolean;
   revealedContent: React.ReactNode;
   errorMessage: string;
+  type?: "property" | "method";
 }
 
 function PropertyQuestion({
@@ -517,7 +564,8 @@ function PropertyQuestion({
   onCorrect,
   isRevealed,
   revealedContent,
-  errorMessage
+  errorMessage,
+  type = "property"
 }: PropertyQuestionProps) {
   const [answer, setAnswer] = useState("");
   const [showError, setShowError] = useState(false);
@@ -527,6 +575,7 @@ function PropertyQuestion({
     if (validateAnswer(answer.toLowerCase())) {
       setIsCorrect(true);
       setShowError(false);
+      playSuccessSound();
       onCorrect();
     } else {
       setShowError(true);
@@ -546,7 +595,7 @@ function PropertyQuestion({
           <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
             ✓
           </div>
-          <span className="text-green-700 font-semibold">Property Unlocked!</span>
+          <span className="text-green-700 font-semibold">{type === "method" ? "Method Unlocked!" : "Property Unlocked!"}</span>
         </div>
         {revealedContent}
       </div>
@@ -599,11 +648,26 @@ export default function Challenge01() {
     hold: false
   });
 
+  // Revealed state for methods
+  const [revealedMethods, setRevealedMethods] = useState({
+    "power-off": false,
+    "power-on": false,
+    "move-left": false,
+    "move-right": false,
+    "grab-item": false,
+    "drop-item": false
+  });
+
   // Accordion state
   const [showProperties, setShowProperties] = useState(true);
+  const [showMethods, setShowMethods] = useState(false);
 
   const revealProperty = (property: keyof typeof revealedProperties) => {
     setRevealedProperties(prev => ({ ...prev, [property]: true }));
+  };
+
+  const revealMethod = (method: keyof typeof revealedMethods) => {
+    setRevealedMethods(prev => ({ ...prev, [method]: true }));
   };
 
   // Get position label
@@ -626,6 +690,16 @@ export default function Challenge01() {
 
   // Check if all properties are revealed
   const allPropertiesRevealed = Object.values(revealedProperties).every(v => v);
+  
+  // Check if all methods are revealed
+  const allMethodsRevealed = Object.values(revealedMethods).every(v => v);
+
+  // Auto-open methods section when properties are done
+  useEffect(() => {
+    if (allPropertiesRevealed) {
+      setShowMethods(true);
+    }
+  }, [allPropertiesRevealed]);
 
   return (
     <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
@@ -745,7 +819,7 @@ export default function Challenge01() {
                 </div>
               </div>
 
-              {/* State Buttons - Only show when all properties revealed */}
+              {/* State Buttons - Grid with ??? placeholders */}
               <AnimatePresence>
                 {allPropertiesRevealed && (
                   <motion.div
@@ -757,6 +831,19 @@ export default function Challenge01() {
                     {STATE_DEFINITIONS.map((stateDef) => {
                       const isActive = craneState === stateDef.id;
                       const isDisabled = isStateDisabled(stateDef.id);
+                      const isRevealed = revealedMethods[stateDef.id];
+                      
+                      if (!isRevealed) {
+                        // Show ??? placeholder
+                        return (
+                          <div
+                            key={stateDef.id}
+                            className="px-4 py-3 bg-[#D0D0D0] border-2 border-black text-center"
+                          >
+                            <div className="text-2xl font-mono font-bold text-gray-500">???</div>
+                          </div>
+                        );
+                      }
                       
                       return (
                         <button
@@ -794,7 +881,16 @@ export default function Challenge01() {
               {!allPropertiesRevealed && (
                 <div className="bg-[#F7931E]/20 border-2 border-[#F7931E] p-4 text-center">
                   <p className="text-[#D06000] font-medium">
-                    🔒 Complete all property questions below to unlock the controls!
+                    🔒 Complete all property questions to unlock the next section
+                  </p>
+                </div>
+              )}
+
+              {/* Hint when properties done but methods not complete */}
+              {allPropertiesRevealed && !allMethodsRevealed && (
+                <div className="bg-[#F7931E]/20 border-2 border-[#F7931E] p-4 text-center">
+                  <p className="text-[#D06000] font-medium">
+                    🔒 Answer method questions to unlock the controls
                   </p>
                 </div>
               )}
@@ -911,7 +1007,7 @@ export default function Challenge01() {
                   <h3 className="font-bold text-green-800 mb-2">🎉 Congratulations!</h3>
                   <p className="text-green-700 text-sm">
                     You've successfully defined the properties for the Crane Robot! In OOP terms, you just created the 
-                    <strong> attributes</strong> of the class. Now you can control the robot using the state buttons that have been unlocked.
+                    <strong> attributes</strong> of the class. The METHODS section is now unlocked!
                   </p>
                 </motion.div>
               )}
@@ -927,6 +1023,189 @@ export default function Challenge01() {
               </p>
             </div>
                   </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* METHODS Section */}
+            <div className="bg-[#F5F5F5] border-2 border-black mt-4">
+              <button
+                onClick={() => setShowMethods(!showMethods)}
+                disabled={!allPropertiesRevealed}
+                className={`w-full px-6 py-4 flex items-center justify-between transition-colors ${
+                  allPropertiesRevealed 
+                    ? "bg-[#E0E0E0] hover:bg-[#D0D0D0] cursor-pointer" 
+                    : "bg-gray-300 cursor-not-allowed"
+                }`}
+              >
+                <h2 className="text-xl font-bold text-black">METHODS</h2>
+                {!allPropertiesRevealed && <span className="text-gray-500 text-sm">🔒 Locked</span>}
+                {allPropertiesRevealed && (
+                  <span className={`text-2xl transition-transform duration-300 ${showMethods ? "rotate-180" : ""}`}>
+                    ▼
+                  </span>
+                )}
+              </button>
+              
+              <AnimatePresence initial={false}>
+                {showMethods && allPropertiesRevealed && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-6 pt-4">
+                      <p className="text-gray-700 mb-6">
+                        In Object-Oriented Programming, <strong>methods</strong> (object functions/behavior) are the actions that an object can perform. 
+                        They define the behavior of the object. Help define the methods for our Crane Robot!
+                      </p>
+
+                      <div className="space-y-4">
+                        {/* Method 1: Power On */}
+                        <PropertyQuestion
+                          questionNumber={1}
+                          question="What method should we call to turn the robot on and make it ready to operate?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("power") && (answer.includes("on") || answer.includes("start"))}
+                          onCorrect={() => revealMethod("power-on")}
+                          isRevealed={revealedMethods["power-on"]}
+                          errorMessage="The robot needs a method to power on."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-green-600" />
+                              <span className="font-bold">Power On</span>
+                              <span className="text-gray-500 text-sm">(Method: powerOn)</span>
+                            </div>
+                          }
+                        />
+
+                        {/* Method 2: Power Off */}
+                        <PropertyQuestion
+                          questionNumber={2}
+                          question="What method should we call to turn the robot off and shut it down?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("power") && (answer.includes("off") || answer.includes("stop"))}
+                          onCorrect={() => revealMethod("power-off")}
+                          isRevealed={revealedMethods["power-off"]}
+                          errorMessage="The robot needs a method to power off."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-red-600" />
+                              <span className="font-bold">Power Off</span>
+                              <span className="text-gray-500 text-sm">(Method: powerOff)</span>
+                            </div>
+                          }
+                        />
+
+                        {/* Method 3: Move Left */}
+                        <PropertyQuestion
+                          questionNumber={3}
+                          question="What method should move the claw to the left, toward the item zone?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("left") || answer.includes("move")}
+                          onCorrect={() => revealMethod("move-left")}
+                          isRevealed={revealedMethods["move-left"]}
+                          errorMessage="The robot needs a method to move left toward the item."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-blue-600" />
+                              <span className="font-bold">Move Left</span>
+                              <span className="text-gray-500 text-sm">(Method: moveLeft)</span>
+                            </div>
+                          }
+                        />
+
+                        {/* Method 4: Move Right */}
+                        <PropertyQuestion
+                          questionNumber={4}
+                          question="What method should move the claw to the right, toward the drop zone?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("right") || answer.includes("move")}
+                          onCorrect={() => revealMethod("move-right")}
+                          isRevealed={revealedMethods["move-right"]}
+                          errorMessage="The robot needs a method to move right toward the drop zone."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-blue-600" />
+                              <span className="font-bold">Move Right</span>
+                              <span className="text-gray-500 text-sm">(Method: moveRight)</span>
+                            </div>
+                          }
+                        />
+
+                        {/* Method 5: Grab Item */}
+                        <PropertyQuestion
+                          questionNumber={5}
+                          question="What method should make the robot grab an item with its claw?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("grab") || answer.includes("pick")}
+                          onCorrect={() => revealMethod("grab-item")}
+                          isRevealed={revealedMethods["grab-item"]}
+                          errorMessage="The robot needs a method to grab items."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-purple-600" />
+                              <span className="font-bold">Grab Item</span>
+                              <span className="text-gray-500 text-sm">(Method: grabItem)</span>
+                            </div>
+                          }
+                        />
+
+                        {/* Method 6: Drop Item */}
+                        <PropertyQuestion
+                          questionNumber={6}
+                          question="What method should make the robot release/drop the item it's holding?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("drop") || answer.includes("release")}
+                          onCorrect={() => revealMethod("drop-item")}
+                          isRevealed={revealedMethods["drop-item"]}
+                          errorMessage="The robot needs a method to drop items."
+                          type="method"
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div className="w-3 h-3 rounded-full bg-purple-600" />
+                              <span className="font-bold">Drop Item</span>
+                              <span className="text-gray-500 text-sm">(Method: dropItem)</span>
+                            </div>
+                          }
+                        />
+                      </div>
+
+                      {/* Success Message for Methods */}
+                      <AnimatePresence>
+                        {allMethodsRevealed && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-6 bg-green-100 border-2 border-green-500 p-4 rounded"
+                          >
+                            <h3 className="font-bold text-green-800 mb-2">🎉 Fantastic!</h3>
+                            <p className="text-green-700 text-sm">
+                              You've defined all the methods for the Crane Robot! In OOP terms, you just created the 
+                              <strong> behaviors</strong> of the class. All robot controls are now unlocked!
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Educational Note for Methods */}
+                      <div className="mt-6 bg-blue-50 border-2 border-blue-300 p-4 rounded">
+                        <h3 className="font-bold text-blue-800 mb-2">💡 Did you know?</h3>
+                        <p className="text-blue-700 text-sm">
+                          In OOP, methods represent the <strong>behavior</strong> of an object. They are functions that 
+                          operate on the object's data (properties). For example, a Car object might have methods like 
+                          <code>accelerate()</code>, <code>brake()</code>, and <code>honk()</code>.
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
