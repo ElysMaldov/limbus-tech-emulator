@@ -146,8 +146,8 @@ export default function CraneDemo() {
   };
 
   const getCraneY = () => {
-    if (animationPhase === 3) return 120;
-    if (animationPhase === 4 || animationPhase === 5) return 120;
+    if (animationPhase === 3) return 50;
+    if (animationPhase === 4 || animationPhase === 5) return 50;
     return 0;
   };
 
@@ -172,9 +172,9 @@ export default function CraneDemo() {
     // When holding the item, it moves with the crane
     if (isHoldingItem) {
       // Base ground position (320) minus how much the crane has lowered
-      // When crane is at getCraneY() = 120 (lowered), item is at ground (320)
-      // When crane is at getCraneY() = 0 (lifted), item is lifted by 120
-      return 320 - (120 - getCraneY());
+      // When crane is at getCraneY() = 50 (lowered), item is at ground (320)
+      // When crane is at getCraneY() = 0 (lifted), item is lifted by 50
+      return 320 - (50 - getCraneY());
     }
     // Item stays on ground when not being held
     return 320;
