@@ -136,7 +136,7 @@ export default function Home() {
       {/* Footer Bar - like the navigation bar at bottom of image */}
       <footer className="bg-[#E8E8E8] border-t-2 border-black px-4 py-2">
         <div className="flex items-center justify-between">
-          <span className="text-black text-sm">Limbus Tech Emulator © 2025</span>
+          <span className="text-black text-sm">Limbus Tech Emulator © 2026</span>
           <div className="flex items-center gap-2">
             <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">◀</span>
