@@ -497,12 +497,114 @@ export function CraneRobot({
   );
 }
 
+// Property Question Component
+interface PropertyQuestionProps {
+  questionNumber: number;
+  question: string;
+  placeholder: string;
+  validateAnswer: (answer: string) => boolean;
+  onCorrect: () => void;
+  isRevealed: boolean;
+  revealedContent: React.ReactNode;
+  errorMessage: string;
+}
+
+function PropertyQuestion({
+  questionNumber,
+  question,
+  placeholder,
+  validateAnswer,
+  onCorrect,
+  isRevealed,
+  revealedContent,
+  errorMessage
+}: PropertyQuestionProps) {
+  const [answer, setAnswer] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const handleSubmit = () => {
+    if (validateAnswer(answer.toLowerCase())) {
+      setIsCorrect(true);
+      setShowError(false);
+      onCorrect();
+    } else {
+      setShowError(true);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
+  if (isRevealed || isCorrect) {
+    return (
+      <div className="bg-green-50 border-2 border-green-500 p-4 rounded">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            ✓
+          </div>
+          <span className="text-green-700 font-semibold">Property Unlocked!</span>
+        </div>
+        {revealedContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-[#F0F0F0] border-2 border-black p-4">
+      <div className="flex items-start gap-3">
+        <span className="text-[#F7931E] font-bold text-lg">{questionNumber}.</span>
+        <div className="flex-1">
+          <p className="text-black mb-3">{question}</p>
+          <input
+            type="text"
+            value={answer}
+            onChange={(e) => {
+              setAnswer(e.target.value);
+              setShowError(false);
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder={placeholder}
+            className="w-full px-3 py-2 bg-white border-2 border-black text-black placeholder-gray-400 focus:outline-none focus:border-[#F7931E]"
+          />
+          {showError && (
+            <p className="text-red-600 text-sm mt-2">{errorMessage}</p>
+          )}
+          <button
+            onClick={handleSubmit}
+            className="mt-3 px-4 py-2 bg-[#C0C0C0] border-2 border-black text-black font-medium hover:bg-[#B0B0B0] active:bg-[#A0A0A0]"
+          >
+            Check Answer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Demo page with controls
 export default function Challenge01() {
   const [craneState, setCraneState] = useState<CraneState>("power-off");
   const [subState, setSubState] = useState<string | null>(null);
   const [cranePosition, setCranePosition] = useState<number>(0);
   const [isHoldingItem, setIsHoldingItem] = useState<boolean>(false);
+
+  // Revealed state for properties
+  const [revealedProperties, setRevealedProperties] = useState({
+    power: false,
+    position: false,
+    hold: false
+  });
+
+  // Accordion state
+  const [showProperties, setShowProperties] = useState(true);
+
+  const revealProperty = (property: keyof typeof revealedProperties) => {
+    setRevealedProperties(prev => ({ ...prev, [property]: true }));
+  };
 
   // Get position label
   const getPositionLabel = (pos: number): string => {
@@ -522,13 +624,16 @@ export default function Challenge01() {
     return false;
   };
 
+  // Check if all properties are revealed
+  const allPropertiesRevealed = Object.values(revealedProperties).every(v => v);
+
   return (
     <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
       {/* Header Bar - Orange */}
       <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-black tracking-wide">
-            Challenge 01 - Crane Control
+            Challenge 01 - Build a Robot with OOP
           </h1>
           {/* Window-style buttons */}
           <div className="flex items-center gap-1">
@@ -558,108 +663,274 @@ export default function Challenge01() {
         </div>
       </nav>
 
-      {/* Main Content - White background */}
-      <main className="flex-1 bg-white border-2 border-black m-4 p-8 overflow-auto">
-        <div className="flex flex-col items-center">
-          <h2 className="text-2xl font-bold text-black mb-8">
-            Crane Robot Control
-          </h2>
+      {/* Main Content - Two Column Layout */}
+      <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+          {/* Left Column - Crane Robot View */}
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold text-black mb-4 text-center">
+              Crane Robot
+            </h2>
 
-          {/* Crane Display */}
-          <CraneRobot
-            state={craneState}
-            onSubStateChange={setSubState}
-            onPositionChange={setCranePosition}
-            onHoldingChange={setIsHoldingItem}
-            showStatus={false}
-          />
+            {/* Crane Display */}
+            <CraneRobot
+              state={craneState}
+              onSubStateChange={setSubState}
+              onPositionChange={setCranePosition}
+              onHoldingChange={setIsHoldingItem}
+              showStatus={false}
+              className="w-full"
+              width={700}
+              height={480}
+            />
 
-          {/* Controls */}
-          <div className="mt-8 w-[800px] space-y-4">
-            {/* Status Card */}
-            <div className="bg-[#C0C0C0] border-2 border-black p-6">
-              <div className="flex items-center justify-around">
-                {/* Power Status */}
-                <div className="flex flex-col items-center gap-2">
-                  <div className="text-xs text-gray-700 uppercase tracking-wider">Power</div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                        craneState !== "power-off"
-                          ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
-                          : "bg-gray-500 shadow-none"
-                      }`}
-                    />
-                    <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
-                      {craneState !== "power-off" ? "ON" : "OFF"}
-                    </span>
+            {/* Controls */}
+            <div className="mt-4 space-y-4">
+              {/* Status Card - With ??? placeholders */}
+              <div className="bg-[#C0C0C0] border-2 border-black p-6">
+                <div className="flex items-center justify-around">
+                  {/* Power Status */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="text-xs text-gray-700 uppercase tracking-wider">Power</div>
+                    {revealedProperties.power ? (
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                            craneState !== "power-off"
+                              ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
+                              : "bg-gray-500 shadow-none"
+                          }`}
+                        />
+                        <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
+                          {craneState !== "power-off" ? "ON" : "OFF"}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
+                    )}
                   </div>
-                </div>
-                <div className="h-12 w-px bg-black" />
-                {/* Claw Position */}
-                <div className="flex flex-col items-center gap-2">
-                  <div className="text-xs text-gray-700 uppercase tracking-wider">Claw Position</div>
-                  <div className="text-2xl font-mono font-bold text-[#D06000]">
-                    {getPositionLabel(cranePosition)}
+                  <div className="h-12 w-px bg-black" />
+                  {/* Claw Position */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="text-xs text-gray-700 uppercase tracking-wider">Claw Position</div>
+                    {revealedProperties.position ? (
+                      <div className="text-2xl font-mono font-bold text-[#D06000]">
+                        {getPositionLabel(cranePosition)}
+                      </div>
+                    ) : (
+                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
+                    )}
                   </div>
-                </div>
-                <div className="h-12 w-px bg-black" />
-                {/* Holding Item */}
-                <div className="flex flex-col items-center gap-2">
-                  <div className="text-xs text-gray-700 uppercase tracking-wider">Holding Item</div>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                        isHoldingItem
-                          ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
-                          : "bg-gray-500 shadow-none"
-                      }`}
-                    />
-                    <span className={`text-lg font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
-                      {isHoldingItem ? "YES" : "NO"}
-                    </span>
+                  <div className="h-12 w-px bg-black" />
+                  {/* Holding Item */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="text-xs text-gray-700 uppercase tracking-wider">Holding Item</div>
+                    {revealedProperties.hold ? (
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                            isHoldingItem
+                              ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
+                              : "bg-gray-500 shadow-none"
+                          }`}
+                        />
+                        <span className={`text-lg font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
+                          {isHoldingItem ? "YES" : "NO"}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
+                    )}
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* State Buttons */}
-            <div className="grid grid-cols-3 gap-3">
-              {STATE_DEFINITIONS.map((stateDef) => {
-                const isActive = craneState === stateDef.id;
-                const isDisabled = isStateDisabled(stateDef.id);
-                
-                return (
-                  <button
-                    key={stateDef.id}
-                    onClick={() => handleStateChange(stateDef.id)}
-                    disabled={isDisabled}
-                    className={`
-                      px-4 py-3 font-medium transition-all text-left border-2
-                      ${isActive
-                        ? "bg-[#F7931E] text-black border-black"
-                        : "bg-[#C0C0C0] text-black border-black hover:bg-[#B0B0B0]"
-                      }
-                      ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
-                    `}
-                    title={stateDef.description}
+              {/* State Buttons - Only show when all properties revealed */}
+              <AnimatePresence>
+                {allPropertiesRevealed && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="grid grid-cols-3 gap-3"
                   >
-                    <div className="flex items-center gap-2">
-                      {stateDef.id === "power-off" && (
-                        <div className={`w-3 h-3 rounded-full ${isActive ? "bg-red-500" : "bg-red-600"}`} />
-                      )}
-                      {stateDef.id === "power-on" && (
-                        <div className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-green-600"}`} />
-                      )}
-                      <span>{stateDef.label}</span>
-                    </div>
-                    <div className="text-xs opacity-70 mt-1">{stateDef.description}</div>
-                  </button>
-                );
-              })}
+                    {STATE_DEFINITIONS.map((stateDef) => {
+                      const isActive = craneState === stateDef.id;
+                      const isDisabled = isStateDisabled(stateDef.id);
+                      
+                      return (
+                        <button
+                          key={stateDef.id}
+                          onClick={() => handleStateChange(stateDef.id)}
+                          disabled={isDisabled}
+                          className={`
+                            px-4 py-3 font-medium transition-all text-left border-2
+                            ${isActive
+                              ? "bg-[#F7931E] text-black border-black"
+                              : "bg-[#C0C0C0] text-black border-black hover:bg-[#B0B0B0]"
+                            }
+                            ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                          `}
+                          title={stateDef.description}
+                        >
+                          <div className="flex items-center gap-2">
+                            {stateDef.id === "power-off" && (
+                              <div className={`w-3 h-3 rounded-full ${isActive ? "bg-red-500" : "bg-red-600"}`} />
+                            )}
+                            {stateDef.id === "power-on" && (
+                              <div className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-green-600"}`} />
+                            )}
+                            <span>{stateDef.label}</span>
+                          </div>
+                          <div className="text-xs opacity-70 mt-1">{stateDef.description}</div>
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Hint when properties not all revealed */}
+              {!allPropertiesRevealed && (
+                <div className="bg-[#F7931E]/20 border-2 border-[#F7931E] p-4 text-center">
+                  <p className="text-[#D06000] font-medium">
+                    🔒 Complete all property questions below to unlock the controls!
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Questions */}
+          <div className="self-start">
+            <div className="bg-[#F5F5F5] border-2 border-black">
+              <button
+                onClick={() => setShowProperties(!showProperties)}
+                className="w-full px-6 py-4 flex items-center justify-between bg-[#E0E0E0] hover:bg-[#D0D0D0] transition-colors"
+              >
+                <h2 className="text-xl font-bold text-black">PROPERTIES</h2>
+                <span className={`text-2xl transition-transform duration-300 ${showProperties ? "rotate-180" : ""}`}>
+                  ▼
+                </span>
+              </button>
+              
+              <AnimatePresence initial={false}>
+                {showProperties && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-6 pt-4">
+            <p className="text-gray-700 mb-6">
+              In Object-Oriented Programming, <strong>properties</strong> are the object's characteristics - the data that an object needs to keep track of. 
+              Help define the properties for our Crane Robot!
+            </p>
+
+            <div className="space-y-4">
+              {/* Question 1: Power */}
+              <PropertyQuestion
+                questionNumber={1}
+                question="The robot needs to know if it's turned on or off. What property name should we use to store this?"
+                placeholder="Type your answer..."
+                validateAnswer={(answer) => answer.includes("power")}
+                onCorrect={() => revealProperty("power")}
+                isRevealed={revealedProperties.power}
+                errorMessage="The robot should know if its power is on or not."
+                revealedContent={
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full ${
+                        craneState !== "power-off"
+                          ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
+                          : "bg-gray-500"
+                      }`}
+                    />
+                    <span className={`font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
+                      {craneState !== "power-off" ? "ON" : "OFF"}
+                    </span>
+                    <span className="text-gray-500 text-sm ml-2">(Property: power)</span>
+                  </div>
+                }
+              />
+
+              {/* Question 2: Position */}
+              <PropertyQuestion
+                questionNumber={2}
+                question="The robot needs to track where its claw is located (left, center, or right). What property name should we use?"
+                placeholder="Type your answer..."
+                validateAnswer={(answer) => answer.includes("position")}
+                onCorrect={() => revealProperty("position")}
+                isRevealed={revealedProperties.position}
+                errorMessage="The robot should know the position of its claw."
+                revealedContent={
+                  <div className="text-xl font-mono font-bold text-[#D06000]">
+                    {getPositionLabel(cranePosition)}
+                    <span className="text-gray-500 text-sm ml-2">(Property: position)</span>
+                  </div>
+                }
+              />
+
+              {/* Question 3: Hold */}
+              <PropertyQuestion
+                questionNumber={3}
+                question="The robot needs to remember whether it's currently holding an item or not. What property name should we use?"
+                placeholder="Type your answer..."
+                validateAnswer={(answer) => answer.includes("hold")}
+                onCorrect={() => revealProperty("hold")}
+                isRevealed={revealedProperties.hold}
+                errorMessage="The robot should know if it's holding an item."
+                revealedContent={
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-6 h-6 rounded-full ${
+                        isHoldingItem
+                          ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
+                          : "bg-gray-500"
+                      }`}
+                    />
+                    <span className={`font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
+                      {isHoldingItem ? "YES" : "NO"}
+                    </span>
+                    <span className="text-gray-500 text-sm ml-2">(Property: isHolding / holdItem)</span>
+                  </div>
+                }
+              />
             </div>
 
+            {/* Success Message */}
+            <AnimatePresence>
+              {allPropertiesRevealed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 bg-green-100 border-2 border-green-500 p-4 rounded"
+                >
+                  <h3 className="font-bold text-green-800 mb-2">🎉 Congratulations!</h3>
+                  <p className="text-green-700 text-sm">
+                    You've successfully defined the properties for the Crane Robot! In OOP terms, you just created the 
+                    <strong> attributes</strong> of the class. Now you can control the robot using the state buttons that have been unlocked.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
+            {/* Educational Note */}
+            <div className="mt-6 bg-blue-50 border-2 border-blue-300 p-4 rounded">
+              <h3 className="font-bold text-blue-800 mb-2">💡 Did you know?</h3>
+              <p className="text-blue-700 text-sm">
+                In OOP, properties represent the <strong>state</strong> of an object. Just like our crane robot tracks 
+                power, position, and whether it's holding something, real-world objects have properties too. 
+                For example, a Car object might have properties like <code>color</code>, <code>speed</code>, and <code>fuelLevel</code>.
+              </p>
+            </div>
+                  </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </main>
