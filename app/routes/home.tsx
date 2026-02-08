@@ -50,14 +50,20 @@ export default function Home() {
         <div className="max-w-2xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-12 pt-8">
-            <p className="text-black text-xl mb-4 tracking-wider">Basics of</p>
             <h2 className="text-[#F7931E] text-4xl md:text-5xl font-bold uppercase tracking-wide mb-2">
-              Object Oriented
+              Limbus Tech Emulator
             </h2>
-            <h2 className="text-[#F7931E] text-4xl md:text-5xl font-bold uppercase tracking-wide mb-6">
-              Programming (OOP)
-            </h2>
-            <p className="text-black text-lg">Reyhan Ardiya</p>
+            <p className="text-black text-lg">
+              Developed by{" "}
+              <a
+                href="https://github.com/ElysMaldov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#F7931E] hover:underline font-medium"
+              >
+                ElysMaldov
+              </a>
+            </p>
           </div>
 
           {/* Start Button - Gray with black border like image */}
