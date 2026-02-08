@@ -216,6 +216,9 @@ export function CraneRobot({
   // Is holding item
   const [isHoldingItem, setIsHoldingItem] = useState(false);
   
+  // Item position (where it is on the ground when not held)
+  const [itemX, setItemX] = useState(-200);
+  
   // Sub-state tracking for complex operations
   const [grabSubState, setGrabSubState] = useState<GrabSubState | null>(null);
   const [dropSubState, setDropSubState] = useState<DropSubState | null>(null);
@@ -241,6 +244,7 @@ export function CraneRobot({
     onSubStateChange?.("grabbing");
     setClawAngle(1);
     setIsHoldingItem(true);
+    setItemX(craneX); // Item will be at crane's position when grabbed
     await delay(TIMING.closeClaws * 1000 + 200);
     
     // Step 4: Lift crane
@@ -251,7 +255,7 @@ export function CraneRobot({
     
     setGrabSubState(null);
     onSubStateChange?.(null);
-  }, [isPowered, onSubStateChange]);
+  }, [isPowered, craneX, onSubStateChange]);
 
   // Execute drop sequence
   const executeDropSequence = useCallback(async () => {
@@ -268,6 +272,7 @@ export function CraneRobot({
     onSubStateChange?.("dropping");
     setClawAngle(45);
     setIsHoldingItem(false);
+    setItemX(200); // Item stays at drop zone
     await delay(TIMING.openClawsDrop * 1000 + 200);
     
     // Close claws after drop
@@ -286,6 +291,7 @@ export function CraneRobot({
         setCableExtension(0);
         setClawAngle(1);
         setIsHoldingItem(false);
+        setItemX(-200); // Reset item to item zone
         setGrabSubState(null);
         setDropSubState(null);
         onSubStateChange?.(null);
@@ -341,8 +347,8 @@ export function CraneRobot({
     if (isHoldingItem) {
       return craneX;
     }
-    // Item stays where it was dropped or at original position
-    return -200;
+    // Item stays where it was dropped
+    return itemX;
   };
 
   const getItemY = () => {
