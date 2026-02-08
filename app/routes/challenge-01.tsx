@@ -246,6 +246,7 @@ export function CraneRobot({
     setGrabSubState("moving");
     onSubStateChange?.("moving");
     setCraneX(-200);
+    onPositionChange?.(-200);
     setItemX(-200);
     setIsHoldingItem(false);
     await delay(TIMING.move * 1000);
@@ -282,7 +283,7 @@ export function CraneRobot({
     setGrabbedAtGround(false);
     setGrabSubState(null);
     onSubStateChange?.(null);
-  }, [isPowered, onSubStateChange]);
+  }, [isPowered, onSubStateChange, onPositionChange]);
 
   // Execute drop sequence
   const executeDropSequence = useCallback(async () => {
@@ -292,6 +293,7 @@ export function CraneRobot({
     setDropSubState("moving");
     onSubStateChange?.("moving");
     setCraneX(200);
+    onPositionChange?.(200);
     await delay(TIMING.move * 1000);
     
     // Step 2: Open claws (drop)
@@ -311,7 +313,7 @@ export function CraneRobot({
     
     setDropSubState(null);
     onSubStateChange?.(null);
-  }, [isPowered, onSubStateChange]);
+  }, [isPowered, onSubStateChange, onPositionChange]);
 
   // Handle state changes
   useEffect(() => {
@@ -767,6 +769,7 @@ export default function Challenge01() {
               onSubStateChange={setSubState}
               onPositionChange={setCranePosition}
               onHoldingChange={setIsHoldingItem}
+
               showStatus={false}
               className="w-full"
               width={700}
