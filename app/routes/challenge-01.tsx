@@ -24,7 +24,13 @@ type CraneState =
   | "drop-item";
 
 // Sub-states for grab-item sequence
-const GRAB_SUB_STATES = ["moving", "opening", "lowering", "grabbing", "lifting"] as const;
+const GRAB_SUB_STATES = [
+  "moving",
+  "opening",
+  "lowering",
+  "grabbing",
+  "lifting"
+] as const;
 type GrabSubState = (typeof GRAB_SUB_STATES)[number];
 
 // Sub-states for drop-item sequence
@@ -32,7 +38,11 @@ const DROP_SUB_STATES = ["moving", "dropping"] as const;
 type DropSubState = (typeof DROP_SUB_STATES)[number];
 
 // State definitions for UI
-const STATE_DEFINITIONS: { id: CraneState; label: string; description: string }[] = [
+const STATE_DEFINITIONS: {
+  id: CraneState;
+  label: string;
+  description: string;
+}[] = [
   { id: "power-off", label: "Power Off", description: "Crane is powered down" },
   { id: "power-on", label: "Power On", description: "Crane is ready" },
   { id: "move-left", label: "Move Left", description: "Move to item zone" },
@@ -52,7 +62,9 @@ function PowerIndicator({ isOn }: { isOn: boolean }) {
             : "bg-gray-500 shadow-none"
         }`}
       />
-      <span className={`text-xs font-medium ${isOn ? "text-[#F7931E]" : "text-gray-500"}`}>
+      <span
+        className={`text-xs font-medium ${isOn ? "text-[#F7931E]" : "text-gray-500"}`}
+      >
         {isOn ? "ON" : "OFF"}
       </span>
     </div>
@@ -70,36 +82,37 @@ function useAnimatedValue(targetValue: number, duration: number) {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
     }
-    
+
     fromRef.current = currentValue;
     startRef.current = performance.now();
-    
+
     const animate = (now: number) => {
       const elapsed = now - startRef.current;
       const progress = Math.min(elapsed / (duration * 1000), 1);
-      
+
       // easeInOut easing
-      const eased = progress < 0.5 
-        ? 2 * progress * progress 
-        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-      
+      const eased =
+        progress < 0.5
+          ? 2 * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
       const value = fromRef.current + (targetValue - fromRef.current) * eased;
       setCurrentValue(value);
-      
+
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
       }
     };
-    
+
     rafRef.current = requestAnimationFrame(animate);
-    
+
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
     };
   }, [targetValue, duration]);
-  
+
   return currentValue;
 }
 
@@ -125,12 +138,35 @@ function CraneClaw({
       }`}
     >
       {/* Fixed Mounting Bracket at top */}
-      <rect x="30" y="0" width="40" height="16" rx="2" fill="#64748b" />
-      <circle cx="40" cy="8" r="3" fill="#94a3b8" />
-      <circle cx="60" cy="8" r="3" fill="#94a3b8" />
+      <rect
+        x="30"
+        y="0"
+        width="40"
+        height="16"
+        rx="2"
+        fill="#64748b"
+      />
+      <circle
+        cx="40"
+        cy="8"
+        r="3"
+        fill="#94a3b8"
+      />
+      <circle
+        cx="60"
+        cy="8"
+        r="3"
+        fill="#94a3b8"
+      />
 
       {/* Fixed rod stub */}
-      <rect x="48" y="16" width="4" height="8" fill="#64748b" />
+      <rect
+        x="48"
+        y="16"
+        width="4"
+        height="8"
+        fill="#64748b"
+      />
 
       {/* Extending cable - animated */}
       <motion.rect
@@ -148,21 +184,51 @@ function CraneClaw({
         transition={{ duration: TIMING.lowerCrane, ease: "easeInOut" }}
       >
         {/* Central Hub - Outer Ring */}
-        <circle cx="50" cy="54" r="18" fill="#64748b" />
+        <circle
+          cx="50"
+          cy="54"
+          r="18"
+          fill="#64748b"
+        />
 
         {/* Central Hub - Inner Ring */}
-        <circle cx="50" cy="54" r="12" fill="#475569" />
+        <circle
+          cx="50"
+          cy="54"
+          r="12"
+          fill="#475569"
+        />
 
         {/* Central Hub - Center */}
-        <circle cx="50" cy="54" r="6" fill="#94a3b8" />
-        <circle cx="50" cy="54" r="3" fill="#475569" />
+        <circle
+          cx="50"
+          cy="54"
+          r="6"
+          fill="#94a3b8"
+        />
+        <circle
+          cx="50"
+          cy="54"
+          r="3"
+          fill="#475569"
+        />
 
         {/* Left Arm Group - Rotates around hub center */}
         <g transform={`rotate(${animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path d="M50,54 L35,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
+          <path
+            d="M50,54 L35,75"
+            stroke="#64748b"
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
           {/* Joint */}
-          <circle cx="32" cy="78" r="4" fill="#64748b" />
+          <circle
+            cx="32"
+            cy="78"
+            r="4"
+            fill="#64748b"
+          />
           {/* Lower claw - curved inward */}
           <path
             d="M32,78 Q22,95 20,115 Q19,128 28,135 Q35,128 32,115 Q30,100 35,82"
@@ -173,9 +239,19 @@ function CraneClaw({
         {/* Right Arm Group - Rotates around hub center */}
         <g transform={`rotate(${-animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path d="M50,54 L65,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
+          <path
+            d="M50,54 L65,75"
+            stroke="#64748b"
+            strokeWidth="6"
+            strokeLinecap="round"
+          />
           {/* Joint */}
-          <circle cx="68" cy="78" r="4" fill="#64748b" />
+          <circle
+            cx="68"
+            cy="78"
+            r="4"
+            fill="#64748b"
+          />
           {/* Lower claw - curved inward */}
           <path
             d="M68,78 Q78,95 80,115 Q81,128 72,135 Q65,128 68,115 Q70,100 65,82"
@@ -214,26 +290,26 @@ export function CraneRobot({
   showSerialNumber = false
 }: CraneRobotProps) {
   const isPowered = state !== "power-off";
-  
+
   // Position: -200 = left (item zone), 200 = right (drop zone), 0 = center
   const [craneX, setCraneX] = useState(0);
-  
+
   // Cable extension: 0 = up, 50 = down
   const [cableExtension, setCableExtension] = useState(0);
-  
+
   // Claw angle: 45 = open, 1 = closed
   const [clawAngle, setClawAngle] = useState(1);
-  
+
   // Is holding item
   const [isHoldingItem, setIsHoldingItem] = useState(false);
-  
+
   // Item position (where it is on the ground when not held)
   const [itemX, setItemX] = useState(-200);
-  
+
   // Track if item was grabbed while crane was at ground level
   // Used to ensure smooth transition when starting to lift
   const [grabbedAtGround, setGrabbedAtGround] = useState(false);
-  
+
   // Sub-state tracking for complex operations
   const [grabSubState, setGrabSubState] = useState<GrabSubState | null>(null);
   const [dropSubState, setDropSubState] = useState<DropSubState | null>(null);
@@ -241,7 +317,7 @@ export function CraneRobot({
   // Execute grab sequence
   const executeGrabSequence = useCallback(async () => {
     if (!isPowered) return;
-    
+
     // Step 1: Move crane and item to item zone
     setGrabSubState("moving");
     onSubStateChange?.("moving");
@@ -250,36 +326,36 @@ export function CraneRobot({
     setItemX(-200);
     setIsHoldingItem(false);
     await delay(TIMING.move * 1000);
-    
+
     // Step 2: Open claws
     setGrabSubState("opening");
     onSubStateChange?.("opening");
     setClawAngle(45);
     await delay(TIMING.openClaws * 1000 + 200);
-    
+
     // Step 3: Lower crane
     setGrabSubState("lowering");
     onSubStateChange?.("lowering");
     setCableExtension(50);
     await delay(TIMING.lowerCrane * 1000);
-    
+
     // Step 4: Close claws (grab)
     setGrabSubState("grabbing");
     onSubStateChange?.("grabbing");
     setClawAngle(1);
     await delay(TIMING.closeClaws * 1000 + 200);
-    
+
     // Attach the item
     setIsHoldingItem(true);
     setGrabbedAtGround(true);
     onHoldingChange?.(true);
-    
+
     // Step 5: Lift crane
     setGrabSubState("lifting");
     onSubStateChange?.("lifting");
     setCableExtension(0);
     await delay(TIMING.liftCrane * 1000);
-    
+
     setGrabbedAtGround(false);
     setGrabSubState(null);
     onSubStateChange?.(null);
@@ -288,14 +364,14 @@ export function CraneRobot({
   // Execute drop sequence
   const executeDropSequence = useCallback(async () => {
     if (!isPowered) return;
-    
+
     // Step 1: Move to drop zone (if not already there)
     setDropSubState("moving");
     onSubStateChange?.("moving");
     setCraneX(200);
     onPositionChange?.(200);
     await delay(TIMING.move * 1000);
-    
+
     // Step 2: Open claws (drop)
     setDropSubState("dropping");
     onSubStateChange?.("dropping");
@@ -306,11 +382,11 @@ export function CraneRobot({
     onHoldingChange?.(false);
     setItemX(200); // Item stays at drop zone
     await delay(TIMING.openClawsDrop * 1000 + 200);
-    
+
     // Close claws after drop
     setClawAngle(1);
     await delay(TIMING.closeClaws * 1000);
-    
+
     setDropSubState(null);
     onSubStateChange?.(null);
   }, [isPowered, onSubStateChange, onPositionChange]);
@@ -331,7 +407,7 @@ export function CraneRobot({
         onPositionChange?.(0);
         onHoldingChange?.(false);
         break;
-        
+
       case "power-on":
         setCraneX(0);
         setCableExtension(0);
@@ -341,27 +417,27 @@ export function CraneRobot({
         onSubStateChange?.(null);
         onPositionChange?.(0);
         break;
-        
+
       case "move-left":
         if (isPowered) {
           setCraneX(-200);
           onPositionChange?.(-200);
         }
         break;
-        
+
       case "move-right":
         if (isPowered) {
           setCraneX(200);
           onPositionChange?.(200);
         }
         break;
-        
+
       case "grab-item":
         if (isPowered) {
           executeGrabSequence();
         }
         break;
-        
+
       case "drop-item":
         if (isPowered && !isHoldingItem) {
           // Can't drop if not holding
@@ -372,7 +448,15 @@ export function CraneRobot({
         }
         break;
     }
-  }, [state, isPowered, executeGrabSequence, executeDropSequence, onSubStateChange, onPositionChange, onHoldingChange]);
+  }, [
+    state,
+    isPowered,
+    executeGrabSequence,
+    executeDropSequence,
+    onSubStateChange,
+    onPositionChange,
+    onHoldingChange
+  ]);
 
   // Calculate item position
   const getItemX = () => {
@@ -388,14 +472,14 @@ export function CraneRobot({
     // When cableExtension=50 (lowered): 225 + 50 = 275
     // When cableExtension=0 (lifted): 225 + 0 = 225
     const craneAttachedY = 225 + cableExtension;
-    
+
     // Ground level
     const groundY = 320;
-    
+
     // When crane is lowered enough that the claw would be at/below ground,
     // the item should sit on ground regardless of isHoldingItem (to avoid jumps)
     const isCraneLoweredEnough = cableExtension >= 45; // Near fully lowered
-    
+
     if (isHoldingItem) {
       // Item is held by crane
       // When crane is lowered, item sits on ground (320)
@@ -412,7 +496,7 @@ export function CraneRobot({
   };
 
   const currentStateDef = STATE_DEFINITIONS.find((s) => s.id === state);
-  
+
   // Build status text
   let statusText = currentStateDef?.label ?? "Unknown";
   if (grabSubState) {
@@ -482,10 +566,30 @@ export function CraneRobot({
       </motion.div>
 
       {/* Ground */}
-      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center">
-        <span className="text-sm font-bold text-[#D06000]">
-          Crane Robot #{showSerialNumber ? serialNumber : "???"}
-        </span>
+      <div className="absolute bottom-0 left-0 right-0 h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center overflow-hidden">
+        <AnimatePresence mode="wait">
+          {showSerialNumber ? (
+            <motion.span
+              key="serial-revealed"
+              className="text-sm font-bold text-[#D06000]"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              Crane Robot #{serialNumber}
+            </motion.span>
+          ) : (
+            <motion.span
+              key="serial-hidden"
+              className="text-sm font-bold text-gray-500"
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Crane Robot #???
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Status Indicator */}
@@ -512,42 +616,58 @@ export function CraneRobot({
 // Play a satisfying success sound using Web Audio API
 function playSuccessSound() {
   try {
-    const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-    
+    const audioContext = new (
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext })
+        .webkitAudioContext
+    )();
+
     // Create oscillator for the main tone
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     // Configure the sound - a pleasant ascending chime
     oscillator.type = "sine";
     oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-    oscillator.frequency.exponentialRampToValueAtTime(783.99, audioContext.currentTime + 0.1); // G5
-    
+    oscillator.frequency.exponentialRampToValueAtTime(
+      783.99,
+      audioContext.currentTime + 0.1
+    ); // G5
+
     // Volume envelope - quick attack, smooth decay
     gainNode.gain.setValueAtTime(0, audioContext.currentTime);
     gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-    
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.01,
+      audioContext.currentTime + 0.5
+    );
+
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.5);
-    
+
     // Add a second oscillator for harmony
     const oscillator2 = audioContext.createOscillator();
     const gainNode2 = audioContext.createGain();
-    
+
     oscillator2.connect(gainNode2);
     gainNode2.connect(audioContext.destination);
-    
+
     oscillator2.type = "triangle";
     oscillator2.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
-    
+
     gainNode2.gain.setValueAtTime(0, audioContext.currentTime);
-    gainNode2.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.05);
-    gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-    
+    gainNode2.gain.linearRampToValueAtTime(
+      0.15,
+      audioContext.currentTime + 0.05
+    );
+    gainNode2.gain.exponentialRampToValueAtTime(
+      0.01,
+      audioContext.currentTime + 0.4
+    );
+
     oscillator2.start(audioContext.currentTime);
     oscillator2.stop(audioContext.currentTime + 0.4);
   } catch {
@@ -560,26 +680,26 @@ function ConfettiParticle({ color, delay }: { color: string; delay: number }) {
   const randomX = (Math.random() - 0.5) * 300;
   const randomRotation = Math.random() * 720 - 360;
   const randomScale = 0.5 + Math.random() * 0.5;
-  
+
   return (
     <motion.div
       className="absolute w-3 h-3 rounded-sm"
       style={{ backgroundColor: color }}
-      initial={{ 
-        x: 0, 
-        y: 0, 
+      initial={{
+        x: 0,
+        y: 0,
         scale: 0,
         rotate: 0,
-        opacity: 1 
+        opacity: 1
       }}
-      animate={{ 
-        x: randomX, 
+      animate={{
+        x: randomX,
         y: [0, -100, 200],
         scale: [0, randomScale, 0],
         rotate: randomRotation,
         opacity: [1, 1, 0]
       }}
-      transition={{ 
+      transition={{
         duration: 1.5,
         delay: delay,
         ease: "easeOut"
@@ -591,18 +711,18 @@ function ConfettiParticle({ color, delay }: { color: string; delay: number }) {
 // Success Animation Component
 function SuccessAnimation({ type }: { type: "property" | "method" }) {
   const colors = ["#F7931E", "#22C55E", "#3B82F6", "#EAB308", "#EC4899"];
-  
+
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
       {/* Confetti burst */}
       {[...Array(20)].map((_, i) => (
-        <ConfettiParticle 
-          key={i} 
-          color={colors[i % colors.length]} 
+        <ConfettiParticle
+          key={i}
+          color={colors[i % colors.length]}
           delay={i * 0.02}
         />
       ))}
-      
+
       {/* Star burst */}
       {[...Array(8)].map((_, i) => {
         const angle = (i / 8) * Math.PI * 2;
@@ -612,13 +732,13 @@ function SuccessAnimation({ type }: { type: "property" | "method" }) {
             key={`star-${i}`}
             className="absolute text-2xl"
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ 
+            animate={{
               scale: [0, 1.5, 0],
               opacity: [0, 1, 0],
               x: Math.cos(angle) * distance,
               y: Math.sin(angle) * distance
             }}
-            transition={{ 
+            transition={{
               duration: 0.8,
               delay: 0.1,
               ease: "easeOut"
@@ -628,13 +748,13 @@ function SuccessAnimation({ type }: { type: "property" | "method" }) {
           </motion.div>
         );
       })}
-      
+
       {/* Main badge */}
       <motion.div
         className="absolute"
         initial={{ scale: 0, rotate: -180 }}
         animate={{ scale: [0, 1.2, 1], rotate: 0 }}
-        transition={{ 
+        transition={{
           type: "spring",
           stiffness: 200,
           damping: 15,
@@ -642,11 +762,11 @@ function SuccessAnimation({ type }: { type: "property" | "method" }) {
         }}
       >
         <motion.div
-          animate={{ 
+          animate={{
             scale: [1, 1.1, 1],
             rotate: [0, 5, -5, 0]
           }}
-          transition={{ 
+          transition={{
             duration: 0.5,
             delay: 0.5
           }}
@@ -659,7 +779,7 @@ function SuccessAnimation({ type }: { type: "property" | "method" }) {
           </span>
         </motion.div>
       </motion.div>
-      
+
       {/* Floating emojis */}
       <motion.div
         className="absolute text-4xl"
@@ -724,20 +844,20 @@ function PropertyQuestion({
 
   if (isRevealed || isCorrect) {
     return (
-      <motion.div 
+      <motion.div
         className="bg-green-50 border-2 border-green-500 p-4 rounded relative overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         {showAnimation && <SuccessAnimation type={type} />}
-        <motion.div 
+        <motion.div
           className="flex items-center gap-2 mb-2"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <motion.div 
+          <motion.div
             className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-lg font-bold"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -745,7 +865,7 @@ function PropertyQuestion({
           >
             ✓
           </motion.div>
-          <motion.span 
+          <motion.span
             className="text-green-700 font-bold text-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -766,14 +886,14 @@ function PropertyQuestion({
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="bg-[#F8F8F8] border-2 border-black p-4"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="flex items-start gap-3">
-        <motion.span 
+        <motion.span
           className="text-[#F7931E] font-bold text-lg"
           animate={{ rotate: [0, -10, 10, 0] }}
           transition={{ duration: 0.5, delay: questionNumber * 0.1 }}
@@ -795,7 +915,7 @@ function PropertyQuestion({
           />
           <AnimatePresence>
             {showError && (
-              <motion.p 
+              <motion.p
                 className="text-red-600 text-sm mt-2 flex items-center gap-1"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
@@ -825,7 +945,9 @@ export default function Challenge01() {
   const [subState, setSubState] = useState<string | null>(null);
   const [cranePosition, setCranePosition] = useState<number>(0);
   const [isHoldingItem, setIsHoldingItem] = useState<boolean>(false);
-  const [serialNumber] = useState<string>("CR-2024-" + Math.floor(1000 + Math.random() * 9000));
+  const [serialNumber] = useState<string>(
+    "CR-2024-" + Math.floor(1000 + Math.random() * 9000)
+  );
 
   // Revealed state for properties
   const [revealedProperties, setRevealedProperties] = useState({
@@ -850,11 +972,11 @@ export default function Challenge01() {
   const [showMethods, setShowMethods] = useState(false);
 
   const revealProperty = (property: keyof typeof revealedProperties) => {
-    setRevealedProperties(prev => ({ ...prev, [property]: true }));
+    setRevealedProperties((prev) => ({ ...prev, [property]: true }));
   };
 
   const revealMethod = (method: keyof typeof revealedMethods) => {
-    setRevealedMethods(prev => ({ ...prev, [method]: true }));
+    setRevealedMethods((prev) => ({ ...prev, [method]: true }));
   };
 
   // Get position label
@@ -876,10 +998,12 @@ export default function Challenge01() {
   };
 
   // Check if all properties are revealed
-  const allPropertiesRevealed = Object.values(revealedProperties).every(v => v);
-  
+  const allPropertiesRevealed = Object.values(revealedProperties).every(
+    (v) => v
+  );
+
   // Check if all methods are revealed
-  const allMethodsRevealed = Object.values(revealedMethods).every(v => v);
+  const allMethodsRevealed = Object.values(revealedMethods).every((v) => v);
 
   // Auto-open methods section when properties are done
   useEffect(() => {
@@ -917,14 +1041,25 @@ export default function Challenge01() {
       {/* Navigation Bar */}
       <nav className="bg-[#E8E8E8] border-b-2 border-black px-4 py-2">
         <div className="flex items-center gap-8">
-          <Link to="/" className="text-black hover:underline tracking-wider">
+          <Link
+            to="/"
+            className="text-black hover:underline tracking-wider"
+          >
             Home
           </Link>
-          <Link to="/crane" className="text-black hover:underline tracking-wider">
+          <Link
+            to="/crane"
+            className="text-black hover:underline tracking-wider"
+          >
             Crane
           </Link>
-          <span className="font-bold text-black tracking-wider">Challenge 01</span>
-          <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
+          <span className="font-bold text-black tracking-wider">
+            Challenge 01
+          </span>
+          <Link
+            to="/challenge-02"
+            className="text-black hover:underline tracking-wider"
+          >
             Challenge 02
           </Link>
         </div>
@@ -945,7 +1080,6 @@ export default function Challenge01() {
               onSubStateChange={setSubState}
               onPositionChange={setCranePosition}
               onHoldingChange={setIsHoldingItem}
-
               showStatus={false}
               className="w-full"
               width={700}
@@ -961,62 +1095,209 @@ export default function Challenge01() {
                 <div className="flex items-center justify-around">
                   {/* Power Status */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-900 uppercase tracking-wider">
-                      {revealedProperties.power ? "Power" : "???"}
-                    </div>
-                    {revealedProperties.power ? (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                            craneState !== "power-off"
-                              ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
-                              : "bg-gray-500 shadow-none"
-                          }`}
-                        />
-                        <span className={`text-lg font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
-                          {craneState !== "power-off" ? "ON" : "OFF"}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
-                    )}
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.power ? (
+                        <motion.div
+                          key="power-label"
+                          className="text-xs text-gray-900 uppercase tracking-wider"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                        >
+                          Power
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="power-hidden"
+                          className="text-xs text-gray-500 uppercase tracking-wider"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.power ? (
+                        <motion.div
+                          key="power-value"
+                          className="flex items-center gap-2"
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 15
+                          }}
+                        >
+                          <motion.div
+                            className={`w-6 h-6 rounded-full ${
+                              craneState !== "power-off"
+                                ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
+                                : "bg-gray-500 shadow-none"
+                            }`}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: "spring" }}
+                          />
+                          <motion.span
+                            className={`text-lg font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                          >
+                            {craneState !== "power-off" ? "ON" : "OFF"}
+                          </motion.span>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="power-locked"
+                          className="text-2xl font-mono font-bold text-gray-500"
+                          animate={{
+                            opacity: [1, 0.5, 1]
+                          }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div className="h-12 w-px bg-black" />
                   {/* Claw Position */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-900 uppercase tracking-wider">
-                      {revealedProperties.position ? "Claw Position" : "???"}
-                    </div>
-                    {revealedProperties.position ? (
-                      <div className="text-2xl font-mono font-bold text-[#D06000]">
-                        {getPositionLabel(cranePosition)}
-                      </div>
-                    ) : (
-                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
-                    )}
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.position ? (
+                        <motion.div
+                          key="position-label"
+                          className="text-xs text-gray-900 uppercase tracking-wider"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                        >
+                          Claw Position
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="position-hidden"
+                          className="text-xs text-gray-500 uppercase tracking-wider"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.position ? (
+                        <motion.div
+                          key="position-value"
+                          className="text-2xl font-mono font-bold text-[#D06000]"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: [0, 1.2, 1], opacity: 1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 20
+                          }}
+                        >
+                          {getPositionLabel(cranePosition)}
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="position-locked"
+                          className="text-2xl font-mono font-bold text-gray-500"
+                          animate={{
+                            opacity: [1, 0.5, 1]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: 0.3
+                          }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                   <div className="h-12 w-px bg-black" />
                   {/* Holding Item */}
                   <div className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-gray-900 uppercase tracking-wider">
-                      {revealedProperties.hold ? "Holding Item" : "???"}
-                    </div>
-                    {revealedProperties.hold ? (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-6 h-6 rounded-full transition-all duration-300 ${
-                            isHoldingItem
-                              ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
-                              : "bg-gray-500 shadow-none"
-                          }`}
-                        />
-                        <span className={`text-lg font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
-                          {isHoldingItem ? "YES" : "NO"}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="text-2xl font-mono font-bold text-gray-500">???</div>
-                    )}
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.hold ? (
+                        <motion.div
+                          key="hold-label"
+                          className="text-xs text-gray-900 uppercase tracking-wider"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                        >
+                          Holding Item
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="hold-hidden"
+                          className="text-xs text-gray-500 uppercase tracking-wider"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                      {revealedProperties.hold ? (
+                        <motion.div
+                          key="hold-value"
+                          className="flex items-center gap-2"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 200,
+                            damping: 15
+                          }}
+                        >
+                          <motion.div
+                            className={`w-6 h-6 rounded-full ${
+                              isHoldingItem
+                                ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
+                                : "bg-gray-500 shadow-none"
+                            }`}
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ delay: 0.2, type: "spring" }}
+                          />
+                          <motion.span
+                            className={`text-lg font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 }}
+                          >
+                            {isHoldingItem ? "YES" : "NO"}
+                          </motion.span>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="hold-locked"
+                          className="text-2xl font-mono font-bold text-gray-500"
+                          animate={{
+                            opacity: [1, 0.5, 1]
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            delay: 0.6
+                          }}
+                        >
+                          ???
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
@@ -1034,29 +1315,47 @@ export default function Challenge01() {
                       const isActive = craneState === stateDef.id;
                       const isDisabled = isStateDisabled(stateDef.id);
                       const isRevealed = revealedMethods[stateDef.id];
-                      
+
                       if (!isRevealed) {
-                        // Show ??? placeholder
+                        // Show ??? placeholder with pulse animation
                         return (
-                          <div
+                          <motion.div
                             key={stateDef.id}
                             className="px-4 py-3 bg-[#D0D0D0] border-2 border-black text-center"
+                            animate={{ opacity: [1, 0.5, 1] }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              delay: Math.random()
+                            }}
                           >
-                            <div className="text-2xl font-mono font-bold text-gray-500">???</div>
-                          </div>
+                            <div className="text-2xl font-mono font-bold text-gray-500">
+                              ???
+                            </div>
+                          </motion.div>
                         );
                       }
-                      
+
                       return (
-                        <button
+                        <motion.button
                           key={stateDef.id}
                           onClick={() => handleStateChange(stateDef.id)}
                           disabled={isDisabled}
+                          initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                          whileHover={!isDisabled ? { scale: 1.02 } : {}}
+                          whileTap={!isDisabled ? { scale: 0.98 } : {}}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 20
+                          }}
                           className={`
                             px-4 py-3 font-medium transition-all text-left border-2
-                            ${isActive
-                              ? "bg-[#F7931E] text-black border-black"
-                              : "bg-[#E8E8E8] text-black border-black hover:bg-[#D8D8D8]"
+                            ${
+                              isActive
+                                ? "bg-[#F7931E] text-black border-black"
+                                : "bg-[#E8E8E8] text-black border-black hover:bg-[#D8D8D8]"
                             }
                             ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                           `}
@@ -1064,15 +1363,21 @@ export default function Challenge01() {
                         >
                           <div className="flex items-center gap-2">
                             {stateDef.id === "power-off" && (
-                              <div className={`w-3 h-3 rounded-full ${isActive ? "bg-red-500" : "bg-red-600"}`} />
+                              <div
+                                className={`w-3 h-3 rounded-full ${isActive ? "bg-red-500" : "bg-red-600"}`}
+                              />
                             )}
                             {stateDef.id === "power-on" && (
-                              <div className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-green-600"}`} />
+                              <div
+                                className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-green-600"}`}
+                              />
                             )}
                             <span>{stateDef.label}</span>
                           </div>
-                          <div className="text-xs opacity-70 mt-1">{stateDef.description}</div>
-                        </button>
+                          <div className="text-xs opacity-70 mt-1">
+                            {stateDef.description}
+                          </div>
+                        </motion.button>
                       );
                     })}
                   </motion.div>
@@ -1083,7 +1388,8 @@ export default function Challenge01() {
               {!allPropertiesRevealed && (
                 <div className="bg-[#F7931E]/20 border-2 border-[#F7931E] p-4 text-center">
                   <p className="text-[#D06000] font-medium">
-                    🔒 Complete all property questions to unlock the next section
+                    🔒 Complete all property questions to unlock the next
+                    section
                   </p>
                 </div>
               )}
@@ -1107,11 +1413,13 @@ export default function Challenge01() {
                 className="w-full px-6 py-4 flex items-center justify-between bg-[#F0F0F0] hover:bg-[#E0E0E0] transition-colors"
               >
                 <h2 className="text-xl font-bold text-black">PROPERTIES</h2>
-                <span className={`text-2xl transition-transform duration-300 ${showProperties ? "rotate-180" : ""}`}>
+                <span
+                  className={`text-2xl transition-transform duration-300 ${showProperties ? "rotate-180" : ""}`}
+                >
                   ▼
                 </span>
               </button>
-              
+
               <AnimatePresence initial={false}>
                 {showProperties && (
                   <motion.div
@@ -1122,126 +1430,159 @@ export default function Challenge01() {
                     className="overflow-hidden"
                   >
                     <div className="p-6 pt-4">
-            <p className="text-gray-900 mb-6">
-              In Object-Oriented Programming, <strong>properties</strong> are the object's characteristics - the data that an object needs to keep track of. 
-              Help define the properties for our Crane Robot!
-            </p>
+                      <p className="text-gray-900 mb-6">
+                        In Object-Oriented Programming,{" "}
+                        <strong>properties</strong> are the object's
+                        characteristics - the data that an object needs to keep
+                        track of. Help define the properties for our Crane
+                        Robot!
+                      </p>
 
-            <div className="space-y-4">
-              {/* Question 1: Serial Number */}
-              <PropertyQuestion
-                questionNumber={1}
-                question="The robot needs a unique identifier to distinguish it from other robots. What property should store this identifier?"
-                placeholder="Type your answer..."
-                validateAnswer={(answer) => answer.includes("serial") || answer.includes("id") || answer.includes("number")}
-                onCorrect={() => revealProperty("serial")}
-                isRevealed={revealedProperties.serial}
-                errorMessage="The robot should have a unique identifier like a serial number."
-                revealedContent={
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-mono font-bold text-[#D06000]">{serialNumber}</span>
-                    <span className="text-gray-500 text-sm">(Property: serialNumber)</span>
-                  </div>
-                }
-              />
+                      <div className="space-y-4">
+                        {/* Question 1: Serial Number */}
+                        <PropertyQuestion
+                          questionNumber={1}
+                          question="The robot needs a unique identifier to distinguish it from other robots. What property should store this identifier?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) =>
+                            answer.includes("serial") ||
+                            answer.includes("id") ||
+                            answer.includes("number")
+                          }
+                          onCorrect={() => revealProperty("serial")}
+                          isRevealed={revealedProperties.serial}
+                          errorMessage="The robot should have a unique identifier like a serial number."
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-mono font-bold text-[#D06000]">
+                                {serialNumber}
+                              </span>
+                              <span className="text-gray-500 text-sm">
+                                (Property: serialNumber)
+                              </span>
+                            </div>
+                          }
+                        />
 
-              {/* Question 2: Power */}
-              <PropertyQuestion
-                questionNumber={2}
-                question="The robot needs to know if it's turned on or off. What property name should we use to store this?"
-                placeholder="Type your answer..."
-                validateAnswer={(answer) => answer.includes("power")}
-                onCorrect={() => revealProperty("power")}
-                isRevealed={revealedProperties.power}
-                errorMessage="The robot should know if its power is on or not."
-                revealedContent={
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full ${
-                        craneState !== "power-off"
-                          ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
-                          : "bg-gray-500"
-                      }`}
-                    />
-                    <span className={`font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}>
-                      {craneState !== "power-off" ? "ON" : "OFF"}
-                    </span>
-                    <span className="text-gray-500 text-sm ml-2">(Property: power)</span>
-                  </div>
-                }
-              />
+                        {/* Question 2: Power */}
+                        <PropertyQuestion
+                          questionNumber={2}
+                          question="The robot needs to know if it's turned on or off. What property name should we use to store this?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("power")}
+                          onCorrect={() => revealProperty("power")}
+                          isRevealed={revealedProperties.power}
+                          errorMessage="The robot should know if its power is on or not."
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-6 h-6 rounded-full ${
+                                  craneState !== "power-off"
+                                    ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]"
+                                    : "bg-gray-500"
+                                }`}
+                              />
+                              <span
+                                className={`font-bold ${craneState !== "power-off" ? "text-green-600" : "text-gray-500"}`}
+                              >
+                                {craneState !== "power-off" ? "ON" : "OFF"}
+                              </span>
+                              <span className="text-gray-500 text-sm ml-2">
+                                (Property: power)
+                              </span>
+                            </div>
+                          }
+                        />
 
-              {/* Question 3: Position */}
-              <PropertyQuestion
-                questionNumber={3}
-                question="The robot needs to track where its claw is located (left, center, or right). What property name should we use?"
-                placeholder="Type your answer..."
-                validateAnswer={(answer) => answer.includes("position")}
-                onCorrect={() => revealProperty("position")}
-                isRevealed={revealedProperties.position}
-                errorMessage="The robot should know the position of its claw."
-                revealedContent={
-                  <div className="text-xl font-mono font-bold text-[#D06000]">
-                    {getPositionLabel(cranePosition)}
-                    <span className="text-gray-500 text-sm ml-2">(Property: position)</span>
-                  </div>
-                }
-              />
+                        {/* Question 3: Position */}
+                        <PropertyQuestion
+                          questionNumber={3}
+                          question="The robot needs to track where its claw is located (left, center, or right). What property name should we use?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) =>
+                            answer.includes("position")
+                          }
+                          onCorrect={() => revealProperty("position")}
+                          isRevealed={revealedProperties.position}
+                          errorMessage="The robot should know the position of its claw."
+                          revealedContent={
+                            <div className="text-xl font-mono font-bold text-[#D06000]">
+                              {getPositionLabel(cranePosition)}
+                              <span className="text-gray-500 text-sm ml-2">
+                                (Property: position)
+                              </span>
+                            </div>
+                          }
+                        />
 
-              {/* Question 4: Hold */}
-              <PropertyQuestion
-                questionNumber={4}
-                question="The robot needs to remember whether it's currently holding an item or not. What property name should we use?"
-                placeholder="Type your answer..."
-                validateAnswer={(answer) => answer.includes("hold")}
-                onCorrect={() => revealProperty("hold")}
-                isRevealed={revealedProperties.hold}
-                errorMessage="The robot should know if it's holding an item."
-                revealedContent={
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full ${
-                        isHoldingItem
-                          ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
-                          : "bg-gray-500"
-                      }`}
-                    />
-                    <span className={`font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}>
-                      {isHoldingItem ? "YES" : "NO"}
-                    </span>
-                    <span className="text-gray-500 text-sm ml-2">(Property: isHolding / holdItem)</span>
-                  </div>
-                }
-              />
-            </div>
+                        {/* Question 4: Hold */}
+                        <PropertyQuestion
+                          questionNumber={4}
+                          question="The robot needs to remember whether it's currently holding an item or not. What property name should we use?"
+                          placeholder="Type your answer..."
+                          validateAnswer={(answer) => answer.includes("hold")}
+                          onCorrect={() => revealProperty("hold")}
+                          isRevealed={revealedProperties.hold}
+                          errorMessage="The robot should know if it's holding an item."
+                          revealedContent={
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-6 h-6 rounded-full ${
+                                  isHoldingItem
+                                    ? "bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.8)]"
+                                    : "bg-gray-500"
+                                }`}
+                              />
+                              <span
+                                className={`font-bold ${isHoldingItem ? "text-blue-700" : "text-gray-500"}`}
+                              >
+                                {isHoldingItem ? "YES" : "NO"}
+                              </span>
+                              <span className="text-gray-500 text-sm ml-2">
+                                (Property: isHolding / holdItem)
+                              </span>
+                            </div>
+                          }
+                        />
+                      </div>
 
-            {/* Success Message */}
-            <AnimatePresence>
-              {allPropertiesRevealed && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 bg-green-100 border-2 border-green-500 p-4 rounded"
-                >
-                  <h3 className="font-bold text-green-800 mb-2">🎉 Congratulations!</h3>
-                  <p className="text-green-700 text-sm">
-                    You've successfully defined the properties for the Crane Robot! In OOP terms, you just created the 
-                    <strong> attributes</strong> of the class. The METHODS section is now unlocked!
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      {/* Success Message */}
+                      <AnimatePresence>
+                        {allPropertiesRevealed && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-6 bg-green-100 border-2 border-green-500 p-4 rounded"
+                          >
+                            <h3 className="font-bold text-green-800 mb-2">
+                              🎉 Congratulations!
+                            </h3>
+                            <p className="text-green-700 text-sm">
+                              You've successfully defined the properties for the
+                              Crane Robot! In OOP terms, you just created the
+                              <strong> properties</strong> of the class. The
+                              METHODS section is now unlocked!
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
 
-            {/* Educational Note */}
-            <div className="mt-6 bg-blue-50 border-2 border-blue-300 p-4 rounded">
-              <h3 className="font-bold text-blue-800 mb-2">💡 Did you know?</h3>
-              <p className="text-blue-700 text-sm">
-                In OOP, properties represent the <strong>state</strong> of an object. Just like our crane robot tracks 
-                power, position, and whether it's holding something, real-world objects have properties too. 
-                For example, a Car object might have properties like <code>color</code>, <code>speed</code>, and <code>fuelLevel</code>.
-              </p>
-            </div>
-                  </div>
+                      {/* Educational Note */}
+                      <div className="mt-6 bg-blue-50 border-2 border-blue-300 p-4 rounded">
+                        <h3 className="font-bold text-blue-800 mb-2">
+                          💡 Did you know?
+                        </h3>
+                        <p className="text-blue-700 text-sm">
+                          In OOP, properties represent the{" "}
+                          <strong>state</strong> of an object. Just like our
+                          crane robot tracks power, position, and whether it's
+                          holding something, real-world objects have properties
+                          too. For example, a Car object might have properties
+                          like <code>color</code>, <code>speed</code>, and{" "}
+                          <code>fuelLevel</code>.
+                        </p>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -1253,20 +1594,24 @@ export default function Challenge01() {
                 onClick={() => setShowMethods(!showMethods)}
                 disabled={!allPropertiesRevealed}
                 className={`w-full px-6 py-4 flex items-center justify-between transition-colors ${
-                  allPropertiesRevealed 
-                    ? "bg-[#F0F0F0] hover:bg-[#E0E0E0] cursor-pointer" 
+                  allPropertiesRevealed
+                    ? "bg-[#F0F0F0] hover:bg-[#E0E0E0] cursor-pointer"
                     : "bg-gray-300 cursor-not-allowed"
                 }`}
               >
                 <h2 className="text-xl font-bold text-black">METHODS</h2>
-                {!allPropertiesRevealed && <span className="text-gray-500 text-sm">🔒 Locked</span>}
+                {!allPropertiesRevealed && (
+                  <span className="text-gray-500 text-sm">🔒 Locked</span>
+                )}
                 {allPropertiesRevealed && (
-                  <span className={`text-2xl transition-transform duration-300 ${showMethods ? "rotate-180" : ""}`}>
+                  <span
+                    className={`text-2xl transition-transform duration-300 ${showMethods ? "rotate-180" : ""}`}
+                  >
                     ▼
                   </span>
                 )}
               </button>
-              
+
               <AnimatePresence initial={false}>
                 {showMethods && allPropertiesRevealed && (
                   <motion.div
@@ -1278,8 +1623,10 @@ export default function Challenge01() {
                   >
                     <div className="p-6 pt-4">
                       <p className="text-gray-900 mb-6">
-                        In Object-Oriented Programming, <strong>methods</strong> (object functions/behavior) are the actions that an object can perform. 
-                        They define the behavior of the object. Help define the methods for our Crane Robot!
+                        In Object-Oriented Programming, <strong>methods</strong>{" "}
+                        (object functions/behavior) are the actions that an
+                        object can perform. They define the behavior of the
+                        object. Help define the methods for our Crane Robot!
                       </p>
 
                       <div className="space-y-4">
@@ -1288,7 +1635,10 @@ export default function Challenge01() {
                           questionNumber={1}
                           question="What method should we call to turn the robot on and make it ready to operate?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("power") && (answer.includes("on") || answer.includes("start"))}
+                          validateAnswer={(answer) =>
+                            answer.includes("power") &&
+                            (answer.includes("on") || answer.includes("start"))
+                          }
                           onCorrect={() => revealMethod("power-on")}
                           isRevealed={revealedMethods["power-on"]}
                           errorMessage="The robot needs a method to power on."
@@ -1297,7 +1647,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-green-600" />
                               <span className="font-bold">Power On</span>
-                              <span className="text-gray-500 text-sm">(Method: powerOn)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: powerOn)
+                              </span>
                             </div>
                           }
                         />
@@ -1307,7 +1659,10 @@ export default function Challenge01() {
                           questionNumber={2}
                           question="What method should we call to turn the robot off and shut it down?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("power") && (answer.includes("off") || answer.includes("stop"))}
+                          validateAnswer={(answer) =>
+                            answer.includes("power") &&
+                            (answer.includes("off") || answer.includes("stop"))
+                          }
                           onCorrect={() => revealMethod("power-off")}
                           isRevealed={revealedMethods["power-off"]}
                           errorMessage="The robot needs a method to power off."
@@ -1316,7 +1671,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-red-600" />
                               <span className="font-bold">Power Off</span>
-                              <span className="text-gray-500 text-sm">(Method: powerOff)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: powerOff)
+                              </span>
                             </div>
                           }
                         />
@@ -1326,7 +1683,9 @@ export default function Challenge01() {
                           questionNumber={3}
                           question="What method should move the claw to the left, toward the item zone?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("left") || answer.includes("move")}
+                          validateAnswer={(answer) =>
+                            answer.includes("left") || answer.includes("move")
+                          }
                           onCorrect={() => revealMethod("move-left")}
                           isRevealed={revealedMethods["move-left"]}
                           errorMessage="The robot needs a method to move left toward the item."
@@ -1335,7 +1694,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-blue-600" />
                               <span className="font-bold">Move Left</span>
-                              <span className="text-gray-500 text-sm">(Method: moveLeft)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: moveLeft)
+                              </span>
                             </div>
                           }
                         />
@@ -1345,7 +1706,9 @@ export default function Challenge01() {
                           questionNumber={4}
                           question="What method should move the claw to the right, toward the drop zone?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("right") || answer.includes("move")}
+                          validateAnswer={(answer) =>
+                            answer.includes("right") || answer.includes("move")
+                          }
                           onCorrect={() => revealMethod("move-right")}
                           isRevealed={revealedMethods["move-right"]}
                           errorMessage="The robot needs a method to move right toward the drop zone."
@@ -1354,7 +1717,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-blue-600" />
                               <span className="font-bold">Move Right</span>
-                              <span className="text-gray-500 text-sm">(Method: moveRight)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: moveRight)
+                              </span>
                             </div>
                           }
                         />
@@ -1364,7 +1729,9 @@ export default function Challenge01() {
                           questionNumber={5}
                           question="What method should make the robot grab an item with its claw?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("grab") || answer.includes("pick")}
+                          validateAnswer={(answer) =>
+                            answer.includes("grab") || answer.includes("pick")
+                          }
                           onCorrect={() => revealMethod("grab-item")}
                           isRevealed={revealedMethods["grab-item"]}
                           errorMessage="The robot needs a method to grab items."
@@ -1373,7 +1740,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-purple-600" />
                               <span className="font-bold">Grab Item</span>
-                              <span className="text-gray-500 text-sm">(Method: grabItem)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: grabItem)
+                              </span>
                             </div>
                           }
                         />
@@ -1383,7 +1752,10 @@ export default function Challenge01() {
                           questionNumber={6}
                           question="What method should make the robot release/drop the item it's holding?"
                           placeholder="Type your answer..."
-                          validateAnswer={(answer) => answer.includes("drop") || answer.includes("release")}
+                          validateAnswer={(answer) =>
+                            answer.includes("drop") ||
+                            answer.includes("release")
+                          }
                           onCorrect={() => revealMethod("drop-item")}
                           isRevealed={revealedMethods["drop-item"]}
                           errorMessage="The robot needs a method to drop items."
@@ -1392,7 +1764,9 @@ export default function Challenge01() {
                             <div className="flex items-center gap-2">
                               <div className="w-3 h-3 rounded-full bg-purple-600" />
                               <span className="font-bold">Drop Item</span>
-                              <span className="text-gray-500 text-sm">(Method: dropItem)</span>
+                              <span className="text-gray-500 text-sm">
+                                (Method: dropItem)
+                              </span>
                             </div>
                           }
                         />
@@ -1406,10 +1780,14 @@ export default function Challenge01() {
                             animate={{ opacity: 1, y: 0 }}
                             className="mt-6 bg-green-100 border-2 border-green-500 p-4 rounded"
                           >
-                            <h3 className="font-bold text-green-800 mb-2">🎉 Fantastic!</h3>
+                            <h3 className="font-bold text-green-800 mb-2">
+                              🎉 Fantastic!
+                            </h3>
                             <p className="text-green-700 text-sm">
-                              You've defined all the methods for the Crane Robot! In OOP terms, you just created the 
-                              <strong> behaviors</strong> of the class. All robot controls are now unlocked!
+                              You've defined all the methods for the Crane
+                              Robot! In OOP terms, you just created the
+                              <strong> behaviors</strong> of the class. All
+                              robot controls are now unlocked!
                             </p>
                           </motion.div>
                         )}
@@ -1417,11 +1795,17 @@ export default function Challenge01() {
 
                       {/* Educational Note for Methods */}
                       <div className="mt-6 bg-blue-50 border-2 border-blue-300 p-4 rounded">
-                        <h3 className="font-bold text-blue-800 mb-2">💡 Did you know?</h3>
+                        <h3 className="font-bold text-blue-800 mb-2">
+                          💡 Did you know?
+                        </h3>
                         <p className="text-blue-700 text-sm">
-                          In OOP, methods represent the <strong>behavior</strong> of an object. They are functions that 
-                          operate on the object's data (properties). For example, a Car object might have methods like 
-                          <code>accelerate()</code>, <code>brake()</code>, and <code>honk()</code>.
+                          In OOP, methods represent the{" "}
+                          <strong>behavior</strong> of an object. They are
+                          functions that operate on the object's data
+                          (properties). For example, a Car object might have
+                          methods like
+                          <code>accelerate()</code>, <code>brake()</code>, and{" "}
+                          <code>honk()</code>.
                         </p>
                       </div>
                     </div>
@@ -1437,7 +1821,11 @@ export default function Challenge01() {
               className="mt-6"
             >
               <button
-                onClick={() => allPropertiesRevealed && allMethodsRevealed && setShowBlueprint(true)}
+                onClick={() =>
+                  allPropertiesRevealed &&
+                  allMethodsRevealed &&
+                  setShowBlueprint(true)
+                }
                 disabled={!allPropertiesRevealed || !allMethodsRevealed}
                 className={`w-full px-6 py-4 border-2 border-black font-bold text-lg transition-colors flex items-center justify-center gap-3 ${
                   allPropertiesRevealed && allMethodsRevealed
@@ -1448,7 +1836,9 @@ export default function Challenge01() {
                 <span>🖨️</span>
                 Print Blueprint
                 {(!allPropertiesRevealed || !allMethodsRevealed) && (
-                  <span className="text-sm font-normal ml-2">🔒 Complete all questions</span>
+                  <span className="text-sm font-normal ml-2">
+                    🔒 Complete all questions
+                  </span>
                 )}
               </button>
             </motion.div>
@@ -1457,12 +1847,17 @@ export default function Challenge01() {
       </main>
 
       {/* Blueprint Dialog */}
-      <BlueprintDialog isOpen={showBlueprint} onClose={() => setShowBlueprint(false)} />
+      <BlueprintDialog
+        isOpen={showBlueprint}
+        onClose={() => setShowBlueprint(false)}
+      />
 
       {/* Footer Bar */}
       <footer className="bg-[#E8E8E8] border-t-2 border-black px-4 py-2">
         <div className="flex items-center justify-between">
-          <span className="text-black text-sm">Challenge 01 - Limbus Tech Emulator</span>
+          <span className="text-black text-sm">
+            Challenge 01 - Limbus Tech Emulator
+          </span>
           <div className="flex items-center gap-2">
             <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
               <span className="text-black text-xs">◀</span>
@@ -1556,11 +1951,11 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/70"
         onClick={onClose}
       />
-      
+
       {/* Dialog */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
@@ -1570,7 +1965,9 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
       >
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black">📋 Crane Robot Blueprint</h2>
+          <h2 className="text-xl font-bold text-black">
+            📋 Crane Robot Blueprint
+          </h2>
           <button
             onClick={onClose}
             className="w-8 h-8 bg-[#E0E0E0] border-2 border-black flex items-center justify-center hover:bg-[#D0D0D0]"
@@ -1592,22 +1989,28 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                 <div className="border-2 border-white/30 rounded overflow-hidden">
                   {/* Class Name */}
                   <div className="bg-[#3c3836] border-b-2 border-white/30 p-3 text-center">
-                    <span className="text-[#fabd2f] font-bold text-lg">CraneRobot</span>
+                    <span className="text-[#fabd2f] font-bold text-lg">
+                      CraneRobot
+                    </span>
                   </div>
-                  
+
                   {/* Properties Section */}
                   <div className="border-b-2 border-white/30 p-3">
-                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">Properties</div>
+                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">
+                      Properties
+                    </div>
                     <div className="text-[#ebdbb2] space-y-1">
                       <div>- isPowered: bool</div>
                       <div>- clawPosition: string</div>
                       <div>- isHoldingItem: bool</div>
                     </div>
                   </div>
-                  
+
                   {/* Methods Section */}
                   <div className="p-3">
-                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">Methods</div>
+                    <div className="text-[#b8bb26] mb-2 text-xs uppercase tracking-wider">
+                      Methods
+                    </div>
                     <div className="text-[#83a598] space-y-1">
                       <div>+ PowerOn()</div>
                       <div>+ PowerOff()</div>
@@ -1632,12 +2035,26 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
 
               {/* OOP Concepts */}
               <div className="mt-4 bg-[#3c3836] border border-[#504945] rounded p-4">
-                <h4 className="text-[#fabd2f] font-bold mb-2">OOP Concepts Used</h4>
+                <h4 className="text-[#fabd2f] font-bold mb-2">
+                  OOP Concepts Used
+                </h4>
                 <ul className="text-[#ebdbb2] text-sm space-y-1">
-                  <li>• <strong className="text-[#b8bb26]">Class:</strong> Blueprint for the robot</li>
-                  <li>• <strong className="text-[#b8bb26]">Properties:</strong> Object's state/data</li>
-                  <li>• <strong className="text-[#b8bb26]">Methods:</strong> Object's behavior</li>
-                  <li>• <strong className="text-[#b8bb26]">Encapsulation:</strong> Data + Behavior together</li>
+                  <li>
+                    • <strong className="text-[#b8bb26]">Class:</strong>{" "}
+                    Blueprint for the robot
+                  </li>
+                  <li>
+                    • <strong className="text-[#b8bb26]">Properties:</strong>{" "}
+                    Object's state/data
+                  </li>
+                  <li>
+                    • <strong className="text-[#b8bb26]">Methods:</strong>{" "}
+                    Object's behavior
+                  </li>
+                  <li>
+                    • <strong className="text-[#b8bb26]">Encapsulation:</strong>{" "}
+                    Data + Behavior together
+                  </li>
                 </ul>
               </div>
             </div>
@@ -1653,10 +2070,10 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                   style={vscDarkPlus}
                   customStyle={{
                     margin: 0,
-                    padding: '1rem',
-                    fontSize: '0.85rem',
-                    lineHeight: '1.5',
-                    backgroundColor: '#1d2021',
+                    padding: "1rem",
+                    fontSize: "0.85rem",
+                    lineHeight: "1.5",
+                    backgroundColor: "#1d2021"
                   }}
                 >
                   {csharpCode}
