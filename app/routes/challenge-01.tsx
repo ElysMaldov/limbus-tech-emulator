@@ -21,13 +21,7 @@ type CraneState =
   | "drop-item";
 
 // Sub-states for grab-item sequence
-const GRAB_SUB_STATES = [
-  "moving",
-  "opening",
-  "lowering",
-  "grabbing",
-  "lifting"
-] as const;
+const GRAB_SUB_STATES = ["moving", "opening", "lowering", "grabbing", "lifting"] as const;
 type GrabSubState = (typeof GRAB_SUB_STATES)[number];
 
 // Sub-states for drop-item sequence
@@ -35,11 +29,7 @@ const DROP_SUB_STATES = ["moving", "dropping"] as const;
 type DropSubState = (typeof DROP_SUB_STATES)[number];
 
 // State definitions for UI
-const STATE_DEFINITIONS: {
-  id: CraneState;
-  label: string;
-  description: string;
-}[] = [
+const STATE_DEFINITIONS: { id: CraneState; label: string; description: string }[] = [
   { id: "power-off", label: "Power Off", description: "Crane is powered down" },
   { id: "power-on", label: "Power On", description: "Crane is ready" },
   { id: "move-left", label: "Move Left", description: "Move to item zone" },
@@ -59,9 +49,7 @@ function PowerIndicator({ isOn }: { isOn: boolean }) {
             : "bg-slate-600 shadow-none"
         }`}
       />
-      <span
-        className={`text-xs font-medium ${isOn ? "text-yellow-400" : "text-slate-500"}`}
-      >
+      <span className={`text-xs font-medium ${isOn ? "text-yellow-400" : "text-slate-500"}`}>
         {isOn ? "ON" : "OFF"}
       </span>
     </div>
@@ -79,37 +67,36 @@ function useAnimatedValue(targetValue: number, duration: number) {
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
     }
-
+    
     fromRef.current = currentValue;
     startRef.current = performance.now();
-
+    
     const animate = (now: number) => {
       const elapsed = now - startRef.current;
       const progress = Math.min(elapsed / (duration * 1000), 1);
-
+      
       // easeInOut easing
-      const eased =
-        progress < 0.5
-          ? 2 * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-
+      const eased = progress < 0.5 
+        ? 2 * progress * progress 
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+      
       const value = fromRef.current + (targetValue - fromRef.current) * eased;
       setCurrentValue(value);
-
+      
       if (progress < 1) {
         rafRef.current = requestAnimationFrame(animate);
       }
     };
-
+    
     rafRef.current = requestAnimationFrame(animate);
-
+    
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
     };
   }, [targetValue, duration]);
-
+  
   return currentValue;
 }
 
@@ -135,35 +122,12 @@ function CraneClaw({
       }`}
     >
       {/* Fixed Mounting Bracket at top */}
-      <rect
-        x="30"
-        y="0"
-        width="40"
-        height="16"
-        rx="2"
-        fill="#64748b"
-      />
-      <circle
-        cx="40"
-        cy="8"
-        r="3"
-        fill="#94a3b8"
-      />
-      <circle
-        cx="60"
-        cy="8"
-        r="3"
-        fill="#94a3b8"
-      />
+      <rect x="30" y="0" width="40" height="16" rx="2" fill="#64748b" />
+      <circle cx="40" cy="8" r="3" fill="#94a3b8" />
+      <circle cx="60" cy="8" r="3" fill="#94a3b8" />
 
       {/* Fixed rod stub */}
-      <rect
-        x="48"
-        y="16"
-        width="4"
-        height="8"
-        fill="#64748b"
-      />
+      <rect x="48" y="16" width="4" height="8" fill="#64748b" />
 
       {/* Extending cable - animated */}
       <motion.rect
@@ -181,51 +145,21 @@ function CraneClaw({
         transition={{ duration: TIMING.lowerCrane, ease: "easeInOut" }}
       >
         {/* Central Hub - Outer Ring */}
-        <circle
-          cx="50"
-          cy="54"
-          r="18"
-          fill="#64748b"
-        />
+        <circle cx="50" cy="54" r="18" fill="#64748b" />
 
         {/* Central Hub - Inner Ring */}
-        <circle
-          cx="50"
-          cy="54"
-          r="12"
-          fill="#475569"
-        />
+        <circle cx="50" cy="54" r="12" fill="#475569" />
 
         {/* Central Hub - Center */}
-        <circle
-          cx="50"
-          cy="54"
-          r="6"
-          fill="#94a3b8"
-        />
-        <circle
-          cx="50"
-          cy="54"
-          r="3"
-          fill="#475569"
-        />
+        <circle cx="50" cy="54" r="6" fill="#94a3b8" />
+        <circle cx="50" cy="54" r="3" fill="#475569" />
 
         {/* Left Arm Group - Rotates around hub center */}
         <g transform={`rotate(${animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path
-            d="M50,54 L35,75"
-            stroke="#64748b"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
+          <path d="M50,54 L35,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
           {/* Joint */}
-          <circle
-            cx="32"
-            cy="78"
-            r="4"
-            fill="#64748b"
-          />
+          <circle cx="32" cy="78" r="4" fill="#64748b" />
           {/* Lower claw - curved inward */}
           <path
             d="M32,78 Q22,95 20,115 Q19,128 28,135 Q35,128 32,115 Q30,100 35,82"
@@ -236,19 +170,9 @@ function CraneClaw({
         {/* Right Arm Group - Rotates around hub center */}
         <g transform={`rotate(${-animatedClawAngle}, 50, 54)`}>
           {/* Upper arm segment */}
-          <path
-            d="M50,54 L65,75"
-            stroke="#64748b"
-            strokeWidth="6"
-            strokeLinecap="round"
-          />
+          <path d="M50,54 L65,75" stroke="#64748b" strokeWidth="6" strokeLinecap="round" />
           {/* Joint */}
-          <circle
-            cx="68"
-            cy="78"
-            r="4"
-            fill="#64748b"
-          />
+          <circle cx="68" cy="78" r="4" fill="#64748b" />
           {/* Lower claw - curved inward */}
           <path
             d="M68,78 Q78,95 80,115 Q81,128 72,135 Q65,128 68,115 Q70,100 65,82"
@@ -279,26 +203,26 @@ export function CraneRobot({
   onSubStateChange
 }: CraneRobotProps) {
   const isPowered = state !== "power-off";
-
+  
   // Position: -200 = left (item zone), 200 = right (drop zone), 0 = center
   const [craneX, setCraneX] = useState(0);
-
+  
   // Cable extension: 0 = up, 50 = down
   const [cableExtension, setCableExtension] = useState(0);
-
+  
   // Claw angle: 45 = open, 1 = closed
   const [clawAngle, setClawAngle] = useState(1);
-
+  
   // Is holding item
   const [isHoldingItem, setIsHoldingItem] = useState(false);
-
+  
   // Item position (where it is on the ground when not held)
   const [itemX, setItemX] = useState(-200);
-
+  
   // Track if item was grabbed while crane was at ground level
   // Used to ensure smooth transition when starting to lift
   const [grabbedAtGround, setGrabbedAtGround] = useState(false);
-
+  
   // Sub-state tracking for complex operations
   const [grabSubState, setGrabSubState] = useState<GrabSubState | null>(null);
   const [dropSubState, setDropSubState] = useState<DropSubState | null>(null);
@@ -306,7 +230,7 @@ export function CraneRobot({
   // Execute grab sequence
   const executeGrabSequence = useCallback(async () => {
     if (!isPowered) return;
-
+    
     // Step 1: Move crane and item to item zone
     setGrabSubState("moving");
     onSubStateChange?.("moving");
@@ -314,35 +238,35 @@ export function CraneRobot({
     setItemX(-200);
     setIsHoldingItem(false);
     await delay(TIMING.move * 1000);
-
+    
     // Step 2: Open claws
     setGrabSubState("opening");
     onSubStateChange?.("opening");
     setClawAngle(45);
     await delay(TIMING.openClaws * 1000 + 200);
-
+    
     // Step 3: Lower crane
     setGrabSubState("lowering");
     onSubStateChange?.("lowering");
     setCableExtension(50);
     await delay(TIMING.lowerCrane * 1000);
-
+    
     // Step 4: Close claws (grab)
     setGrabSubState("grabbing");
     onSubStateChange?.("grabbing");
     setClawAngle(1);
     await delay(TIMING.closeClaws * 1000 + 200);
-
+    
     // Attach the item
     setIsHoldingItem(true);
     setGrabbedAtGround(true);
-
+    
     // Step 5: Lift crane
     setGrabSubState("lifting");
     onSubStateChange?.("lifting");
     setCableExtension(0);
     await delay(TIMING.liftCrane * 1000);
-
+    
     setGrabbedAtGround(false);
     setGrabSubState(null);
     onSubStateChange?.(null);
@@ -351,13 +275,13 @@ export function CraneRobot({
   // Execute drop sequence
   const executeDropSequence = useCallback(async () => {
     if (!isPowered) return;
-
+    
     // Step 1: Move to drop zone (if not already there)
     setDropSubState("moving");
     onSubStateChange?.("moving");
     setCraneX(200);
     await delay(TIMING.move * 1000);
-
+    
     // Step 2: Open claws (drop)
     setDropSubState("dropping");
     onSubStateChange?.("dropping");
@@ -367,11 +291,11 @@ export function CraneRobot({
     setGrabbedAtGround(false);
     setItemX(200); // Item stays at drop zone
     await delay(TIMING.openClawsDrop * 1000 + 200);
-
+    
     // Close claws after drop
     setClawAngle(1);
     await delay(TIMING.closeClaws * 1000);
-
+    
     setDropSubState(null);
     onSubStateChange?.(null);
   }, [isPowered, onSubStateChange]);
@@ -390,7 +314,7 @@ export function CraneRobot({
         setDropSubState(null);
         onSubStateChange?.(null);
         break;
-
+        
       case "power-on":
         setCraneX(0);
         setCableExtension(0);
@@ -399,25 +323,25 @@ export function CraneRobot({
         setDropSubState(null);
         onSubStateChange?.(null);
         break;
-
+        
       case "move-left":
         if (isPowered) {
           setCraneX(-200);
         }
         break;
-
+        
       case "move-right":
         if (isPowered) {
           setCraneX(200);
         }
         break;
-
+        
       case "grab-item":
         if (isPowered) {
           executeGrabSequence();
         }
         break;
-
+        
       case "drop-item":
         if (isPowered && !isHoldingItem) {
           // Can't drop if not holding
@@ -428,13 +352,7 @@ export function CraneRobot({
         }
         break;
     }
-  }, [
-    state,
-    isPowered,
-    executeGrabSequence,
-    executeDropSequence,
-    onSubStateChange
-  ]);
+  }, [state, isPowered, executeGrabSequence, executeDropSequence, onSubStateChange]);
 
   // Calculate item position
   const getItemX = () => {
@@ -450,14 +368,14 @@ export function CraneRobot({
     // When cableExtension=50 (lowered): 225 + 50 = 275
     // When cableExtension=0 (lifted): 225 + 0 = 225
     const craneAttachedY = 225 + cableExtension;
-
+    
     // Ground level
     const groundY = 320;
-
+    
     // When crane is lowered enough that the claw would be at/below ground,
     // the item should sit on ground regardless of isHoldingItem (to avoid jumps)
     const isCraneLoweredEnough = cableExtension >= 45; // Near fully lowered
-
+    
     if (isHoldingItem) {
       // Item is held by crane
       // When crane is lowered, item sits on ground (320)
@@ -474,7 +392,7 @@ export function CraneRobot({
   };
 
   const currentStateDef = STATE_DEFINITIONS.find((s) => s.id === state);
-
+  
   // Build status text
   let statusText = currentStateDef?.label ?? "Unknown";
   if (grabSubState) {
@@ -553,12 +471,8 @@ export function CraneRobot({
             <PowerIndicator isOn={isPowered} />
             <div className="h-4 w-px bg-slate-600" />
             <div>
-              <div className="text-xs text-slate-400 uppercase tracking-wider">
-                State
-              </div>
-              <div className="text-sm font-mono text-cyan-400">
-                {statusText}
-              </div>
+              <div className="text-xs text-slate-400 uppercase tracking-wider">State</div>
+              <div className="text-sm font-mono text-cyan-400">{statusText}</div>
             </div>
           </div>
         </div>
@@ -585,9 +499,7 @@ export default function CraneDemo() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center overflow-hidden p-4">
-      <h1 className="text-3xl font-bold text-white mb-8">
-        Crane Robot Control
-      </h1>
+      <h1 className="text-3xl font-bold text-white mb-8">Crane Robot Control</h1>
 
       {/* Crane Display */}
       <CraneRobot
@@ -602,7 +514,7 @@ export default function CraneDemo() {
           {STATE_DEFINITIONS.map((stateDef) => {
             const isActive = craneState === stateDef.id;
             const isDisabled = isStateDisabled(stateDef.id);
-
+            
             return (
               <button
                 key={stateDef.id}
@@ -610,10 +522,9 @@ export default function CraneDemo() {
                 disabled={isDisabled}
                 className={`
                   px-4 py-3 rounded-lg font-medium transition-all text-left
-                  ${
-                    isActive
-                      ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30"
-                      : "bg-slate-700 text-slate-300 hover:bg-slate-600"
+                  ${isActive
+                    ? "bg-cyan-600 text-white shadow-lg shadow-cyan-600/30"
+                    : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                   }
                   ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                 `}
@@ -621,20 +532,14 @@ export default function CraneDemo() {
               >
                 <div className="flex items-center gap-2">
                   {stateDef.id === "power-off" && (
-                    <div
-                      className={`w-3 h-3 rounded-full ${isActive ? "bg-red-400" : "bg-red-600"}`}
-                    />
+                    <div className={`w-3 h-3 rounded-full ${isActive ? "bg-red-400" : "bg-red-600"}`} />
                   )}
                   {stateDef.id === "power-on" && (
-                    <div
-                      className={`w-3 h-3 rounded-full ${isActive ? "bg-green-400" : "bg-green-600"}`}
-                    />
+                    <div className={`w-3 h-3 rounded-full ${isActive ? "bg-green-400" : "bg-green-600"}`} />
                   )}
                   <span>{stateDef.label}</span>
                 </div>
-                <div className="text-xs opacity-70 mt-1">
-                  {stateDef.description}
-                </div>
+                <div className="text-xs opacity-70 mt-1">{stateDef.description}</div>
               </button>
             );
           })}
@@ -670,8 +575,8 @@ export default function CraneDemo() {
             {craneState === "power-off"
               ? "System is powered down. Press 'Power On' to start."
               : subState
-                ? "Executing sequence... Please wait."
-                : "Ready for next command."}
+              ? "Executing sequence... Please wait."
+              : "Ready for next command."}
           </p>
         </div>
       </div>
