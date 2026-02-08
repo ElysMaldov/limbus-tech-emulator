@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import { useState, useEffect } from "react";
 
 // Animation timing constants
@@ -13,68 +13,84 @@ const TIMING = {
   reset: 1,
 };
 
-// Crane SVG Component - Matches the reference design
-function CraneClaw({ clawAngle }: { clawAngle: number }) {
+// Crane SVG Component - Mounting bracket stays fixed, cable extends with animation
+function CraneClaw({ clawAngle, cableExtension }: { clawAngle: number; cableExtension: number }) {
   return (
     <svg 
       width="200" 
-      height="280" 
-      viewBox="0 0 100 140" 
+      height="400" 
+      viewBox="0 0 100 200" 
       className="overflow-visible"
     >
-      {/* Mounting Bracket at top */}
+      {/* Fixed Mounting Bracket at top */}
       <rect x="30" y="0" width="40" height="16" rx="2" fill="#64748b" />
       <circle cx="40" cy="8" r="3" fill="#94a3b8" />
       <circle cx="60" cy="8" r="3" fill="#94a3b8" />
       
-      {/* Vertical Rod */}
-      <rect x="48" y="16" width="4" height="24" fill="#64748b" />
+      {/* Fixed rod stub */}
+      <rect x="48" y="16" width="4" height="8" fill="#64748b" />
       
-      {/* Central Hub - Outer Ring */}
-      <circle cx="50" cy="54" r="18" fill="#64748b" />
+      {/* Extending cable - animated */}
+      <motion.rect 
+        x="48" 
+        y="24" 
+        width="4" 
+        fill="#64748b" 
+        animate={{ height: 24 + cableExtension }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      />
       
-      {/* Central Hub - Inner Ring */}
-      <circle cx="50" cy="54" r="12" fill="#475569" />
-      
-      {/* Central Hub - Center */}
-      <circle cx="50" cy="54" r="6" fill="#94a3b8" />
-      <circle cx="50" cy="54" r="3" fill="#475569" />
-      
-      {/* Left Arm Group - Rotates around hub center */}
-      <g transform={`rotate(${clawAngle}, 50, 54)`}>
-        {/* Upper arm segment */}
-        <path 
-          d="M50,54 L35,75" 
-          stroke="#64748b" 
-          strokeWidth="6" 
-          strokeLinecap="round"
-        />
-        {/* Joint */}
-        <circle cx="32" cy="78" r="4" fill="#64748b" />
-        {/* Lower claw - curved inward */}
-        <path 
-          d="M32,78 Q22,95 20,115 Q19,128 28,135 Q35,128 32,115 Q30,100 35,82" 
-          fill="#64748b"
-        />
-      </g>
-      
-      {/* Right Arm Group - Rotates around hub center */}
-      <g transform={`rotate(${-clawAngle}, 50, 54)`}>
-        {/* Upper arm segment */}
-        <path 
-          d="M50,54 L65,75" 
-          stroke="#64748b" 
-          strokeWidth="6" 
-          strokeLinecap="round"
-        />
-        {/* Joint */}
-        <circle cx="68" cy="78" r="4" fill="#64748b" />
-        {/* Lower claw - curved inward */}
-        <path 
-          d="M68,78 Q78,95 80,115 Q81,128 72,135 Q65,128 68,115 Q70,100 65,82" 
-          fill="#64748b"
-        />
-      </g>
+      {/* Moving part - Hub and claws - animated */}
+      <motion.g 
+        animate={{ y: cableExtension }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        {/* Central Hub - Outer Ring */}
+        <circle cx="50" cy="54" r="18" fill="#64748b" />
+        
+        {/* Central Hub - Inner Ring */}
+        <circle cx="50" cy="54" r="12" fill="#475569" />
+        
+        {/* Central Hub - Center */}
+        <circle cx="50" cy="54" r="6" fill="#94a3b8" />
+        <circle cx="50" cy="54" r="3" fill="#475569" />
+        
+        {/* Left Arm Group - Rotates around hub center */}
+        <g transform={`rotate(${clawAngle}, 50, 54)`}>
+          {/* Upper arm segment */}
+          <path 
+            d="M50,54 L35,75" 
+            stroke="#64748b" 
+            strokeWidth="6" 
+            strokeLinecap="round"
+          />
+          {/* Joint */}
+          <circle cx="32" cy="78" r="4" fill="#64748b" />
+          {/* Lower claw - curved inward */}
+          <path 
+            d="M32,78 Q22,95 20,115 Q19,128 28,135 Q35,128 32,115 Q30,100 35,82" 
+            fill="#64748b"
+          />
+        </g>
+        
+        {/* Right Arm Group - Rotates around hub center */}
+        <g transform={`rotate(${-clawAngle}, 50, 54)`}>
+          {/* Upper arm segment */}
+          <path 
+            d="M50,54 L65,75" 
+            stroke="#64748b" 
+            strokeWidth="6" 
+            strokeLinecap="round"
+          />
+          {/* Joint */}
+          <circle cx="68" cy="78" r="4" fill="#64748b" />
+          {/* Lower claw - curved inward */}
+          <path 
+            d="M68,78 Q78,95 80,115 Q81,128 72,135 Q65,128 68,115 Q70,100 65,82" 
+            fill="#64748b"
+          />
+        </g>
+      </motion.g>
     </svg>
   );
 }
@@ -136,7 +152,9 @@ export default function CraneDemo() {
   };
 
   const getClawAngle = () => {
-    if (animationPhase === 2 || animationPhase === 7) return 45;
+    // Open during opening phase (2), lowering (3), and dropping (7)
+    if (animationPhase === 2 || animationPhase === 3 || animationPhase === 7) return 45;
+    // Closed during grabbing (4), lifting (5), and moving (6)
     return 1;
   };
 
@@ -151,10 +169,14 @@ export default function CraneDemo() {
   };
 
   const getItemY = () => {
+    // When holding the item, it moves with the crane
     if (isHoldingItem) {
-      return getCraneY() + 230;
+      // Base ground position (320) minus how much the crane has lowered
+      // When crane is at getCraneY() = 120 (lowered), item is at ground (320)
+      // When crane is at getCraneY() = 0 (lifted), item is lifted by 120
+      return 320 - (120 - getCraneY());
     }
-    if (animationPhase >= 7) return 320;
+    // Item stays on ground when not being held
     return 320;
   };
 
@@ -180,7 +202,11 @@ export default function CraneDemo() {
           }}
           transition={{
             x: { duration: isHoldingItem && animationPhase === 6 ? TIMING.moveToDrop : 0.3, ease: "easeInOut" },
-            y: { duration: 0.3, ease: "easeInOut" },
+            y: { 
+              duration: isHoldingItem && (animationPhase === 5 || animationPhase === 3) ? TIMING.liftCrane : 
+                        animationPhase === 3 || animationPhase === 5 ? TIMING.lowerCrane : 0.3, 
+              ease: "easeInOut" 
+            },
           }}
           style={{ left: 0, top: 0 }}
         >
@@ -201,36 +227,8 @@ export default function CraneDemo() {
           }}
           style={{ top: 20, left: 0 }}
         >
-          {/* Extend rod based on phase */}
-          <motion.div
-            animate={{ y: getCraneY() }}
-            transition={{
-              duration: animationPhase === 3 ? TIMING.lowerCrane : animationPhase === 5 ? TIMING.liftCrane : 0.3,
-              ease: "easeInOut",
-            }}
-          >
-            {/* Extended rod section */}
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2 w-1 bg-slate-500 origin-top"
-              animate={{ height: getCraneY() }}
-              transition={{
-                duration: animationPhase === 3 ? TIMING.lowerCrane : animationPhase === 5 ? TIMING.liftCrane : 0.3,
-                ease: "easeInOut",
-              }}
-              style={{ top: 40, left: 100 }}
-            />
-            
-            {/* The Crane SVG */}
-            <motion.div
-              animate={{ y: getCraneY() }}
-              transition={{
-                duration: animationPhase === 3 ? TIMING.lowerCrane : animationPhase === 5 ? TIMING.liftCrane : 0.3,
-                ease: "easeInOut",
-              }}
-            >
-              <CraneClaw clawAngle={getClawAngle()} />
-            </motion.div>
-          </motion.div>
+          {/* The Crane SVG - mounting bracket stays fixed, cable extends */}
+          <CraneClaw clawAngle={getClawAngle()} cableExtension={getCraneY()} />
         </motion.div>
 
         {/* Ground */}
