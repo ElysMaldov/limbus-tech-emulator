@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from "react";
 import { Link } from "react-router";
 
 // Animation timing constants
@@ -271,7 +271,7 @@ interface CraneRobotProps {
   onSubStateChange?: (subState: string | null) => void;
 }
 
-export function CraneRobot({
+function CraneRobotInner({
   state,
   width = 800,
   height = 500,
@@ -568,10 +568,40 @@ export function CraneRobot({
   );
 }
 
+// Wrapper to ensure client-only rendering for framer-motion
+function CraneRobot(props: CraneRobotProps) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    // Return placeholder during SSR
+    return (
+      <div
+        className={`relative bg-[#F5F5F5] border-2 border-black overflow-hidden flex items-center justify-center ${props.className || ""}`}
+        style={{ width: props.width || 800, height: props.height || 500 }}
+      >
+        <div className="text-black/50">Loading...</div>
+      </div>
+    );
+  }
+
+  return <CraneRobotInner {...props} />;
+}
+
+export { CraneRobot };
+
 // Demo page with controls
 export default function CraneDemo() {
   const [craneState, setCraneState] = useState<CraneState>("power-off");
   const [subState, setSubState] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleStateChange = (newState: CraneState) => {
     setCraneState(newState);
@@ -583,6 +613,31 @@ export default function CraneDemo() {
     if (subState !== null) return true; // Disable during sequences
     return false;
   };
+
+  // Prevent hydration mismatch by not rendering interactive content until client-side
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-[#F0F0F0] flex flex-col">
+        <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-black tracking-wide">
+              Crane Robot Control
+            </h1>
+          </div>
+        </header>
+        <nav className="bg-[#F0F0F0] border-b-2 border-black px-4 py-2">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="text-black hover:underline tracking-wider">Home</Link>
+            <span className="font-bold text-black tracking-wider">Crane</span>
+            <Link to="/challenge-01" className="text-black hover:underline tracking-wider">Challenge</Link>
+          </div>
+        </nav>
+        <main className="flex-1 bg-white border-2 border-black m-4 p-8 flex items-center justify-center">
+          <div className="text-black">Loading...</div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#C0C0C0] flex flex-col">
