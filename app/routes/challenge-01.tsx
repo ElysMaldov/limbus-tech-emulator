@@ -589,40 +589,7 @@ export default function Challenge01() {
               })}
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-[#C0C0C0] border-2 border-black px-4 py-3">
-              <div className="text-black font-medium mb-2">Quick Actions</div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleStateChange("power-off")}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white border-2 border-black font-medium transition-colors"
-                >
-                  Emergency Stop
-                </button>
-                <button
-                  onClick={() => handleStateChange("power-on")}
-                  disabled={craneState !== "power-off"}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white border-2 border-black font-medium transition-colors"
-                >
-                  Power On
-                </button>
-              </div>
-            </div>
 
-            {/* Status Info */}
-            <div className="bg-[#C0C0C0] border-2 border-black px-4 py-3 text-sm text-black">
-              <p>
-                <strong className="text-black">Current State:</strong>{" "}
-                {craneState} {subState && `→ ${subState}`}
-              </p>
-              <p className="mt-1">
-                {craneState === "power-off"
-                  ? "System is powered down. Press 'Power On' to start."
-                  : subState
-                  ? "Executing sequence... Please wait."
-                  : "Ready for next command."}
-              </p>
-            </div>
           </div>
         </div>
       </main>
