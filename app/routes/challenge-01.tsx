@@ -4,12 +4,12 @@ import { Link } from "react-router";
 
 // Animation timing constants
 const TIMING = {
-  move: 1.5,
-  openClaws: 0.5,
-  lowerCrane: 1,
-  closeClaws: 0.5,
-  liftCrane: 1,
-  openClawsDrop: 0.5
+  move: 0.5,
+  openClaws: 0.2,
+  lowerCrane: 0.3,
+  closeClaws: 0.2,
+  liftCrane: 0.3,
+  openClawsDrop: 0.2
 };
 
 // Crane states
