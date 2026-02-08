@@ -750,7 +750,10 @@ export default function Challenge01() {
           <Link to="/crane" className="text-black hover:underline tracking-wider">
             Crane
           </Link>
-          <span className="font-bold text-black tracking-wider">Challenge</span>
+          <span className="font-bold text-black tracking-wider">Challenge 01</span>
+          <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
+            Challenge 02
+          </Link>
         </div>
       </nav>
 
