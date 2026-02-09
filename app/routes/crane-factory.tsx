@@ -27,8 +27,8 @@ const STATE_DEFINITIONS: {
   label: string;
   description: string;
 }[] = [
-  { id: "power-off", label: "Power Off", description: "Crane is powered down" },
-  { id: "power-on", label: "Power On", description: "Crane is ready" },
+  { id: "power-off", label: "Power Off", description: "Claw is powered down" },
+  { id: "power-on", label: "Power On", description: "Claw is ready" },
   { id: "move-left", label: "Move Left", description: "Move to item zone" },
   { id: "move-right", label: "Move Right", description: "Move to drop zone" },
   { id: "grab-item", label: "Grab Item", description: "Grab sequence" },
@@ -553,7 +553,7 @@ export default function CraneFactory() {
             Home
           </Link>
           <Link to="/crane" className="text-black hover:underline tracking-wider">
-            Crane
+            Claw
           </Link>
           <Link to="/conveyor" className="text-black hover:underline tracking-wider">
             Conveyor
@@ -626,11 +626,11 @@ export default function CraneFactory() {
             className="px-8 py-4 border-2 border-black font-bold text-lg transition-colors flex items-center gap-3 bg-[#F7931E] text-black hover:bg-[#E08000]"
           >
             <span>🏗️</span>
-            Manufacture New Crane
+            Manufacture New Claw
           </motion.button>
           
           <div className="text-gray-600">
-            <span className="font-bold text-[#F7931E]">{cranes.length}</span> cranes created
+            <span className="font-bold text-[#F7931E]">{cranes.length}</span> claws created
           </div>
         </div>
 
@@ -645,7 +645,7 @@ export default function CraneFactory() {
               <div className="text-6xl mb-4">🏭</div>
               <h3 className="text-xl font-bold text-gray-700 mb-2">Factory is Empty</h3>
               <p className="text-gray-500">
-                Click "Manufacture New Crane" to create your first crane instance!
+                Click "Manufacture New Claw" to create your first claw instance!
               </p>
             </motion.div>
           ) : (
@@ -685,7 +685,7 @@ export default function CraneFactory() {
             className="max-w-6xl mx-auto mt-8"
           >
             <div className="bg-[#1d2021] border-2 border-black p-6 rounded overflow-hidden">
-              <h3 className="text-[#F7931E] font-bold mb-4">📋 Behind the Scenes: The Crane Class</h3>
+              <h3 className="text-[#F7931E] font-bold mb-4">📋 Behind the Scenes: The Claw Class</h3>
               <pre className="text-sm text-gray-300 overflow-x-auto">
                 <code>{`class Crane {
   // Each instance has its own properties
@@ -717,7 +717,7 @@ const crane2 = new Crane("2");  // Instance #2 with its own data
       <footer className="bg-[#E8E8E8] border-t-2 border-black px-4 py-2">
         <div className="flex items-center justify-between">
           <span className="text-black text-sm">
-            Crane Factory - Limbus Tech Emulator
+            Claw Factory - Limbus Tech Emulator
           </span>
           <div className="flex items-center gap-2">
             <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
