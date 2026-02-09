@@ -149,7 +149,7 @@ function AssemblyLineCard({
       <div className={`border-b-2 border-black px-4 py-2 flex items-center justify-between ${line.isDestroyed ? 'bg-red-900' : 'bg-[#F7931E]'}`}>
         <div className="flex items-center gap-3">
           <span className={`font-bold ${line.isDestroyed ? 'text-white line-through' : 'text-black'}`}>{line.name}</span>
-          <span className={`text-xs ${line.isDestroyed ? 'text-white/70' : 'text-black/70'}`}>({line.robots.length} robots)</span>
+          <span className={`text-xs ${line.isDestroyed ? 'text-white/70' : 'text-black/70'}`}>({line.robots.length} machines)</span>
           {line.isDestroyed && (
             <span className="text-xs bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">
               DESTROYED
@@ -162,7 +162,7 @@ function AssemblyLineCard({
             <button
               onClick={() => onSelfDestruct(line.id)}
               className="px-3 py-1 text-xs font-bold border-2 border-black bg-orange-600 text-white hover:bg-orange-700 transition-colors"
-              title="Self destruct - breaks all robots in this line"
+              title="Self destruct - breaks all machines in this line"
             >
               💥 SELF DESTRUCT
             </button>
@@ -193,53 +193,53 @@ function AssemblyLineCard({
         </div>
       </div>
 
-      {/* Robot Chain */}
+      {/* Machine Chain */}
       <div className="p-4">
         {line.robots.length === 0 ? (
           <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300">
-            <p className="text-sm">No robots yet. Add one to start!</p>
+            <p className="text-sm">No machines yet. Add one to start!</p>
           </div>
         ) : (
           <div className="flex gap-3 justify-start overflow-x-auto pb-2 px-2">
-            {line.robots.map((robot, index) => (
-              <div key={robot.id} className="flex items-center gap-2">
-                <div className={`flex-shrink-0 ${robot.type === "crane" ? "w-64 sm:w-80 md:w-96" : "w-48 sm:w-56 md:w-64"}`}>
-                  {/* Robot Header */}
-                  <div className={`border-x-2 border-t-2 border-black px-3 py-1.5 ${robot.isDestroyed ? 'bg-red-900' : 'bg-[#E0E0E0]'}`}>
+            {line.robots.map((machine, index) => (
+              <div key={machine.id} className="flex items-center gap-2">
+                <div className={`flex-shrink-0 ${machine.type === "crane" ? "w-64 sm:w-80 md:w-96" : "w-48 sm:w-56 md:w-64"}`}>
+                  {/* Machine Header */}
+                  <div className={`border-x-2 border-t-2 border-black px-3 py-1.5 ${machine.isDestroyed ? 'bg-red-900' : 'bg-[#E0E0E0]'}`}>
                     <div className="flex items-center justify-between">
-                      <span className={`text-[10px] font-mono truncate ${robot.isDestroyed ? 'text-white line-through' : ''}`}>{robot.serialNumber}</span>
-                      <div className={`w-2.5 h-2.5 rounded-full ${robot.isDestroyed ? 'bg-red-600' : robot.state === "working" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
+                      <span className={`text-[10px] font-mono truncate ${machine.isDestroyed ? 'text-white line-through' : ''}`}>{machine.serialNumber}</span>
+                      <div className={`w-2.5 h-2.5 rounded-full ${machine.isDestroyed ? 'bg-red-600' : machine.state === "working" ? "bg-green-500 animate-pulse" : "bg-gray-400"}`} />
                     </div>
                   </div>
                   
-                  {/* Robot Visual - Using actual components */}
+                  {/* Machine Visual - Using actual components */}
                   <div className="border-2 border-black">
-                    {robot.type === "crane" ? (
+                    {machine.type === "crane" ? (
                       <LoopingCrane
                         isPowered={line.isRunning && !line.isDestroyed}
-                        serialNumber={robot.serialNumber}
+                        serialNumber={machine.serialNumber}
                         hideStatusOverlay={true}
                         showStatus={false}
-                        isBroken={robot.isDestroyed}
+                        isBroken={machine.isDestroyed}
                         className="h-52"
                       />
                     ) : (
                       <LoopingConveyor
                         isPowered={line.isRunning && !line.isDestroyed}
-                        serialNumber={robot.serialNumber}
+                        serialNumber={machine.serialNumber}
                         hideStatusOverlay={true}
                         showStatus={false}
                         itemCount={3}
-                        isBroken={robot.isDestroyed}
+                        isBroken={machine.isDestroyed}
                         className="h-40"
                       />
                     )}
                   </div>
                   
                   {/* Status badge */}
-                  <div className={`border-x-2 border-b-2 border-black px-3 py-1.5 ${robot.isDestroyed ? 'bg-red-900' : 'bg-[#F0F0F0]'}`}>
-                    <div className={`text-[10px] text-center uppercase font-bold ${robot.isDestroyed ? 'text-red-400' : robot.state === "working" ? "text-green-600" : "text-gray-500"}`}>
-                      {robot.isDestroyed ? "DESTROYED" : robot.state}
+                  <div className={`border-x-2 border-b-2 border-black px-3 py-1.5 ${machine.isDestroyed ? 'bg-red-900' : 'bg-[#F0F0F0]'}`}>
+                    <div className={`text-[10px] text-center uppercase font-bold ${machine.isDestroyed ? 'text-red-400' : machine.state === "working" ? "text-green-600" : "text-gray-500"}`}>
+                      {machine.isDestroyed ? "DESTROYED" : machine.state}
                     </div>
                   </div>
                 </div>
@@ -283,10 +283,10 @@ function AssemblyLineCard({
         </div>
       )}
 
-      {/* Add Robot Buttons */}
+      {/* Add Machine Buttons */}
       <div className={`border-t-2 border-black px-4 py-3 ${line.isDestroyed ? 'bg-red-900/20' : 'bg-[#F5F5F5]'}`}>
         <div className={`text-xs mb-2 uppercase tracking-wider font-bold ${line.isDestroyed ? 'text-red-800' : 'text-gray-600'}`}>
-          {line.isDestroyed ? '🔧 Repairs needed - Remove line to rebuild' : 'Add Robot:'}
+          {line.isDestroyed ? '🔧 Repairs needed - Remove line to rebuild' : 'Add Machine:'}
         </div>
         <div className="flex gap-2">
           <button
@@ -311,7 +311,7 @@ function AssemblyLineCard({
           </button>
         </div>
         {line.robots.length >= 6 && (
-          <p className="text-[10px] text-red-500 mt-1 text-center">Maximum 6 robots per line</p>
+          <p className="text-[10px] text-red-500 mt-1 text-center">Maximum 6 machines per line</p>
         )}
       </div>
     </motion.div>
@@ -492,9 +492,9 @@ export default function AssemblyLine() {
                   <strong>internal state</strong> and communicates with other objects through well-defined interfaces.
                 </p>
                 <p className="text-gray-700">
-                  Watch how the <strong>conveyor robots</strong> pass items between each other, 
-                  and how <strong>claw robots</strong> can pick up items from adjacent conveyors. 
-                  Each robot is an independent instance handling its own state!
+                  Watch how the <strong>conveyor machines</strong> pass items between each other, 
+                  and how <strong>claw machines</strong> can pick up items from adjacent conveyors. 
+                  Each machine is an independent instance handling its own state!
                 </p>
               </div>
               <div className="bg-[#F8F8F8] border-2 border-black p-4">
@@ -522,7 +522,7 @@ export default function AssemblyLine() {
           </div>
         </div>
 
-        {/* Demo Section - Looping Robots */}
+        {/* Demo Section - Looping Machines */}
         <div className="max-w-6xl mx-auto mb-8">
           <div className="bg-[#E8E8E8] border-2 border-black p-4">
             <div className="flex items-center justify-between mb-4">
@@ -637,7 +637,7 @@ export default function AssemblyLine() {
                 📋 Behind the Scenes: Object Interaction
               </h3>
               <pre className="text-sm text-gray-300 overflow-x-auto">
-                <code>{`// Each robot is an independent object with its own state
+                <code>{`// Each machine is an independent object with its own state
 class Conveyor {
   id: string;
   itemPosition: number;

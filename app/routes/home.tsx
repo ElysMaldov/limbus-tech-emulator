@@ -4,7 +4,7 @@ import { Link } from "react-router";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Limbus Tech Emulator" },
-    { name: "description", content: "Limbus Tech Emulator - Claw Robot Control" },
+    { name: "description", content: "Limbus Tech Emulator - Claw Machine Control" },
   ];
 }
 
@@ -114,7 +114,7 @@ export default function Home() {
                   <path d="M2 15h10" />
                   <path d="m5 12-3 3 3 3" />
                 </svg>
-                Claw Robot Control
+                Claw Machine Control
               </Link>
 
               <Link
@@ -138,7 +138,7 @@ export default function Home() {
                   <path d="M6 12v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" />
                   <path d="m9 8 3-3 3 3" />
                 </svg>
-                Conveyor Robot Demo
+                Conveyor Machine Demo
               </Link>
 
               <Link
@@ -162,7 +162,7 @@ export default function Home() {
                   <path d="M3 5h4" />
                   <path d="M17 19h4" />
                 </svg>
-                Challenge 01 - Build a Robot
+                Challenge 01 - Build a Machine
               </Link>
 
               <Link

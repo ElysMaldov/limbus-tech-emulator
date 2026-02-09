@@ -158,7 +158,7 @@ function ConveyorBelt({
   );
 }
 
-// Main Conveyor Robot Component
+// Main Conveyor Machine Component
 interface ConveyorRobotProps {
   state: ConveyorState;
   showStatus?: boolean;
@@ -304,7 +304,7 @@ function ConveyorRobotInner({
       {/* Ground/Support surface */}
       <div className="absolute bottom-0 left-0 right-0 h-4 sm:h-6 md:h-8 bg-[#C0C0C0] border-t border-black flex items-center justify-center">
         <span className="text-[10px] sm:text-xs md:text-sm font-bold text-[#D06000]">
-          Conveyor Robot #{serialNumber}
+          Conveyor Machine #{serialNumber}
         </span>
       </div>
 

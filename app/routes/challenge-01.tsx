@@ -263,7 +263,7 @@ function CraneClaw({
   );
 }
 
-// Main Claw Robot Component
+// Main Claw Machine Component
 interface CraneRobotProps {
   state: CraneState;
   width?: number;
@@ -577,7 +577,7 @@ export function CraneRobot({
               exit={{ y: -20, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              Claw Robot #{serialNumber}
+              Claw Machine #{serialNumber}
             </motion.span>
           ) : (
             <motion.span
@@ -586,7 +586,7 @@ export function CraneRobot({
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              Claw Robot #???
+              Claw Machine #???
             </motion.span>
           )}
         </AnimatePresence>
@@ -1088,7 +1088,7 @@ export default function Challenge01() {
       <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-black tracking-wide">
-            Challenge 01 - Build a Robot with OOP
+            Challenge 01 - Build a Machine with OOP
           </h1>
           {/* Window-style buttons */}
           <div className="flex items-center gap-1">
@@ -1141,10 +1141,10 @@ export default function Challenge01() {
       {/* Main Content - Two Column Layout */}
       <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-visible">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Left Column - Claw Robot View */}
+          {/* Left Column - Claw Machine View */}
           <div className="flex flex-col lg:sticky lg:top-6 z-10">
             <h2 className="text-xl font-bold text-black mb-4 text-center">
-              Claw Robot
+              Claw Machine
             </h2>
 
             {/* Crane Display */}
@@ -1508,14 +1508,14 @@ export default function Challenge01() {
                         <strong>properties</strong> are the object's
                         characteristics - the data that an object needs to keep
                         track of. Help define the properties for our Crane
-                        Robot!
+                        Machine!
                       </p>
 
                       <div className="space-y-4">
                         {/* Question 1: Serial Number */}
                         <PropertyQuestion
                           questionNumber={1}
-                          question="The robot needs a unique identifier to distinguish it from other robots. What property should store this identifier?"
+                          question="The machine needs a unique identifier to distinguish it from other machines. What property should store this identifier?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("serial") ||
@@ -1524,7 +1524,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealProperty("serial")}
                           isRevealed={revealedProperties.serial}
-                          errorMessage="The robot should have a unique identifier like a serial number."
+                          errorMessage="The machine should have a unique identifier like a serial number."
                           revealedContent={
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-mono font-bold text-[#D06000]">
@@ -1540,12 +1540,12 @@ export default function Challenge01() {
                         {/* Question 2: Power */}
                         <PropertyQuestion
                           questionNumber={2}
-                          question="The robot needs to know if it's turned on or off. What property name should we use to store this?"
+                          question="The machine needs to know if it's turned on or off. What property name should we use to store this?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) => answer.includes("power")}
                           onCorrect={() => revealProperty("power")}
                           isRevealed={revealedProperties.power}
-                          errorMessage="The robot should know if its power is on or not."
+                          errorMessage="The machine should know if its power is on or not."
                           revealedContent={
                             <div className="flex items-center gap-2">
                               <div
@@ -1570,14 +1570,14 @@ export default function Challenge01() {
                         {/* Question 3: Position */}
                         <PropertyQuestion
                           questionNumber={3}
-                          question="The robot needs to track where its claw is located (left, center, or right). What property name should we use?"
+                          question="The machine needs to track where its claw is located (left, center, or right). What property name should we use?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("position")
                           }
                           onCorrect={() => revealProperty("position")}
                           isRevealed={revealedProperties.position}
-                          errorMessage="The robot should know the position of its claw."
+                          errorMessage="The machine should know the position of its claw."
                           revealedContent={
                             <div className="text-xl font-mono font-bold text-[#D06000]">
                               {getPositionLabel(cranePosition)}
@@ -1591,12 +1591,12 @@ export default function Challenge01() {
                         {/* Question 4: Hold */}
                         <PropertyQuestion
                           questionNumber={4}
-                          question="The robot needs to remember whether it's currently holding an item or not. What property name should we use?"
+                          question="The machine needs to remember whether it's currently holding an item or not. What property name should we use?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) => answer.includes("hold")}
                           onCorrect={() => revealProperty("hold")}
                           isRevealed={revealedProperties.hold}
-                          errorMessage="The robot should know if it's holding an item."
+                          errorMessage="The machine should know if it's holding an item."
                           revealedContent={
                             <div className="flex items-center gap-2">
                               <div
@@ -1632,7 +1632,7 @@ export default function Challenge01() {
                             </h3>
                             <p className="text-green-700 text-sm">
                               You've successfully defined the properties for the
-                              Claw Robot! In OOP terms, you just created the
+                              Claw Machine! In OOP terms, you just created the
                               <strong> properties</strong> of the class. The
                               METHODS section is now unlocked!
                             </p>
@@ -1648,7 +1648,7 @@ export default function Challenge01() {
                         <p className="text-blue-700 text-sm">
                           In OOP, properties represent the{" "}
                           <strong>state</strong> of an object. Just like our
-                          claw robot tracks power, position, and whether it's
+                          claw machine tracks power, position, and whether it's
                           holding something, real-world objects have properties
                           too. For example, a Car object might have properties
                           like <code>color</code>, <code>speed</code>, and{" "}
@@ -1699,14 +1699,14 @@ export default function Challenge01() {
                         In Object-Oriented Programming, <strong>methods</strong>{" "}
                         (object functions/behavior) are the actions that an
                         object can perform. They define the behavior of the
-                        object. Help define the methods for our Claw Robot!
+                        object. Help define the methods for our Claw Machine!
                       </p>
 
                       <div className="space-y-4">
                         {/* Method 1: Power On */}
                         <PropertyQuestion
                           questionNumber={1}
-                          question="What method should we call to turn the robot on and make it ready to operate?"
+                          question="What method should we call to turn the machine on and make it ready to operate?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("power") &&
@@ -1714,7 +1714,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealMethod("power-on")}
                           isRevealed={revealedMethods["power-on"]}
-                          errorMessage="The robot needs a method to power on."
+                          errorMessage="The machine needs a method to power on."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1730,7 +1730,7 @@ export default function Challenge01() {
                         {/* Method 2: Power Off */}
                         <PropertyQuestion
                           questionNumber={2}
-                          question="What method should we call to turn the robot off and shut it down?"
+                          question="What method should we call to turn the machine off and shut it down?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("power") &&
@@ -1738,7 +1738,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealMethod("power-off")}
                           isRevealed={revealedMethods["power-off"]}
-                          errorMessage="The robot needs a method to power off."
+                          errorMessage="The machine needs a method to power off."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1761,7 +1761,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealMethod("move-left")}
                           isRevealed={revealedMethods["move-left"]}
-                          errorMessage="The robot needs a method to move left toward the item."
+                          errorMessage="The machine needs a method to move left toward the item."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1784,7 +1784,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealMethod("move-right")}
                           isRevealed={revealedMethods["move-right"]}
-                          errorMessage="The robot needs a method to move right toward the drop zone."
+                          errorMessage="The machine needs a method to move right toward the drop zone."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1800,14 +1800,14 @@ export default function Challenge01() {
                         {/* Method 5: Grab Item */}
                         <PropertyQuestion
                           questionNumber={5}
-                          question="What method should make the robot grab an item with its claw?"
+                          question="What method should make the machine grab an item with its claw?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("grab") || answer.includes("pick")
                           }
                           onCorrect={() => revealMethod("grab-item")}
                           isRevealed={revealedMethods["grab-item"]}
-                          errorMessage="The robot needs a method to grab items."
+                          errorMessage="The machine needs a method to grab items."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1823,7 +1823,7 @@ export default function Challenge01() {
                         {/* Method 6: Drop Item */}
                         <PropertyQuestion
                           questionNumber={6}
-                          question="What method should make the robot release/drop the item it's holding?"
+                          question="What method should make the machine release/drop the item it's holding?"
                           placeholder="Type your answer..."
                           validateAnswer={(answer) =>
                             answer.includes("drop") ||
@@ -1831,7 +1831,7 @@ export default function Challenge01() {
                           }
                           onCorrect={() => revealMethod("drop-item")}
                           isRevealed={revealedMethods["drop-item"]}
-                          errorMessage="The robot needs a method to drop items."
+                          errorMessage="The machine needs a method to drop items."
                           type="method"
                           revealedContent={
                             <div className="flex items-center gap-2">
@@ -1858,9 +1858,9 @@ export default function Challenge01() {
                             </h3>
                             <p className="text-green-700 text-sm">
                               You've defined all the methods for the Crane
-                              Robot! In OOP terms, you just created the
+                              Machine! In OOP terms, you just created the
                               <strong> behaviors</strong> of the class. All
-                              robot controls are now unlocked!
+                              machine controls are now unlocked!
                             </p>
                           </motion.div>
                         )}
@@ -2039,7 +2039,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-black">
-            📋 Claw Robot Blueprint
+            📋 Claw Machine Blueprint
           </h2>
           <button
             onClick={onClose}
@@ -2114,7 +2114,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                 <ul className="text-[#ebdbb2] text-sm space-y-1">
                   <li>
                     • <strong className="text-[#b8bb26]">Class:</strong>{" "}
-                    Blueprint for the robot
+                    Blueprint for the machine
                   </li>
                   <li>
                     • <strong className="text-[#b8bb26]">Properties:</strong>{" "}

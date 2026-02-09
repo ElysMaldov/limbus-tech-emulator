@@ -590,7 +590,7 @@ export default function CraneFactory() {
                   independent object <strong>instances</strong>.
                 </p>
                 <p className="text-gray-700">
-                  Each claw robot below is created from the same <code className="bg-gray-100 px-1 py-0.5 rounded">Claw</code> class, 
+                  Each claw machine below is created from the same <code className="bg-gray-100 px-1 py-0.5 rounded">Claw</code> class, 
                   but each instance manages its <strong>own data independently</strong>. 
                   Operating one claw does not affect the others!
                 </p>

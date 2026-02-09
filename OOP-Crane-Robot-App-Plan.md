@@ -1,7 +1,7 @@
-# OOP Claw Robot Teaching App - Plan
+# OOP Claw Machine Teaching App - Plan
 
 ## Overview
-An interactive web application that teaches Object-Oriented Programming (OOP) concepts through a gamified crossword puzzle experience featuring a controllable 2D claw robot.
+An interactive web application that teaches Object-Oriented Programming (OOP) concepts through a gamified crossword puzzle experience featuring a controllable 2D claw machine.
 
 ## Core Concepts to Teach
 
@@ -32,15 +32,15 @@ An interactive web application that teaches Object-Oriented Programming (OOP) co
 **Crossword Fields**:
 | Property | Type | Visual Effect When Filled |
 |----------|------|---------------------------|
-| `name` | string | Robot displays "Claw Robot" label below it |
-| `isPoweredOn` | boolean | Robot's LED emits green light (was off/dark) |
-| `coordinates` | object (x, y) | Robot's arm moves to specified position |
-| `isHandOpen` | boolean | Robot's claw opens or closes |
+| `name` | string | Machine displays "Claw Machine" label below it |
+| `isPoweredOn` | boolean | Machine's LED emits green light (was off/dark) |
+| `coordinates` | object (x, y) | Machine's arm moves to specified position |
+| `isHandOpen` | boolean | Machine's claw opens or closes |
 
 **Flow**:
-1. User sees a dark/inactive 2D claw robot
+1. User sees a dark/inactive 2D claw machine
 2. User fills in each property in crossword format
-3. Each correct entry triggers immediate visual feedback on the robot
+3. Each correct entry triggers immediate visual feedback on the machine
 4. When all properties filled → "Object Created!" celebration
 
 ---
@@ -52,14 +52,14 @@ An interactive web application that teaches Object-Oriented Programming (OOP) co
 **Crossword Fields**:
 | Method | Action | Visual Effect |
 |--------|--------|---------------|
-| `powerOff()` | void | Robot LED turns off, goes inactive |
-| `powerOn()` | void | Robot LED turns green, becomes active |
-| `grabItem()` | void | Robot arm lowers, claw closes on ball, lifts up |
-| `move(x, y)` | void | Robot arm moves from left to right smoothly |
-| `dropItem()` | void | Robot claw opens, ball drops |
+| `powerOff()` | void | Machine LED turns off, goes inactive |
+| `powerOn()` | void | Machine LED turns green, becomes active |
+| `grabItem()` | void | Machine arm lowers, claw closes on ball, lifts up |
+| `move(x, y)` | void | Machine arm moves from left to right smoothly |
+| `dropItem()` | void | Machine claw opens, ball drops |
 
 **Flow**:
-1. Same robot from Phase 1, now fully operational
+1. Same machine from Phase 1, now fully operational
 2. User fills in method names in crossword
 3. Each method triggers animation sequence:
    - `grabItem`: Arm moves down → claw closes → lifts ball up
@@ -76,14 +76,14 @@ An interactive web application that teaches Object-Oriented Programming (OOP) co
 **New Fields Added**:
 | Property | Type | Visual Effect |
 |----------|------|---------------|
-| `BIOSPassword` | string | Text displays near robot |
-| `selfDestruct` | function | Red button appears below robot |
+| `BIOSPassword` | string | Text displays near machine |
+| `selfDestruct` | function | Red button appears below machine |
 
 **Flow**:
-1. Show the two new fields added to the robot
+1. Show the two new fields added to the machine
 2. Demonstrate `selfDestruct` button click
 3. "Oops!" moment - too much exposed information is dangerous
-4. Transition to: "Let's make this robot more secure..."
+4. Transition to: "Let's make this machine more secure..."
 
 ---
 
@@ -101,7 +101,7 @@ An interactive web application that teaches Object-Oriented Programming (OOP) co
    - `private` - hidden/protected (red indicator)
 
 **Behavior**:
-| Visibility | UI Effect | Robot Visual Effect |
+| Visibility | UI Effect | Machine Visual Effect |
 |------------|-----------|---------------------|
 | `public` | Field remains visible in control panel | Feature remains visible |
 | `private` | Field hidden/grayed out in panel | Feature hidden from view |
@@ -128,8 +128,8 @@ dropItem()        → internal method only
 1. User toggles Encapsulation Mode ON
 2. User marks sensitive items as `private`
 3. UI immediately updates to hide private fields
-4. Robot visualization updates to remove private features
-5. Lesson: "Now our robot is secure! Private data is protected."
+4. Machine visualization updates to remove private features
+5. Lesson: "Now our machine is secure! Private data is protected."
 
 ---
 
@@ -141,9 +141,9 @@ dropItem()        → internal method only
 |-------|------------|---------|
 | Build Tool | **Vite** | Fast development, optimized production builds |
 | Framework | **React 18+** | Component-based UI |
-| Animation | **Framer Motion** | Smooth robot movements, claw animations |
+| Animation | **Framer Motion** | Smooth machine movements, claw animations |
 | Styling | **Tailwind CSS** | Rapid UI development, responsive design |
-| State Management | **Zustand** | Global state for robot properties, game progress |
+| State Management | **Zustand** | Global state for machine properties, game progress |
 | Icons | **Lucide React** | UI icons |
 
 ### Why This Stack?
@@ -170,8 +170,8 @@ App
 │   │   ├── MethodsCrossword (Phase 2)
 │   │   ├── AbstractionPanel (Phase 3)
 │   │   └── EncapsulationEditor (Phase 4)
-│   └── RightPanel (Robot Visualization)
-│       └── ClawRobot (SVG with Framer Motion)
+│   └── RightPanel (Machine Visualization)
+│       └── ClawMachine (SVG with Framer Motion)
 └── ProgressIndicator
 ```
 
@@ -231,7 +231,7 @@ const ledVariants = {
 **State Integration**:
 ```typescript
 // Zustand store structure
-interface RobotState {
+interface MachineState {
   // Properties
   name: string;
   isPoweredOn: boolean;
@@ -268,10 +268,10 @@ interface RobotState {
 
 ## Data Model
 
-### Robot Object Schema
+### Machine Object Schema
 
 ```typescript
-interface RobotProperty {
+interface MachineProperty {
   id: string;
   name: string;
   type: 'string' | 'boolean' | 'number' | 'object' | 'function';
@@ -282,7 +282,7 @@ interface RobotProperty {
   visualEffect: string;
 }
 
-interface RobotMethod {
+interface MachineMethod {
   id: string;
   name: string;
   parameters: string[];
@@ -291,7 +291,7 @@ interface RobotMethod {
   animationSequence: string[];
 }
 
-const robotConfig = {
+const machineConfig = {
   properties: [
     {
       id: 'name',
@@ -299,8 +299,8 @@ const robotConfig = {
       type: 'string',
       defaultValue: '',
       visibility: 'public',
-      description: 'The name of the robot',
-      visualEffect: 'Displays label below robot'
+      description: 'The name of the machine',
+      visualEffect: 'Displays label below machine'
     },
     {
       id: 'isPoweredOn',
@@ -308,7 +308,7 @@ const robotConfig = {
       type: 'boolean',
       defaultValue: false,
       visibility: 'public',
-      description: 'Power state of the robot',
+      description: 'Power state of the machine',
       visualEffect: 'LED turns green when true'
     },
     {
@@ -336,7 +336,7 @@ const robotConfig = {
       defaultValue: 'SECRET123',
       visibility: 'private',
       description: 'BIOS access password',
-      visualEffect: 'Displays password text near robot'
+      visualEffect: 'Displays password text near machine'
     }
   ],
   methods: [
@@ -345,7 +345,7 @@ const robotConfig = {
       name: 'powerOn',
       parameters: [],
       visibility: 'public',
-      description: 'Turns the robot on',
+      description: 'Turns the machine on',
       animationSequence: ['led-on', 'activate']
     },
     {
@@ -353,7 +353,7 @@ const robotConfig = {
       name: 'powerOff',
       parameters: [],
       visibility: 'public',
-      description: 'Turns the robot off',
+      description: 'Turns the machine off',
       animationSequence: ['led-off', 'deactivate']
     },
     {
@@ -385,7 +385,7 @@ const robotConfig = {
       name: 'selfDestruct',
       parameters: [],
       visibility: 'private',
-      description: '⚠️ Destroys the robot',
+      description: '⚠️ Destroys the machine',
       animationSequence: ['shake', 'explode', 'game-over']
     }
   ]
@@ -477,9 +477,9 @@ const destructSequence = {
 --color-text: #f8fafc;         /* White - primary text */
 --color-text-muted: #94a3b8;   /* Gray - secondary text */
 
-/* Robot */
---robot-metal: #64748b;
---robot-dark: #334155;
+/* Machine */
+--machine-metal: #64748b;
+--machine-dark: #334155;
 --led-off: #450a0a;
 --led-on: #00ff00;
 ```
@@ -488,7 +488,7 @@ const destructSequence = {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  OOP Robot Teacher                                    [?]   │
+│  OOP Machine Teacher                                    [?]   │
 ├──────────────────────────────┬──────────────────────────────┤
 │                              │                              │
 │  ┌────────────────────────┐  │                              │
@@ -503,7 +503,7 @@ const destructSequence = {
 │  └────────────────────────┘  │      │   ●     ●    │        │
 │                              │      │              │        │
 │  Phase: [1] [2] [3] [4]      │      └──────────────┘        │
-│                              │     "Claw Robot"            │
+│                              │     "Claw Machine"            │
 │  [Encapsulation Mode: OFF]   │                              │
 │                              │                              │
 └──────────────────────────────┴──────────────────────────────┘
@@ -515,10 +515,10 @@ const destructSequence = {
 
 ### Phase 1: MVP - Properties (Week 1)
 - [ ] Set up Vite + React + Tailwind + Framer Motion
-- [ ] Create SVG claw robot with basic structure
-- [ ] Implement Zustand store for robot state
+- [ ] Create SVG claw machine with basic structure
+- [ ] Implement Zustand store for machine state
 - [ ] Build crossword input form for properties
-- [ ] Connect inputs to robot visual feedback
+- [ ] Connect inputs to machine visual feedback
 - [ ] Add simple animations for each property
 
 ### Phase 2: Methods (Week 2)
@@ -556,12 +556,12 @@ const destructSequence = {
 ```
 src/
 ├── components/
-│   ├── robot/
-│   │   ├── CraneRobot.tsx       # Main SVG robot component
-│   │   ├── RobotArm.tsx         # Arm sub-component
-│   │   ├── RobotClaw.tsx        # Claw sub-component
-│   │   ├── RobotLED.tsx         # LED indicator
-│   │   └── RobotLabel.tsx       # Name label
+│   ├── machine/
+│   │   ├── CraneMachine.tsx       # Main SVG machine component
+│   │   ├── MachineArm.tsx         # Arm sub-component
+│   │   ├── MachineClaw.tsx        # Claw sub-component
+│   │   ├── MachineLED.tsx         # LED indicator
+│   │   └── MachineLabel.tsx       # Name label
 │   ├── crossword/
 │   │   ├── CrosswordGrid.tsx    # Grid layout
 │   │   ├── PropertyInput.tsx    # Single property field
@@ -582,14 +582,14 @@ src/
 │       ├── Toggle.tsx
 │       └── Tooltip.tsx
 ├── store/
-│   ├── useRobotStore.ts         # Zustand store
+│   ├── useMachineStore.ts         # Zustand store
 │   └── useGameStore.ts          # Game progression state
 ├── hooks/
-│   ├── useRobotAnimation.ts     # Animation orchestration
+│   ├── useMachineAnimation.ts     # Animation orchestration
 │   ├── useEncapsulation.ts      # Visibility logic
 │   └── useCrossword.ts          # Crossword state management
 ├── lib/
-│   ├── robotConfig.ts           # Robot schema/config
+│   ├── machineConfig.ts           # Machine schema/config
 │   ├── animations.ts            # Framer Motion variants
 │   └── utils.ts
 ├── types/
@@ -603,12 +603,12 @@ src/
 
 ## Potential Enhancements (Future)
 
-1. **Inheritance Level**: Add different robot types that inherit from base crane
-2. **Polymorphism Level**: Override methods in child robot classes
-3. **Code Export**: Generate actual JavaScript class code from the visual robot
+1. **Inheritance Level**: Add different machine types that inherit from base crane
+2. **Polymorphism Level**: Override methods in child machine classes
+3. **Code Export**: Generate actual JavaScript class code from the visual machine
 4. **Quiz Mode**: Test understanding with mini-challenges
 5. **Multiplayer**: Classroom mode with teacher dashboard
-6. **Save/Load**: Export robot configurations as JSON
+6. **Save/Load**: Export machine configurations as JSON
 
 ---
 

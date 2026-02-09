@@ -54,13 +54,13 @@ interface FieldDefinition {
 }
 
 const ENCAPSULATION_FIELDS: FieldDefinition[] = [
-  { id: "serialNumber", name: "SerialNumber", type: "property", correctAccess: "public", description: "Unique identifier for the robot" },
+  { id: "serialNumber", name: "SerialNumber", type: "property", correctAccess: "public", description: "Unique identifier for the machine" },
   { id: "power", name: "Power", type: "property", correctAccess: "public", description: "Current power state (on/off)" },
   { id: "position", name: "Position", type: "property", correctAccess: "public", description: "Claw position (left/center/right)" },
-  { id: "isHolding", name: "IsHolding", type: "property", correctAccess: "public", description: "Whether robot is holding an item" },
+  { id: "isHolding", name: "IsHolding", type: "property", correctAccess: "public", description: "Whether machine is holding an item" },
   { id: "biosPassword", name: "BiosPassword", type: "property", correctAccess: "private", description: "4-digit system maintenance code" },
-  { id: "powerOn", name: "PowerOn()", type: "method", correctAccess: "public", description: "Turn the robot on" },
-  { id: "powerOff", name: "PowerOff()", type: "method", correctAccess: "public", description: "Turn the robot off" },
+  { id: "powerOn", name: "PowerOn()", type: "method", correctAccess: "public", description: "Turn the machine on" },
+  { id: "powerOff", name: "PowerOff()", type: "method", correctAccess: "public", description: "Turn the machine off" },
   { id: "moveLeft", name: "MoveLeft()", type: "method", correctAccess: "public", description: "Move claw to the left" },
   { id: "moveRight", name: "MoveRight()", type: "method", correctAccess: "public", description: "Move claw to the right" },
   { id: "grabItem", name: "GrabItem()", type: "method", correctAccess: "public", description: "Grab an item with the claw" },
@@ -442,7 +442,7 @@ function CraneClaw({
   );
 }
 
-// Main Claw Robot Component
+// Main Claw Machine Component
 interface CraneRobotProps {
   state: CraneState;
   width?: number;
@@ -706,7 +706,7 @@ export function CraneRobot({
       {/* Ground */}
       <div className={`absolute bottom-0 left-0 right-0 h-8 border-t border-black flex items-center justify-center ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`}>
         <span className={`text-sm font-bold ${isBroken ? 'text-red-800 line-through' : 'text-[#D06000]'}`}>
-          Claw Robot #{serialNumber}
+          Claw Machine #{serialNumber}
         </span>
       </div>
 
@@ -951,35 +951,35 @@ function EncapsulationQuestion({
           {/* Field-specific feedback messages */}
           {isCorrect === false && (
             <p className="text-red-600 text-sm mt-2">
-              ❌ {field.id === "serialNumber" && "Think: Should external systems be able to read the robot's ID for identification?"}
-              {field.id === "power" && "Consider: Does the user interface need to check if the robot is on or off?"}
+              ❌ {field.id === "serialNumber" && "Think: Should external systems be able to read the machine's ID for identification?"}
+              {field.id === "power" && "Consider: Does the user interface need to check if the machine is on or off?"}
               {field.id === "position" && "Hint: Would external code need to know where the claw is located?"}
               {field.id === "isHolding" && "Think about: Does the control system need to verify if an item is being carried?"}
               {field.id === "biosPassword" && "Security question: Should anyone be able to see this sensitive maintenance code?"}
-              {field.id === "powerOn" && "Consider: Does the operator need to call this to activate the robot?"}
+              {field.id === "powerOn" && "Consider: Does the operator need to call this to activate the machine?"}
               {field.id === "powerOff" && "Hint: Would an external shutdown button need to trigger this method?"}
-              {field.id === "moveLeft" && "Think: Does the movement controller need to command the robot to move?"}
+              {field.id === "moveLeft" && "Think: Does the movement controller need to command the machine to move?"}
               {field.id === "moveRight" && "Consider: Would external navigation code call this method?"}
               {field.id === "grabItem" && "Hint: Does the operator interface need to initiate grabbing?"}
               {field.id === "dropItem" && "Think: Would the control system need to command a drop action?"}
-              {field.id === "systemMaintenance" && "Consider: Should external systems run internal diagnostics, or should only the robot manage its own maintenance?"}
+              {field.id === "systemMaintenance" && "Consider: Should external systems run internal diagnostics, or should only the machine manage its own maintenance?"}
             </p>
           )}
           
           {isCorrect === true && (
             <p className="text-green-600 text-sm mt-2">
-              ✅ {field.id === "serialNumber" && "Correct! SerialNumber should be public so external systems can identify the robot for maintenance, tracking, or inventory purposes."}
-              {field.id === "power" && "Right! Power needs to be public so the UI can display whether the robot is active, and other systems can check before sending commands."}
+              ✅ {field.id === "serialNumber" && "Correct! SerialNumber should be public so external systems can identify the machine for maintenance, tracking, or inventory purposes."}
+              {field.id === "power" && "Right! Power needs to be public so the UI can display whether the machine is active, and other systems can check before sending commands."}
               {field.id === "position" && "Correct! External controllers need to know the claw Position to coordinate operations and provide visual feedback to operators."}
-              {field.id === "isHolding" && "Good! IsHolding must be public so the control system can determine if the robot is ready to grab, move, or drop items."}
-              {field.id === "biosPassword" && "Exactly! This sensitive maintenance code should be private—only the robot's internal systems should access BiosPassword for authentication, preventing unauthorized use."}
-              {field.id === "powerOn" && "Correct! The operator needs to call PowerOn() to activate the robot, so it must be accessible from outside the class."}
+              {field.id === "isHolding" && "Good! IsHolding must be public so the control system can determine if the machine is ready to grab, move, or drop items."}
+              {field.id === "biosPassword" && "Exactly! This sensitive maintenance code should be private—only the machine's internal systems should access BiosPassword for authentication, preventing unauthorized use."}
+              {field.id === "powerOn" && "Correct! The operator needs to call PowerOn() to activate the machine, so it must be accessible from outside the class."}
               {field.id === "powerOff" && "Right! External shutdown procedures and safety systems need to call PowerOff(), requiring public access."}
-              {field.id === "moveLeft" && "Good! The movement controller sends commands to the robot, so MoveLeft() must be public to receive external navigation instructions."}
+              {field.id === "moveLeft" && "Good! The movement controller sends commands to the machine, so MoveLeft() must be public to receive external navigation instructions."}
               {field.id === "moveRight" && "Correct! External automation systems and operators need to call MoveRight() during normal operations."}
               {field.id === "grabItem" && "Right! The operator interface or automated systems trigger GrabItem() when an item is detected at the pickup zone."}
-              {field.id === "dropItem" && "Correct! Drop commands come from external systems calling DropItem() when the robot reaches the destination zone."}
-              {field.id === "systemMaintenance" && "Good thinking! SystemMaintenance() should be private since it's an internal diagnostic routine that shouldn't be triggered by external code—only the robot's internal systems should run maintenance checks."}
+              {field.id === "dropItem" && "Correct! Drop commands come from external systems calling DropItem() when the machine reaches the destination zone."}
+              {field.id === "systemMaintenance" && "Good thinking! SystemMaintenance() should be private since it's an internal diagnostic routine that shouldn't be triggered by external code—only the machine's internal systems should run maintenance checks."}
             </p>
           )}
         </div>
@@ -1194,10 +1194,10 @@ export default function Challenge02() {
       {/* Main Content - Two Column Layout */}
       <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-visible">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Left Column - Claw Robot View */}
+          {/* Left Column - Claw Machine View */}
           <div className="flex flex-col lg:sticky lg:top-6 z-10">
             <h2 className="text-xl font-bold text-black mb-4 text-center">
-              Claw Robot
+              Claw Machine
             </h2>
 
             {/* Crane Display */}
@@ -1508,7 +1508,7 @@ export default function Challenge02() {
                               <li>All other fields can be public for normal operation</li>
                             </ul>
                             <p className="text-green-700 text-sm mt-3 font-medium border-t border-green-300 pt-3">
-                              🔒 Now the robot is secure! With <code>BiosPassword</code> and <code>SystemMaintenance()</code> 
+                              🔒 Now the machine is secure! With <code>BiosPassword</code> and <code>SystemMaintenance()</code> 
                               set to private, attackers can no longer easily access the password or trigger destruction.
                             </p>
                           </motion.div>
@@ -1867,7 +1867,7 @@ function BlueprintDialog({ isOpen, onClose, accessModifiers }: BlueprintDialogPr
       >
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black">📋 Claw Robot Blueprint - Encapsulation</h2>
+          <h2 className="text-xl font-bold text-black">📋 Claw Machine Blueprint - Encapsulation</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 bg-[#E0E0E0] border-2 border-black flex items-center justify-center hover:bg-[#D0D0D0]"
@@ -1940,7 +1940,7 @@ function BlueprintDialog({ isOpen, onClose, accessModifiers }: BlueprintDialogPr
               <div className="mt-4 bg-[#3c3836] border border-[#504945] rounded p-4">
                 <h4 className="text-[#fabd2f] font-bold mb-2">OOP Concepts Used</h4>
                 <ul className="text-[#ebdbb2] text-sm space-y-1">
-                  <li>• <strong className="text-[#b8bb26]">Class:</strong> Blueprint for the robot</li>
+                  <li>• <strong className="text-[#b8bb26]">Class:</strong> Blueprint for the machine</li>
                   <li>• <strong className="text-[#b8bb26]">Properties:</strong> Object's state/data</li>
                   <li>• <strong className="text-[#b8bb26]">Methods:</strong> Object's behavior</li>
                   <li>• <strong className="text-[#b8bb26]">Encapsulation:</strong> Controlled access</li>

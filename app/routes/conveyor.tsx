@@ -29,7 +29,7 @@ export default function ConveyorDemo() {
         <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
           <div className="flex items-center justify-between">
             <h1 className="text-lg sm:text-xl font-bold text-black tracking-wide">
-              Conveyor Robot Control
+              Conveyor Machine Control
             </h1>
           </div>
         </header>
@@ -57,7 +57,7 @@ export default function ConveyorDemo() {
       <header className="bg-[#F7931E] border-b-2 border-black px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-base sm:text-lg md:text-xl font-bold text-black tracking-wide">
-            Conveyor Robot Control
+            Conveyor Machine Control
           </h1>
           {/* Window-style buttons - hidden on smallest screens */}
           <div className="hidden sm:flex items-center gap-1">
@@ -97,7 +97,7 @@ export default function ConveyorDemo() {
       <main className="flex-1 bg-white border-2 border-black m-2 sm:m-4 p-4 sm:p-6 md:p-8 overflow-auto">
         <div className="flex flex-col items-center">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black mb-4 sm:mb-8">
-            Conveyor Robot Demo
+            Conveyor Machine Demo
           </h2>
 
           {/* Conveyor Display - Full width, responsive */}
@@ -189,9 +189,9 @@ export default function ConveyorDemo() {
               </p>
             </div>
 
-            {/* Robot Info */}
+            {/* Machine Info */}
             <div className="bg-[#E8E8E8] border-2 border-black px-3 sm:px-4 py-2 sm:py-3">
-              <div className="text-black font-medium mb-2 text-sm sm:text-base">Robot Information</div>
+              <div className="text-black font-medium mb-2 text-sm sm:text-base">Machine Information</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
                   <span className="text-gray-600">Serial Number:</span>{" "}
@@ -199,7 +199,7 @@ export default function ConveyorDemo() {
                 </div>
                 <div>
                   <span className="text-gray-600">Type:</span>{" "}
-                  <span className="text-black">Conveyor Belt Robot</span>
+                  <span className="text-black">Conveyor Belt Machine</span>
                 </div>
                 <div>
                   <span className="text-gray-600">Capabilities:</span>{" "}
@@ -219,7 +219,7 @@ export default function ConveyorDemo() {
       <footer className="bg-[#E8E8E8] border-t-2 border-black px-3 sm:px-4 py-2">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="text-black text-xs sm:text-sm text-center sm:text-left">
-            Conveyor Robot Control - Limbus Tech Emulator
+            Conveyor Machine Control - Limbus Tech Emulator
           </span>
           <div className="flex items-center gap-2">
             <div className="w-5 sm:w-6 h-4 sm:h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">

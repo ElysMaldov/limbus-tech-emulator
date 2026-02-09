@@ -207,7 +207,7 @@ function CraneClaw({
   );
 }
 
-// Main Claw Robot Component
+// Main Claw Machine Component
 interface CraneRobotProps {
   state: CraneState;
   showStatus?: boolean;
@@ -605,7 +605,7 @@ export default function CraneDemo() {
         <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
           <div className="flex items-center justify-between">
             <h1 className="text-lg sm:text-xl font-bold text-black tracking-wide">
-              Claw Robot Control
+              Claw Machine Control
             </h1>
           </div>
         </header>
@@ -636,7 +636,7 @@ export default function CraneDemo() {
       <header className="bg-[#F7931E] border-b-2 border-black px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-base sm:text-lg md:text-xl font-bold text-black tracking-wide">
-            Claw Robot Control
+            Claw Machine Control
           </h1>
           {/* Window-style buttons - hidden on smallest screens */}
           <div className="hidden sm:flex items-center gap-1">
@@ -676,7 +676,7 @@ export default function CraneDemo() {
       <main className="flex-1 bg-white border-2 border-black m-2 sm:m-4 p-4 sm:p-6 md:p-8 overflow-auto">
         <div className="flex flex-col items-center">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black mb-4 sm:mb-8">
-            Claw Robot Control
+            Claw Machine Control
           </h2>
 
           {/* Crane Display - Full width, responsive */}
@@ -771,7 +771,7 @@ export default function CraneDemo() {
       <footer className="bg-[#E8E8E8] border-t-2 border-black px-3 sm:px-4 py-2">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
           <span className="text-black text-xs sm:text-sm text-center sm:text-left">
-            Claw Robot Control - Limbus Tech Emulator
+            Claw Machine Control - Limbus Tech Emulator
           </span>
           <div className="flex items-center gap-2">
             <div className="w-5 sm:w-6 h-4 sm:h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
