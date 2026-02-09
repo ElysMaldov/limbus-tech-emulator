@@ -568,6 +568,9 @@ export default function CraneFactory() {
           <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
             Assembly Line
           </Link>
+          <Link to="/machine-hierarchy" className="text-black hover:underline tracking-wider">
+            Machine Hierarchy
+          </Link>
         </div>
       </nav>
 

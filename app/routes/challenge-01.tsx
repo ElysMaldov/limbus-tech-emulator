@@ -1147,6 +1147,12 @@ export default function Challenge01() {
           >
             Assembly Line
           </Link>
+          <Link
+            to="/machine-hierarchy"
+            className="text-black hover:underline tracking-wider"
+          >
+            Machine Hierarchy
+          </Link>
         </div>
       </nav>
 

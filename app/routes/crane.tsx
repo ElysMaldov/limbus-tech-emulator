@@ -630,6 +630,9 @@ export default function CraneDemo() {
             <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
               Assembly Line
             </Link>
+            <Link to="/machine-hierarchy" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Machine Hierarchy
+            </Link>
           </div>
         </nav>
         <main className="flex-1 bg-white border-2 border-black m-2 sm:m-4 p-4 sm:p-8 flex items-center justify-center">
@@ -683,6 +686,9 @@ export default function CraneDemo() {
           </Link>
           <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Assembly Line
+          </Link>
+          <Link to="/machine-hierarchy" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Machine Hierarchy
           </Link>
         </div>
       </nav>

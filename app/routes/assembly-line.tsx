@@ -475,6 +475,9 @@ export default function AssemblyLine() {
           <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
             Challenge 02
           </Link>
+          <Link to="/machine-hierarchy" className="text-black hover:underline tracking-wider">
+            Machine Hierarchy
+          </Link>
           <span className="font-bold text-black tracking-wider">Assembly Line</span>
         </div>
       </nav>
