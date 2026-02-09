@@ -234,7 +234,7 @@ function ClassBox({
 function InheritanceLines() {
   return (
     <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-      <svg className="w-full h-full" viewBox="0 0 800 500" preserveAspectRatio="xMidYMin meet">
+      <svg className="w-full h-full" viewBox="0 0 800 800" preserveAspectRatio="xMidYMin meet">
         {/* Line from Machine to Crane */}
         <motion.path
           d="M 400 120 L 200 250"
@@ -1000,7 +1000,7 @@ export default function MachineHierarchy() {
             {/* Class Diagram */}
             <div className="bg-white border-2 border-black p-4 md:p-6">
               <h3 className="font-bold text-black mb-4 text-lg">Class Hierarchy Diagram</h3>
-              <div className="relative" style={{ height: "520px" }}>
+              <div className="relative" style={{ height: "800px" }}>
                 <InheritanceLines />
 
                 {/* Machine Base Class - Top */}
