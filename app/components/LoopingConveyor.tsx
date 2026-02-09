@@ -151,6 +151,7 @@ interface LoopingConveyorProps {
   className?: string;
   serialNumber?: string;
   itemCount?: number;
+  autoRun?: boolean;
 }
 
 function LoopingConveyorInner({
@@ -160,7 +161,8 @@ function LoopingConveyorInner({
   serialNumber = "???",
   itemCount = 3,
   hideStatusOverlay = false,
-  isBroken = false
+  isBroken = false,
+  autoRun = true
 }: LoopingConveyorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(800);
@@ -194,9 +196,9 @@ function LoopingConveyorInner({
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-  // Animation loop - move items continuously
+  // Animation loop - move items continuously when powered and autoRun is true
   useEffect(() => {
-    if (!isPowered || isBroken) return;
+    if (!isPowered || isBroken || !autoRun) return;
 
     let animationId: number;
     let lastTime = performance.now();
@@ -222,7 +224,7 @@ function LoopingConveyorInner({
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [isPowered]);
+  }, [isPowered, autoRun]);
 
   // Responsive values based on container width
   const baseWidth = 800;
@@ -234,7 +236,7 @@ function LoopingConveyorInner({
     <div
       ref={containerRef}
       className={`relative bg-[#E0E0E0] border-2 border-black overflow-hidden ${className}`}
-      style={{ aspectRatio: "16/10" }}
+      style={{ width: "100%", height: "auto", minHeight: "180px" }}
     >
       {/* Entry/Exit markers */}
       <div className={`absolute bottom-0 left-[10%] sm:left-[15%] w-12 sm:w-16 md:w-20 h-3 sm:h-4 rounded-t-lg border-t border-x border-black ${isBroken ? 'bg-red-900/30' : 'bg-[#22c55e]/30'}`} />
@@ -247,11 +249,10 @@ function LoopingConveyorInner({
         EXIT
       </div>
 
-      {/* Conveyor Belt Assembly - vertically centered */}
+      {/* Conveyor Belt Assembly - fills container */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+        className="absolute inset-x-4 top-1/2 -translate-y-1/2"
         style={{
-          width: Math.min(400 * scale, containerWidth * 0.9),
           height: conveyorHeight
         }}
       >
@@ -269,7 +270,8 @@ function LoopingConveyorInner({
             backgroundColor: item.color,
             top: `calc(50% - ${conveyorHeight / 2 + itemSize / 2 - 15 * scale}px)`,
             left: 0,
-            x: item.position * scale + containerWidth / 2 - itemSize / 2
+            x: item.position * scale + containerWidth / 2 - itemSize / 2,
+            maxWidth: "calc(100% - 16px)"
           }}
         >
           {/* Box details */}
@@ -297,7 +299,7 @@ function LoopingConveyorInner({
                 Mode
               </div>
               <div className="text-xs sm:text-sm font-mono text-[#D06000]">
-                {isPowered ? "LOOPING" : "STOPPED"}
+                {isPowered ? (autoRun ? "LOOPING" : "IDLE") : "STOPPED"}
               </div>
             </div>
           </div>
@@ -327,7 +329,7 @@ export function LoopingConveyor(props: LoopingConveyorProps) {
     return (
       <div
         className={`relative bg-[#F5F5F5] border-2 border-black overflow-hidden flex items-center justify-center ${props.className || ""}`}
-        style={{ aspectRatio: "16/10" }}
+        style={{ width: "100%", height: "auto", minHeight: "180px" }}
       >
         <div className="text-black/50">Loading...</div>
       </div>

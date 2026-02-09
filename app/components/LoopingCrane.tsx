@@ -21,6 +21,7 @@ interface LoopingCraneProps {
   serialNumber?: string;
   hideStatusOverlay?: boolean;
   isBroken?: boolean;
+  autoRun?: boolean;
 }
 
 function LoopingCraneInner({
@@ -29,7 +30,8 @@ function LoopingCraneInner({
   className = "",
   serialNumber = "???",
   hideStatusOverlay = false,
-  isBroken = false
+  isBroken = false,
+  autoRun = true
 }: LoopingCraneProps) {
   const [craneX, setCraneX] = useState(0);
   const [cableExtension, setCableExtension] = useState(0);
@@ -88,15 +90,17 @@ function LoopingCraneInner({
     setLoopState("idle");
   }, [isPowered]);
 
-  // Start the loop when powered
+  // Start the loop when powered and autoRun is true
   useEffect(() => {
-    if (!isPowered) {
-      setLoopState("idle");
-      setCraneX(0);
-      setCableExtension(0);
-      setClawAngle(1);
-      setIsHoldingItem(false);
-      setItemX(-150);
+    if (!isPowered || !autoRun) {
+      if (!isPowered) {
+        setLoopState("idle");
+        setCraneX(0);
+        setCableExtension(0);
+        setClawAngle(1);
+        setIsHoldingItem(false);
+        setItemX(-150);
+      }
       return;
     }
 
@@ -117,7 +121,7 @@ function LoopingCraneInner({
     return () => {
       isCancelled = true;
     };
-  }, [isPowered, executeCycle]);
+  }, [isPowered, autoRun, executeCycle]);
 
   const getItemX = () => {
     if (isHoldingItem) return craneX;
@@ -137,7 +141,7 @@ function LoopingCraneInner({
   const getStatusText = () => {
     if (isBroken) return "DESTROYED";
     if (!isPowered) return "OFF";
-    if (loopState === "idle") return "READY";
+    if (loopState === "idle") return autoRun ? "READY" : "IDLE";
     return loopState.replace(/-/g, " ").toUpperCase();
   };
 
@@ -271,7 +275,7 @@ function LoopingCraneInner({
       )}
 
       {/* Loop indicator */}
-      {isPowered && !hideStatusOverlay && (
+      {isPowered && autoRun && !hideStatusOverlay && (
         <motion.div
           className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-green-500 px-2 py-1 border-2 border-black"
           animate={{ opacity: [1, 0.5, 1] }}
