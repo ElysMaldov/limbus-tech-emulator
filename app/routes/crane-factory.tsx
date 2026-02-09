@@ -560,15 +560,15 @@ export default function CraneFactory() {
           <Link to="/conveyor" className="text-black hover:underline tracking-wider">
             Conveyor
           </Link>
-          <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
-            Assembly Line
-          </Link>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
             Challenge 01
           </Link>
-          <span className="font-bold text-black tracking-wider">Crane Factory</span>
+          <span className="font-bold text-black tracking-wider">Claw Factory</span>
           <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
             Challenge 02
+          </Link>
+          <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
+            Assembly Line
           </Link>
         </div>
       </nav>

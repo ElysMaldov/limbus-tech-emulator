@@ -38,9 +38,21 @@ export default function ConveyorDemo() {
             <Link to="/" className="text-black hover:underline tracking-wider text-sm sm:text-base">
               Home
             </Link>
-            <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
             <Link to="/crane" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-              Claw
+              Crane
+            </Link>
+            <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
+            <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Challenge 01
+            </Link>
+            <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Claw Factory
+            </Link>
+            <Link to="/challenge-02" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Challenge 02
+            </Link>
+            <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Assembly Line
             </Link>
           </div>
         </nav>
@@ -80,15 +92,21 @@ export default function ConveyorDemo() {
           <Link to="/" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Home
           </Link>
-          <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
           <Link to="/crane" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-            Claw
+            Crane
+          </Link>
+          <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
+          <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Challenge 01
+          </Link>
+          <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Claw Factory
+          </Link>
+          <Link to="/challenge-02" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Challenge 02
           </Link>
           <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Assembly Line
-          </Link>
-          <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-            Challenge
           </Link>
         </div>
       </nav>

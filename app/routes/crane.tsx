@@ -614,12 +614,21 @@ export default function CraneDemo() {
             <Link to="/" className="text-black hover:underline tracking-wider text-sm sm:text-base">
               Home
             </Link>
-            <span className="font-bold text-black tracking-wider text-sm sm:text-base">Claw</span>
+            <span className="font-bold text-black tracking-wider text-sm sm:text-base">Crane</span>
+            <Link to="/conveyor" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Conveyor
+            </Link>
             <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-              Challenge
+              Challenge 01
             </Link>
             <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-              Factory
+              Claw Factory
+            </Link>
+            <Link to="/challenge-02" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Challenge 02
+            </Link>
+            <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+              Assembly Line
             </Link>
           </div>
         </nav>
@@ -659,15 +668,21 @@ export default function CraneDemo() {
           <Link to="/" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Home
           </Link>
-          <span className="font-bold text-black tracking-wider text-sm sm:text-base">Claw</span>
+          <span className="font-bold text-black tracking-wider text-sm sm:text-base">Crane</span>
           <Link to="/conveyor" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Conveyor
           </Link>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-            Challenge
+            Challenge 01
           </Link>
           <Link to="/crane-factory" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-            Factory
+            Claw Factory
+          </Link>
+          <Link to="/challenge-02" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Challenge 02
+          </Link>
+          <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
+            Assembly Line
           </Link>
         </div>
       </nav>

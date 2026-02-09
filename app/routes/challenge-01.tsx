@@ -1120,6 +1120,12 @@ export default function Challenge01() {
           >
             Crane
           </Link>
+          <Link
+            to="/conveyor"
+            className="text-black hover:underline tracking-wider"
+          >
+            Conveyor
+          </Link>
           <span className="font-bold text-black tracking-wider">
             Challenge 01
           </span>
@@ -1134,6 +1140,12 @@ export default function Challenge01() {
             className="text-black hover:underline tracking-wider"
           >
             Challenge 02
+          </Link>
+          <Link
+            to="/assembly-line"
+            className="text-black hover:underline tracking-wider"
+          >
+            Assembly Line
           </Link>
         </div>
       </nav>
@@ -1531,7 +1543,7 @@ export default function Challenge01() {
                                 {serialNumber}
                               </span>
                               <span className="text-gray-500 text-sm">
-                                (Property: serialNumber)
+                                (Property: SerialNumber)
                               </span>
                             </div>
                           }
@@ -1561,7 +1573,7 @@ export default function Challenge01() {
                                 {craneState !== "power-off" ? "ON" : "OFF"}
                               </span>
                               <span className="text-gray-500 text-sm ml-2">
-                                (Property: power)
+                                (Property: Power)
                               </span>
                             </div>
                           }
@@ -1582,7 +1594,7 @@ export default function Challenge01() {
                             <div className="text-xl font-mono font-bold text-[#D06000]">
                               {getPositionLabel(cranePosition)}
                               <span className="text-gray-500 text-sm ml-2">
-                                (Property: position)
+                                (Property: Position)
                               </span>
                             </div>
                           }
@@ -1612,7 +1624,7 @@ export default function Challenge01() {
                                 {isHoldingItem ? "YES" : "NO"}
                               </span>
                               <span className="text-gray-500 text-sm ml-2">
-                                (Property: isHolding / holdItem)
+                                (Property: IsHolding / HoldItem)
                               </span>
                             </div>
                           }
@@ -1721,7 +1733,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-green-600" />
                               <span className="font-bold">Power On</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: powerOn)
+                                (Method: PowerOn)
                               </span>
                             </div>
                           }
@@ -1745,7 +1757,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-red-600" />
                               <span className="font-bold">Power Off</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: powerOff)
+                                (Method: PowerOff)
                               </span>
                             </div>
                           }
@@ -1768,7 +1780,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-blue-600" />
                               <span className="font-bold">Move Left</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: moveLeft)
+                                (Method: MoveLeft)
                               </span>
                             </div>
                           }
@@ -1791,7 +1803,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-blue-600" />
                               <span className="font-bold">Move Right</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: moveRight)
+                                (Method: MoveRight)
                               </span>
                             </div>
                           }
@@ -1814,7 +1826,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-purple-600" />
                               <span className="font-bold">Grab Item</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: grabItem)
+                                (Method: GrabItem)
                               </span>
                             </div>
                           }
@@ -1838,7 +1850,7 @@ export default function Challenge01() {
                               <div className="w-3 h-3 rounded-full bg-purple-600" />
                               <span className="font-bold">Drop Item</span>
                               <span className="text-gray-500 text-sm">
-                                (Method: dropItem)
+                                (Method: DropItem)
                               </span>
                             </div>
                           }
@@ -1950,63 +1962,63 @@ export default function Challenge01() {
 const csharpCode = `public class CraneRobot
 {
     // Properties
-    private bool isPowered;
-    private string clawPosition;
-    private bool isHoldingItem;
+    private bool IsPowered;
+    private string ClawPosition;
+    private bool IsHoldingItem;
 
     // Constructor
     public CraneRobot()
     {
-        isPowered = false;
-        clawPosition = "Center";
-        isHoldingItem = false;
+        IsPowered = false;
+        ClawPosition = "Center";
+        IsHoldingItem = false;
     }
 
     // Methods
     public void PowerOn()
     {
-        isPowered = true;
+        IsPowered = true;
         Console.WriteLine("Claw powered on");
     }
 
     public void PowerOff()
     {
-        isPowered = false;
+        IsPowered = false;
         Console.WriteLine("Claw powered off");
     }
 
     public void MoveLeft()
     {
-        if (isPowered)
+        if (IsPowered)
         {
-            clawPosition = "Left";
+            ClawPosition = "Left";
             Console.WriteLine("Moving left to item zone");
         }
     }
 
     public void MoveRight()
     {
-        if (isPowered)
+        if (IsPowered)
         {
-            clawPosition = "Right";
+            ClawPosition = "Right";
             Console.WriteLine("Moving right to drop zone");
         }
     }
 
     public void GrabItem()
     {
-        if (isPowered && clawPosition == "Left")
+        if (IsPowered && ClawPosition == "Left")
         {
-            isHoldingItem = true;
+            IsHoldingItem = true;
             Console.WriteLine("Item grabbed");
         }
     }
 
     public void DropItem()
     {
-        if (isPowered && isHoldingItem)
+        if (IsPowered && IsHoldingItem)
         {
-            isHoldingItem = false;
+            IsHoldingItem = false;
             Console.WriteLine("Item dropped");
         }
     }
@@ -2073,9 +2085,9 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                       Properties
                     </div>
                     <div className="text-[#ebdbb2] space-y-1">
-                      <div>- isPowered: bool</div>
-                      <div>- clawPosition: string</div>
-                      <div>- isHoldingItem: bool</div>
+                      <div>- IsPowered: bool</div>
+                      <div>- ClawPosition: string</div>
+                      <div>- IsHoldingItem: bool</div>
                     </div>
                   </div>
 

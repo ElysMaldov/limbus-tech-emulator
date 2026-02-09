@@ -469,10 +469,16 @@ export default function AssemblyLine() {
           <Link to="/conveyor" className="text-black hover:underline tracking-wider">
             Conveyor
           </Link>
-          <span className="font-bold text-black tracking-wider">Assembly Line</span>
-          <Link to="/crane-factory" className="text-black hover:underline tracking-wider">
-            Factory
+          <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
+            Challenge 01
           </Link>
+          <Link to="/crane-factory" className="text-black hover:underline tracking-wider">
+            Claw Factory
+          </Link>
+          <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
+            Challenge 02
+          </Link>
+          <span className="font-bold text-black tracking-wider">Assembly Line</span>
         </div>
       </nav>
 

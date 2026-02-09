@@ -42,9 +42,6 @@ export default function Home() {
           <Link to="/conveyor" className="text-black hover:underline tracking-wider">
             Conveyor
           </Link>
-          <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
-            Assembly Line
-          </Link>
           <Link to="/challenge-01" className="text-black hover:underline tracking-wider">
             Challenge 01
           </Link>
@@ -53,6 +50,9 @@ export default function Home() {
           </Link>
           <Link to="/challenge-02" className="text-black hover:underline tracking-wider">
             Challenge 02
+          </Link>
+          <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
+            Assembly Line
           </Link>
         </div>
       </nav>
