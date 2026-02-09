@@ -291,7 +291,7 @@ function AssemblyLineCard({
         <div className="flex gap-2">
           <button
             onClick={() => onAddRobot(line.id, "conveyor")}
-            disabled={line.robots.length >= 6 || line.isDestroyed}
+            disabled={line.isDestroyed}
             className="flex-1 px-3 py-2 bg-[#E0E0E0] border-2 border-black text-xs font-medium hover:bg-[#D0D0D0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <div className="flex items-center justify-center gap-1">
@@ -301,7 +301,7 @@ function AssemblyLineCard({
           </button>
           <button
             onClick={() => onAddRobot(line.id, "crane")}
-            disabled={line.robots.length >= 6 || line.isDestroyed}
+            disabled={line.isDestroyed}
             className="flex-1 px-3 py-2 bg-[#E0E0E0] border-2 border-black text-xs font-medium hover:bg-[#D0D0D0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <div className="flex items-center justify-center gap-1">
@@ -310,9 +310,6 @@ function AssemblyLineCard({
             </div>
           </button>
         </div>
-        {line.robots.length >= 6 && (
-          <p className="text-[10px] text-red-500 mt-1 text-center">Maximum 6 machines per line</p>
-        )}
       </div>
     </motion.div>
   );
@@ -353,7 +350,7 @@ export default function AssemblyLine() {
   const addRobot = (lineId: string, type: RobotType) => {
     setAssemblyLines(prev => prev.map(line => {
       if (line.id !== lineId) return line;
-      if (line.robots.length >= 6) return line;
+
 
       const newRobot: Robot = {
         id: `${line.id}-robot-${line.robots.length}`,

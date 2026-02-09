@@ -54,6 +54,9 @@ export default function Home() {
           <Link to="/assembly-line" className="text-black hover:underline tracking-wider">
             Assembly Line
           </Link>
+          <Link to="/machine-hierarchy" className="text-black hover:underline tracking-wider">
+            Machine Hierarchy
+          </Link>
         </div>
       </nav>
 
@@ -230,6 +233,33 @@ export default function Home() {
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 Challenge 02 - Encapsulation
+              </Link>
+
+              <Link
+                to="/machine-hierarchy"
+                className="flex items-center justify-center gap-3 w-full p-4 bg-[#F7931E] border-2 border-black text-black hover:bg-[#E08000] transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 3v18" />
+                  <path d="M12 8 7 5" />
+                  <path d="m12 8 5-3" />
+                  <path d="M7 5v6" />
+                  <path d="M17 5v6" />
+                  <path d="M7 11h10" />
+                  <path d="M7 17h10" />
+                  <path d="M7 14h10" />
+                </svg>
+                Machine Hierarchy - Inheritance
               </Link>
             </div>
           </div>

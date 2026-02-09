@@ -1,0 +1,381 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Machine Hierarchy - Inheritance & Polymorphism" [level=1] [ref=e5]
+      - generic [ref=e12]: ×
+  - navigation [ref=e13]:
+    - generic [ref=e14]:
+      - link "Home" [ref=e15] [cursor=pointer]:
+        - /url: /
+      - link "Crane" [ref=e16] [cursor=pointer]:
+        - /url: /crane
+      - link "Conveyor" [ref=e17] [cursor=pointer]:
+        - /url: /conveyor
+      - link "Challenge 01" [ref=e18] [cursor=pointer]:
+        - /url: /challenge-01
+      - link "Claw Factory" [ref=e19] [cursor=pointer]:
+        - /url: /crane-factory
+      - link "Challenge 02" [ref=e20] [cursor=pointer]:
+        - /url: /challenge-02
+      - link "Assembly Line" [ref=e21] [cursor=pointer]:
+        - /url: /assembly-line
+      - generic [ref=e22]: Machine Hierarchy
+  - main [ref=e23]:
+    - generic [ref=e25]:
+      - heading "🧬 Inheritance & Polymorphism" [level=2] [ref=e26]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - paragraph [ref=e29]:
+            - strong [ref=e30]: Inheritance
+            - text: allows a class to inherit properties and methods from another class. The
+            - strong [ref=e31]: Machine
+            - text: class is the base (parent) class, while
+            - strong [ref=e32]: Crane
+            - text: and
+            - strong [ref=e33]: Conveyor
+            - text: are derived (child) classes that inherit from it.
+          - paragraph [ref=e34]:
+            - strong [ref=e35]: Polymorphism
+            - text: means "many forms." Both Crane and Conveyor have their own implementation of the
+            - code [ref=e36]: RunJob()
+            - text: method, but they can be treated as generic Machines.
+        - generic [ref=e37]:
+          - heading "💡 Key Concepts" [level=3] [ref=e38]
+          - list [ref=e39]:
+            - listitem [ref=e40]:
+              - generic [ref=e41]: ✓
+              - generic [ref=e42]:
+                - strong [ref=e43]: "Base Class:"
+                - text: Defines common behavior (Machine)
+            - listitem [ref=e44]:
+              - generic [ref=e45]: ✓
+              - generic [ref=e46]:
+                - strong [ref=e47]: "Derived Classes:"
+                - text: Extend base with specific features
+            - listitem [ref=e48]:
+              - generic [ref=e49]: ✓
+              - generic [ref=e50]:
+                - strong [ref=e51]: "Inheritance:"
+                - text: Reuse code from parent class
+            - listitem [ref=e52]:
+              - generic [ref=e53]: ✓
+              - generic [ref=e54]:
+                - strong [ref=e55]: "Polymorphism:"
+                - text: Same method, different behavior
+    - generic [ref=e56]:
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - heading "Class Hierarchy Diagram" [level=3] [ref=e59]
+          - generic [ref=e60]:
+            - generic:
+              - img:
+                - generic: inherits
+                - generic: inherits
+            - generic [ref=e62] [cursor=pointer]:
+              - generic [ref=e63]:
+                - generic [ref=e65]: Machine
+                - generic [ref=e66]: Base class for all machines
+              - generic [ref=e67]:
+                - generic [ref=e68]: Properties
+                - generic [ref=e69]:
+                  - generic [ref=e70]:
+                    - generic [ref=e72]: bool
+                    - generic [ref=e73]: IsPowered
+                  - generic [ref=e74]:
+                    - generic [ref=e76]: string
+                    - generic [ref=e77]: SerialNumber
+                  - generic [ref=e78]:
+                    - generic [ref=e80]: string
+                    - generic [ref=e81]: State
+              - generic [ref=e82]:
+                - generic [ref=e83]: Methods
+                - generic [ref=e84]:
+                  - generic [ref=e85]:
+                    - generic [ref=e87]: void
+                    - generic [ref=e88]: TogglePower()
+                  - generic [ref=e89]:
+                    - generic [ref=e91]: void
+                    - generic [ref=e92]: RunJob()
+            - generic [ref=e94] [cursor=pointer]:
+              - generic [ref=e95]:
+                - generic [ref=e96]:
+                  - generic [ref=e97]: Crane
+                  - generic [ref=e98]: extends Machine
+                - generic [ref=e99]: A claw machine for picking and moving items
+              - generic [ref=e100]:
+                - generic [ref=e101]: Properties
+                - generic [ref=e102]:
+                  - generic [ref=e103]:
+                    - generic [ref=e105]: bool
+                    - generic [ref=e106]: IsPowered
+                  - generic [ref=e107]:
+                    - generic [ref=e109]: string
+                    - generic [ref=e110]: SerialNumber
+                  - generic [ref=e111]:
+                    - generic [ref=e113]: string
+                    - generic [ref=e114]: State
+                  - generic [ref=e115]:
+                    - generic [ref=e117]: string
+                    - generic [ref=e118]: ClawPosition
+                  - generic [ref=e119]:
+                    - generic [ref=e121]: bool
+                    - generic [ref=e122]: IsHoldingItem
+                  - generic [ref=e123]:
+                    - generic [ref=e125]: int
+                    - generic [ref=e126]: CableExtension
+              - generic [ref=e127]:
+                - generic [ref=e128]: Methods
+                - generic [ref=e129]:
+                  - generic [ref=e130]:
+                    - generic [ref=e132]: void
+                    - generic [ref=e133]: TogglePower()
+                  - generic [ref=e134]:
+                    - generic [ref=e136]: void
+                    - generic [ref=e137]: RunJob()
+                    - generic [ref=e138]: override
+                  - generic [ref=e139]:
+                    - generic [ref=e141]: void
+                    - generic [ref=e142]: MoveLeft()
+                  - generic [ref=e143]:
+                    - generic [ref=e145]: void
+                    - generic [ref=e146]: MoveRight()
+                  - generic [ref=e147]:
+                    - generic [ref=e149]: void
+                    - generic [ref=e150]: GrabItem()
+                  - generic [ref=e151]:
+                    - generic [ref=e153]: void
+                    - generic [ref=e154]: DropItem()
+            - generic [ref=e156] [cursor=pointer]:
+              - generic [ref=e157]:
+                - generic [ref=e158]:
+                  - generic [ref=e159]: Conveyor
+                  - generic [ref=e160]: extends Machine
+                - generic [ref=e161]: A conveyor belt for transporting items
+              - generic [ref=e162]:
+                - generic [ref=e163]: Properties
+                - generic [ref=e164]:
+                  - generic [ref=e165]:
+                    - generic [ref=e167]: bool
+                    - generic [ref=e168]: IsPowered
+                  - generic [ref=e169]:
+                    - generic [ref=e171]: string
+                    - generic [ref=e172]: SerialNumber
+                  - generic [ref=e173]:
+                    - generic [ref=e175]: string
+                    - generic [ref=e176]: State
+                  - generic [ref=e177]:
+                    - generic [ref=e179]: int
+                    - generic [ref=e180]: ItemPosition
+                  - generic [ref=e181]:
+                    - generic [ref=e183]: string
+                    - generic [ref=e184]: BeltDirection
+                  - generic [ref=e185]:
+                    - generic [ref=e187]: float
+                    - generic [ref=e188]: Speed
+              - generic [ref=e189]:
+                - generic [ref=e190]: Methods
+                - generic [ref=e191]:
+                  - generic [ref=e192]:
+                    - generic [ref=e194]: void
+                    - generic [ref=e195]: TogglePower()
+                  - generic [ref=e196]:
+                    - generic [ref=e198]: void
+                    - generic [ref=e199]: RunJob()
+                    - generic [ref=e200]: override
+                  - generic [ref=e201]:
+                    - generic [ref=e203]: void
+                    - generic [ref=e204]: MoveLeft()
+                  - generic [ref=e205]:
+                    - generic [ref=e207]: void
+                    - generic [ref=e208]: MoveRight()
+          - generic [ref=e209]:
+            - generic [ref=e212]: Base Class Property
+            - generic [ref=e215]: Inherited Property
+            - generic [ref=e218]: Overridden Method
+            - generic [ref=e221]: Unique Method
+        - generic [ref=e222]:
+          - heading "Machine State" [level=3] [ref=e224]
+          - generic [ref=e226]:
+            - generic [ref=e227]:
+              - generic [ref=e228]: IsPowered
+              - generic [ref=e231]: "OFF"
+            - generic [ref=e232]:
+              - generic [ref=e233]: SerialNumber
+              - generic [ref=e234]: CV-2026-2976
+            - generic [ref=e235]:
+              - generic [ref=e236]: State
+              - generic [ref=e237]: "OFF"
+          - generic [ref=e238]:
+            - button "Turn ON" [ref=e239]
+            - button "Run Job" [disabled] [ref=e240]
+      - generic [ref=e241]:
+        - generic [ref=e242]:
+          - heading "Class Designer" [level=3] [ref=e243]
+          - paragraph [ref=e244]: Toggle properties and methods independently for each class. Hiding in base Machine hides everywhere, but each derived class can override visibility independently.
+          - generic [ref=e245]:
+            - generic [ref=e248]: Machine (Base)
+            - generic [ref=e249]:
+              - generic [ref=e250]: Properties
+              - generic [ref=e251]:
+                - button "IsPowered Whether the machine is turned on" [ref=e252]:
+                  - generic [ref=e255]:
+                    - generic [ref=e256]: IsPowered
+                    - generic [ref=e257]: Whether the machine is turned on
+                - button "SerialNumber Unique identifier for the machine" [ref=e258]:
+                  - generic [ref=e261]:
+                    - generic [ref=e262]: SerialNumber
+                    - generic [ref=e263]: Unique identifier for the machine
+                - button "State Current operational state" [ref=e264]:
+                  - generic [ref=e267]:
+                    - generic [ref=e268]: State
+                    - generic [ref=e269]: Current operational state
+              - generic [ref=e270]: Methods
+              - generic [ref=e271]:
+                - button "TogglePower Turn machine on/off" [ref=e272]:
+                  - generic [ref=e275]:
+                    - generic [ref=e276]: TogglePower
+                    - generic [ref=e277]: Turn machine on/off
+                - button "RunJob Execute the machine's primary task (virtual)" [ref=e278]:
+                  - generic [ref=e281]:
+                    - generic [ref=e282]: RunJob
+                    - generic [ref=e283]: Execute the machine's primary task (virtual)
+          - generic [ref=e284]:
+            - generic [ref=e287]: Crane (extends Machine)
+            - generic [ref=e288]:
+              - generic [ref=e289]: Properties
+              - generic [ref=e290]:
+                - button "IsPowered Whether the machine is turned on inherited" [ref=e291]:
+                  - generic [ref=e294]:
+                    - generic [ref=e295]: IsPowered
+                    - generic [ref=e296]: Whether the machine is turned on
+                  - generic [ref=e297]: inherited
+                - button "SerialNumber Unique identifier for the machine inherited" [ref=e298]:
+                  - generic [ref=e301]:
+                    - generic [ref=e302]: SerialNumber
+                    - generic [ref=e303]: Unique identifier for the machine
+                  - generic [ref=e304]: inherited
+                - button "State Current operational state inherited" [ref=e305]:
+                  - generic [ref=e308]:
+                    - generic [ref=e309]: State
+                    - generic [ref=e310]: Current operational state
+                  - generic [ref=e311]: inherited
+                - button "ClawPosition Position of the claw (Left/Center/Right)" [ref=e312]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]: ClawPosition
+                    - generic [ref=e317]: Position of the claw (Left/Center/Right)
+                - button "IsHoldingItem Whether the claw is holding an item" [ref=e318]:
+                  - generic [ref=e321]:
+                    - generic [ref=e322]: IsHoldingItem
+                    - generic [ref=e323]: Whether the claw is holding an item
+                - button "CableExtension How far the cable is extended" [ref=e324]:
+                  - generic [ref=e327]:
+                    - generic [ref=e328]: CableExtension
+                    - generic [ref=e329]: How far the cable is extended
+              - generic [ref=e330]: Methods
+              - generic [ref=e331]:
+                - button "TogglePower Turn machine on/off inherited" [ref=e332]:
+                  - generic [ref=e335]:
+                    - generic [ref=e336]: TogglePower
+                    - generic [ref=e337]: Turn machine on/off
+                  - generic [ref=e338]: inherited
+                - button "RunJob Grab item from left, drop on right override" [ref=e339]:
+                  - generic [ref=e342]:
+                    - generic [ref=e343]: RunJob
+                    - generic [ref=e344]: Grab item from left, drop on right
+                  - generic [ref=e345]: override
+                - button "MoveLeft Move claw to item zone" [ref=e346]:
+                  - generic [ref=e349]:
+                    - generic [ref=e350]: MoveLeft
+                    - generic [ref=e351]: Move claw to item zone
+                - button "MoveRight Move claw to drop zone" [ref=e352]:
+                  - generic [ref=e355]:
+                    - generic [ref=e356]: MoveRight
+                    - generic [ref=e357]: Move claw to drop zone
+                - button "GrabItem Close claws to grab item" [ref=e358]:
+                  - generic [ref=e361]:
+                    - generic [ref=e362]: GrabItem
+                    - generic [ref=e363]: Close claws to grab item
+                - button "DropItem Open claws to drop item" [ref=e364]:
+                  - generic [ref=e367]:
+                    - generic [ref=e368]: DropItem
+                    - generic [ref=e369]: Open claws to drop item
+          - generic [ref=e370]:
+            - generic [ref=e373]: Conveyor (extends Machine)
+            - generic [ref=e374]:
+              - generic [ref=e375]: Properties
+              - generic [ref=e376]:
+                - button "IsPowered Whether the machine is turned on inherited" [ref=e377]:
+                  - generic [ref=e380]:
+                    - generic [ref=e381]: IsPowered
+                    - generic [ref=e382]: Whether the machine is turned on
+                  - generic [ref=e383]: inherited
+                - button "SerialNumber Unique identifier for the machine inherited" [ref=e384]:
+                  - generic [ref=e387]:
+                    - generic [ref=e388]: SerialNumber
+                    - generic [ref=e389]: Unique identifier for the machine
+                  - generic [ref=e390]: inherited
+                - button "State Current operational state inherited" [ref=e391]:
+                  - generic [ref=e394]:
+                    - generic [ref=e395]: State
+                    - generic [ref=e396]: Current operational state
+                  - generic [ref=e397]: inherited
+                - button "ItemPosition Current position of item on belt" [ref=e398]:
+                  - generic [ref=e401]:
+                    - generic [ref=e402]: ItemPosition
+                    - generic [ref=e403]: Current position of item on belt
+                - button "BeltDirection Direction of belt movement" [ref=e404]:
+                  - generic [ref=e407]:
+                    - generic [ref=e408]: BeltDirection
+                    - generic [ref=e409]: Direction of belt movement
+                - button "Speed Speed of the conveyor belt" [ref=e410]:
+                  - generic [ref=e413]:
+                    - generic [ref=e414]: Speed
+                    - generic [ref=e415]: Speed of the conveyor belt
+              - generic [ref=e416]: Methods
+              - generic [ref=e417]:
+                - button "TogglePower Turn machine on/off inherited" [ref=e418]:
+                  - generic [ref=e421]:
+                    - generic [ref=e422]: TogglePower
+                    - generic [ref=e423]: Turn machine on/off
+                  - generic [ref=e424]: inherited
+                - button "RunJob Move items across the belt override" [ref=e425]:
+                  - generic [ref=e428]:
+                    - generic [ref=e429]: RunJob
+                    - generic [ref=e430]: Move items across the belt
+                  - generic [ref=e431]: override
+                - button "MoveLeft Move belt to the left" [ref=e432]:
+                  - generic [ref=e435]:
+                    - generic [ref=e436]: MoveLeft
+                    - generic [ref=e437]: Move belt to the left
+                - button "MoveRight Move belt to the right" [ref=e438]:
+                  - generic [ref=e441]:
+                    - generic [ref=e442]: MoveRight
+                    - generic [ref=e443]: Move belt to the right
+          - button "🖨️ Print Blueprint" [ref=e444]:
+            - generic [ref=e445]: 🖨️
+            - text: Print Blueprint
+        - generic [ref=e446]:
+          - heading "How It Works" [level=4] [ref=e447]
+          - list [ref=e448]:
+            - listitem [ref=e449]:
+              - generic [ref=e450]: ●
+              - generic [ref=e451]:
+                - strong [ref=e452]: "Base Class:"
+                - text: Toggling here affects all classes
+            - listitem [ref=e453]:
+              - generic [ref=e454]: ●
+              - generic [ref=e455]:
+                - strong [ref=e456]: "Derived Classes:"
+                - text: Toggle independently to show overriding
+            - listitem [ref=e457]:
+              - generic [ref=e458]: inherited
+              - generic [ref=e459]: Property/method from base class
+            - listitem [ref=e460]:
+              - generic [ref=e461]: override
+              - generic [ref=e462]: Custom implementation in derived class
+  - contentinfo [ref=e463]:
+    - generic [ref=e464]:
+      - generic [ref=e465]: Machine Hierarchy - Limbus Tech Emulator
+      - generic [ref=e466]:
+        - generic [ref=e468]: ◀
+        - generic [ref=e471]: ▶

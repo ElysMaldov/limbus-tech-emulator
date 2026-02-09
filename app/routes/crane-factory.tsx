@@ -36,7 +36,7 @@ const STATE_DEFINITIONS: {
 ];
 
 // Crane Class - Demonstrates OOP principles
-class Claw {
+class Crane {
   id: string;
   serialNumber: string;
   state: CraneState = "power-off";
@@ -48,7 +48,7 @@ class Claw {
   subState: string | null = null;
   
   // Callbacks for React state updates
-  private onStateChange?: () => void;
+  onStateChange?: () => void;
 
   constructor(id: string, onStateChange?: () => void) {
     this.id = id;
@@ -510,8 +510,6 @@ export default function CraneFactory() {
   const [nextId, setNextId] = useState(1);
 
   const createCrane = () => {
-    if (cranes.length >= 4) return; // Max 4 cranes (2x2 grid)
-    
     const newCrane = new Crane(nextId.toString());
     // Set up a callback that triggers a re-render for this specific crane
     newCrane.onStateChange = () => {
@@ -620,23 +618,16 @@ export default function CraneFactory() {
         <div className="max-w-6xl mx-auto mb-6 flex items-center gap-4">
           <motion.button
             onClick={createCrane}
-            disabled={cranes.length >= 4}
-            whileHover={cranes.length < 4 ? { scale: 1.02 } : {}}
-            whileTap={cranes.length < 4 ? { scale: 0.98 } : {}}
-            className={`
-              px-8 py-4 border-2 border-black font-bold text-lg transition-colors flex items-center gap-3
-              ${cranes.length < 4
-                ? "bg-[#F7931E] text-black hover:bg-[#E08000]"
-                : "bg-gray-400 text-gray-600 cursor-not-allowed"
-              }
-            `}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="px-8 py-4 border-2 border-black font-bold text-lg transition-colors flex items-center gap-3 bg-[#F7931E] text-black hover:bg-[#E08000]"
           >
             <span>🏗️</span>
             Manufacture New Crane
           </motion.button>
           
           <div className="text-gray-600">
-            <span className="font-bold text-[#F7931E]">{cranes.length}</span> / 4 cranes created
+            <span className="font-bold text-[#F7931E]">{cranes.length}</span> cranes created
           </div>
         </div>
 
