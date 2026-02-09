@@ -40,7 +40,7 @@ export default function ConveyorDemo() {
             </Link>
             <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
             <Link to="/crane" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-              Crane
+              Claw
             </Link>
           </div>
         </nav>
@@ -82,7 +82,7 @@ export default function ConveyorDemo() {
           </Link>
           <span className="font-bold text-black tracking-wider text-sm sm:text-base">Conveyor</span>
           <Link to="/crane" className="text-black hover:underline tracking-wider text-sm sm:text-base">
-            Crane
+            Claw
           </Link>
           <Link to="/assembly-line" className="text-black hover:underline tracking-wider text-sm sm:text-base">
             Assembly Line

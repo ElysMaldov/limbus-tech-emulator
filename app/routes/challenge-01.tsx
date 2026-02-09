@@ -43,8 +43,8 @@ const STATE_DEFINITIONS: {
   label: string;
   description: string;
 }[] = [
-  { id: "power-off", label: "Power Off", description: "Crane is powered down" },
-  { id: "power-on", label: "Power On", description: "Crane is ready" },
+  { id: "power-off", label: "Power Off", description: "Claw is powered down" },
+  { id: "power-on", label: "Power On", description: "Claw is ready" },
   { id: "move-left", label: "Move Left", description: "Move to item zone" },
   { id: "move-right", label: "Move Right", description: "Move to drop zone" },
   { id: "grab-item", label: "Grab Item", description: "Grab sequence" },
@@ -263,7 +263,7 @@ function CraneClaw({
   );
 }
 
-// Main Crane Robot Component
+// Main Claw Robot Component
 interface CraneRobotProps {
   state: CraneState;
   width?: number;
@@ -577,7 +577,7 @@ export function CraneRobot({
               exit={{ y: -20, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              Crane Robot #{serialNumber}
+              Claw Robot #{serialNumber}
             </motion.span>
           ) : (
             <motion.span
@@ -586,7 +586,7 @@ export function CraneRobot({
               animate={{ opacity: [1, 0.5, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              Crane Robot #???
+              Claw Robot #???
             </motion.span>
           )}
         </AnimatePresence>
@@ -1127,7 +1127,7 @@ export default function Challenge01() {
             to="/crane-factory"
             className="text-black hover:underline tracking-wider"
           >
-            Crane Factory
+            Claw Factory
           </Link>
           <Link
             to="/challenge-02"
@@ -1141,10 +1141,10 @@ export default function Challenge01() {
       {/* Main Content - Two Column Layout */}
       <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-visible">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Left Column - Crane Robot View */}
+          {/* Left Column - Claw Robot View */}
           <div className="flex flex-col lg:sticky lg:top-6 z-10">
             <h2 className="text-xl font-bold text-black mb-4 text-center">
-              Crane Robot
+              Claw Robot
             </h2>
 
             {/* Crane Display */}
@@ -1632,7 +1632,7 @@ export default function Challenge01() {
                             </h3>
                             <p className="text-green-700 text-sm">
                               You've successfully defined the properties for the
-                              Crane Robot! In OOP terms, you just created the
+                              Claw Robot! In OOP terms, you just created the
                               <strong> properties</strong> of the class. The
                               METHODS section is now unlocked!
                             </p>
@@ -1648,7 +1648,7 @@ export default function Challenge01() {
                         <p className="text-blue-700 text-sm">
                           In OOP, properties represent the{" "}
                           <strong>state</strong> of an object. Just like our
-                          crane robot tracks power, position, and whether it's
+                          claw robot tracks power, position, and whether it's
                           holding something, real-world objects have properties
                           too. For example, a Car object might have properties
                           like <code>color</code>, <code>speed</code>, and{" "}
@@ -1699,7 +1699,7 @@ export default function Challenge01() {
                         In Object-Oriented Programming, <strong>methods</strong>{" "}
                         (object functions/behavior) are the actions that an
                         object can perform. They define the behavior of the
-                        object. Help define the methods for our Crane Robot!
+                        object. Help define the methods for our Claw Robot!
                       </p>
 
                       <div className="space-y-4">
@@ -1966,13 +1966,13 @@ const csharpCode = `public class CraneRobot
     public void PowerOn()
     {
         isPowered = true;
-        Console.WriteLine("Crane powered on");
+        Console.WriteLine("Claw powered on");
     }
 
     public void PowerOff()
     {
         isPowered = false;
-        Console.WriteLine("Crane powered off");
+        Console.WriteLine("Claw powered off");
     }
 
     public void MoveLeft()
@@ -2039,7 +2039,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-black">
-            📋 Crane Robot Blueprint
+            📋 Claw Robot Blueprint
           </h2>
           <button
             onClick={onClose}

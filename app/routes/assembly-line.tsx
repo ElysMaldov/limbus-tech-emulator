@@ -306,7 +306,7 @@ function AssemblyLineCard({
           >
             <div className="flex items-center justify-center gap-1">
               <span>🦾</span>
-              <span>Crane</span>
+              <span>Claw</span>
             </div>
           </button>
         </div>
@@ -493,7 +493,7 @@ export default function AssemblyLine() {
                 </p>
                 <p className="text-gray-700">
                   Watch how the <strong>conveyor robots</strong> pass items between each other, 
-                  and how <strong>crane robots</strong> can pick up items from adjacent conveyors. 
+                  and how <strong>claw robots</strong> can pick up items from adjacent conveyors. 
                   Each robot is an independent instance handling its own state!
                 </p>
               </div>
@@ -540,10 +540,10 @@ export default function AssemblyLine() {
             </div>
             
             <div className="grid md:grid-cols-2 gap-4">
-              {/* Looping Crane Demo */}
+              {/* Looping Claw Demo */}
               <div>
                 <div className="bg-white border-2 border-black p-3 mb-2">
-                  <div className="text-xs font-bold text-gray-600 mb-2 uppercase">Looping Crane</div>
+                  <div className="text-xs font-bold text-gray-600 mb-2 uppercase">Looping Claw</div>
                   <LoopingCrane 
                     isPowered={demoPowered} 
                     serialNumber="LOOP-001"
@@ -648,7 +648,7 @@ class Conveyor {
   }
 }
 
-class Crane {
+class Claw {
   id: string;
   isHoldingItem: boolean;
   

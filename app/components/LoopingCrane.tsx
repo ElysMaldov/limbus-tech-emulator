@@ -13,7 +13,7 @@ const TIMING = {
 
 type LoopState = "idle" | "moving-to-grab" | "grabbing" | "moving-to-drop" | "dropping";
 
-// Main Looping Crane Component
+// Main Looping Claw Component
 interface LoopingCraneProps {
   isPowered: boolean;
   showStatus?: boolean;
@@ -245,7 +245,7 @@ function LoopingCraneInner({
       {/* Ground */}
       <div className={`absolute bottom-0 left-0 right-0 h-6 sm:h-8 border-t border-black flex items-center justify-center ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`}>
         <span className={`text-[10px] sm:text-xs font-bold ${isBroken ? 'text-red-800 line-through' : 'text-[#D06000]'}`}>
-          Looping Crane #{serialNumber}
+          Looping Claw #{serialNumber}
         </span>
       </div>
 

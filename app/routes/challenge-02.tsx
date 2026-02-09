@@ -33,8 +33,8 @@ type DropSubState = (typeof DROP_SUB_STATES)[number];
 
 // State definitions for UI
 const STATE_DEFINITIONS: { id: CraneState; label: string; description: string }[] = [
-  { id: "power-off", label: "Power Off", description: "Crane is powered down" },
-  { id: "power-on", label: "Power On", description: "Crane is ready" },
+  { id: "power-off", label: "Power Off", description: "Claw is powered down" },
+  { id: "power-on", label: "Power On", description: "Claw is ready" },
   { id: "move-left", label: "Move Left", description: "Move to item zone" },
   { id: "move-right", label: "Move Right", description: "Move to drop zone" },
   { id: "grab-item", label: "Grab Item", description: "Grab sequence" },
@@ -442,7 +442,7 @@ function CraneClaw({
   );
 }
 
-// Main Crane Robot Component
+// Main Claw Robot Component
 interface CraneRobotProps {
   state: CraneState;
   width?: number;
@@ -706,7 +706,7 @@ export function CraneRobot({
       {/* Ground */}
       <div className={`absolute bottom-0 left-0 right-0 h-8 border-t border-black flex items-center justify-center ${isBroken ? 'bg-red-900/50' : 'bg-[#C0C0C0]'}`}>
         <span className={`text-sm font-bold ${isBroken ? 'text-red-800 line-through' : 'text-[#D06000]'}`}>
-          Crane Robot #{serialNumber}
+          Claw Robot #{serialNumber}
         </span>
       </div>
 
@@ -1185,7 +1185,7 @@ export default function Challenge02() {
             to="/crane-factory"
             className="text-black hover:underline tracking-wider"
           >
-            Crane Factory
+            Claw Factory
           </Link>
           <span className="font-bold text-black tracking-wider">Challenge 02</span>
         </div>
@@ -1194,10 +1194,10 @@ export default function Challenge02() {
       {/* Main Content - Two Column Layout */}
       <main className="flex-1 bg-white border-2 border-black m-4 p-6 overflow-visible">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Left Column - Crane Robot View */}
+          {/* Left Column - Claw Robot View */}
           <div className="flex flex-col lg:sticky lg:top-6 z-10">
             <h2 className="text-xl font-bold text-black mb-4 text-center">
-              Crane Robot
+              Claw Robot
             </h2>
 
             {/* Crane Display */}
@@ -1603,7 +1603,7 @@ export default function Challenge02() {
 function getCsharpCode(accessModifiers: Record<string, AccessModifier>) {
   const getAccess = (id: string) => accessModifiers[id] || "public";
   
-  return `public class CraneRobot
+  return `public class ClawRobot
 {
     // Properties
     ${getAccess("power")} bool Power;
@@ -1626,13 +1626,13 @@ function getCsharpCode(accessModifiers: Record<string, AccessModifier>) {
     ${getAccess("powerOn")} void PowerOn()
     {
         Power = true;
-        Console.WriteLine("Crane powered on");
+        Console.WriteLine("Claw powered on");
     }
 
     ${getAccess("powerOff")} void PowerOff()
     {
         Power = false;
-        Console.WriteLine("Crane powered off");
+        Console.WriteLine("Claw powered off");
     }
 
     ${getAccess("moveLeft")} void MoveLeft()
@@ -1867,7 +1867,7 @@ function BlueprintDialog({ isOpen, onClose, accessModifiers }: BlueprintDialogPr
       >
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-black">📋 Crane Robot Blueprint - Encapsulation</h2>
+          <h2 className="text-xl font-bold text-black">📋 Claw Robot Blueprint - Encapsulation</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 bg-[#E0E0E0] border-2 border-black flex items-center justify-center hover:bg-[#D0D0D0]"

@@ -36,7 +36,7 @@ const STATE_DEFINITIONS: {
 ];
 
 // Crane Class - Demonstrates OOP principles
-class Crane {
+class Claw {
   id: string;
   serialNumber: string;
   state: CraneState = "power-off";
@@ -532,7 +532,7 @@ export default function CraneFactory() {
       <header className="bg-[#F7931E] border-b-2 border-black px-4 py-3">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-black tracking-wide">
-            Crane Factory - Class Blueprint Demo
+            Claw Factory - Class Blueprint Demo
           </h1>
           <div className="flex items-center gap-1">
             <div className="w-6 h-5 bg-[#E0E0E0] border-2 border-black flex items-center justify-center">
@@ -590,9 +590,9 @@ export default function CraneFactory() {
                   independent object <strong>instances</strong>.
                 </p>
                 <p className="text-gray-700">
-                  Each crane robot below is created from the same <code className="bg-gray-100 px-1 py-0.5 rounded">Crane</code> class, 
+                  Each claw robot below is created from the same <code className="bg-gray-100 px-1 py-0.5 rounded">Claw</code> class, 
                   but each instance manages its <strong>own data independently</strong>. 
-                  Operating one crane does not affect the others!
+                  Operating one claw does not affect the others!
                 </p>
               </div>
               <div className="bg-[#F8F8F8] border-2 border-black p-4">

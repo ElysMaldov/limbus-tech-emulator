@@ -1,7 +1,7 @@
-# OOP Crane Robot Teaching App - Plan
+# OOP Claw Robot Teaching App - Plan
 
 ## Overview
-An interactive web application that teaches Object-Oriented Programming (OOP) concepts through a gamified crossword puzzle experience featuring a controllable 2D crane robot.
+An interactive web application that teaches Object-Oriented Programming (OOP) concepts through a gamified crossword puzzle experience featuring a controllable 2D claw robot.
 
 ## Core Concepts to Teach
 
@@ -32,13 +32,13 @@ An interactive web application that teaches Object-Oriented Programming (OOP) co
 **Crossword Fields**:
 | Property | Type | Visual Effect When Filled |
 |----------|------|---------------------------|
-| `name` | string | Robot displays "Crane Robot" label below it |
+| `name` | string | Robot displays "Claw Robot" label below it |
 | `isPoweredOn` | boolean | Robot's LED emits green light (was off/dark) |
 | `coordinates` | object (x, y) | Robot's arm moves to specified position |
 | `isHandOpen` | boolean | Robot's claw opens or closes |
 
 **Flow**:
-1. User sees a dark/inactive 2D crane robot
+1. User sees a dark/inactive 2D claw robot
 2. User fills in each property in crossword format
 3. Each correct entry triggers immediate visual feedback on the robot
 4. When all properties filled → "Object Created!" celebration
@@ -171,7 +171,7 @@ App
 │   │   ├── AbstractionPanel (Phase 3)
 │   │   └── EncapsulationEditor (Phase 4)
 │   └── RightPanel (Robot Visualization)
-│       └── CraneRobot (SVG with Framer Motion)
+│       └── ClawRobot (SVG with Framer Motion)
 └── ProgressIndicator
 ```
 
@@ -503,7 +503,7 @@ const destructSequence = {
 │  └────────────────────────┘  │      │   ●     ●    │        │
 │                              │      │              │        │
 │  Phase: [1] [2] [3] [4]      │      └──────────────┘        │
-│                              │     "Crane Robot"            │
+│                              │     "Claw Robot"            │
 │  [Encapsulation Mode: OFF]   │                              │
 │                              │                              │
 └──────────────────────────────┴──────────────────────────────┘
@@ -515,7 +515,7 @@ const destructSequence = {
 
 ### Phase 1: MVP - Properties (Week 1)
 - [ ] Set up Vite + React + Tailwind + Framer Motion
-- [ ] Create SVG crane robot with basic structure
+- [ ] Create SVG claw robot with basic structure
 - [ ] Implement Zustand store for robot state
 - [ ] Build crossword input form for properties
 - [ ] Connect inputs to robot visual feedback
