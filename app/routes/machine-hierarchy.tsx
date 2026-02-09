@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { LoopingCrane } from "~/components/LoopingCrane";
+import { LoopingConveyor } from "~/components/LoopingConveyor";
 
 // ============================================
 // TYPES AND INTERFACES
@@ -827,6 +829,9 @@ export default function MachineHierarchy() {
     conveyor: false,
   });
 
+  // Demo power state for both machines
+  const [demoPowered, setDemoPowered] = useState(false);
+
   // Running state for animations
   const [isRunning, setIsRunning] = useState(false);
 
@@ -1067,18 +1072,75 @@ export default function MachineHierarchy() {
               </div>
             </div>
 
-            {/* State Card */}
-            <StateCard
-              machineType={selectedMachine}
-              visibleProperties={visibleProperties[selectedMachine]}
-              visibleMethods={visibleMethods[selectedMachine]}
-              allVisibleProperties={visibleProperties}
-              allVisibleMethods={visibleMethods}
-              isPowered={powerStates[selectedMachine]}
-              onTogglePower={handleTogglePower}
-              onRunJob={handleRunJob}
-              isRunning={isRunning}
-            />
+            {/* Machine Demo Section */}
+            <div className="bg-[#E8E8E8] border-2 border-black p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-black">🔄 Encapsulation Demo</h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      const newPower = !demoPowered;
+                      setDemoPowered(newPower);
+                      setPowerStates(prev => ({
+                        ...prev,
+                        crane: newPower,
+                        conveyor: newPower
+                      }));
+                    }}
+                    className={`px-4 py-2 text-sm font-bold border-2 border-black transition-colors ${
+                      demoPowered
+                        ? "bg-red-500 text-white hover:bg-red-600"
+                        : "bg-green-500 text-white hover:bg-green-600"
+                    }`}
+                  >
+                    {demoPowered ? "Turn OFF" : "Turn ON"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!demoPowered) return;
+                      setIsRunning(true);
+                      setTimeout(() => setIsRunning(false), 2000);
+                    }}
+                    disabled={!demoPowered}
+                    className={`px-4 py-2 text-sm font-bold border-2 border-black transition-colors ${
+                      demoPowered
+                        ? "bg-[#F7931E] text-black hover:bg-[#E08000]"
+                        : "bg-gray-400 text-gray-600 cursor-not-allowed"
+                    }`}
+                  >
+                    Run Job
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Crane Demo */}
+                <div className="bg-white border-2 border-black p-3">
+                  <div className="text-xs font-bold text-gray-600 mb-2 uppercase">Crane Instance</div>
+                  <LoopingCrane 
+                    isPowered={demoPowered} 
+                    serialNumber="CR-2026-0001"
+                    className="h-48"
+                  />
+                </div>
+
+                {/* Conveyor Demo */}
+                <div className="bg-white border-2 border-black p-3">
+                  <div className="text-xs font-bold text-gray-600 mb-2 uppercase">Conveyor Instance</div>
+                  <LoopingConveyor
+                    isPowered={demoPowered}
+                    serialNumber="CV-2026-0001"
+                    itemCount={3}
+                    className="h-48"
+                  />
+                </div>
+              </div>
+              
+              <p className="text-xs text-gray-600 mt-3">
+                Both machines are independent instances with their own internal state (encapsulation). 
+                Toggle power and Run Job to control both simultaneously through their public interfaces.
+              </p>
+            </div>
           </div>
 
           {/* Right Column - Toggle Panel */}
