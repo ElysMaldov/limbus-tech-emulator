@@ -40,7 +40,7 @@ interface MachineClass {
 // MACHINE CLASS DEFINITIONS
 // ============================================
 
-const MACHINE_CLASSES: Record<MachineType, MachineClass> = {
+const INITIAL_MACHINE_CLASSES: Record<MachineType, MachineClass> = {
   base: {
     name: "Machine",
     properties: [
@@ -112,6 +112,8 @@ function ClassBox({
   allVisibleProperties,
   allVisibleMethods,
   isPowered,
+  machineClasses,
+  onRenameProperty,
 }: {
   machineType: MachineType;
   isSelected: boolean;
@@ -121,8 +123,10 @@ function ClassBox({
   allVisibleProperties: Record<MachineType, Set<string>>;
   allVisibleMethods: Record<MachineType, Set<string>>;
   isPowered: boolean;
+  machineClasses: Record<MachineType, MachineClass>;
+  onRenameProperty?: (oldName: string, newName: string) => void;
 }) {
-  const machine = MACHINE_CLASSES[machineType];
+  const machine = machineClasses[machineType];
   const isBase = machineType === "base";
 
   // Check if a property should be shown (for inherited props, check base class visibility)
@@ -170,21 +174,12 @@ function ClassBox({
           {machine.properties
             .filter(isPropertyVisible)
             .map((prop) => (
-              <motion.div
+              <EditableProperty
                 key={prop.name}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className={`flex items-center gap-2 text-sm ${prop.inherited ? "text-gray-600" : "text-black"}`}
-              >
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    prop.inherited ? "bg-gray-400" : "bg-[#F7931E]"
-                  }`}
-                />
-                <span className="font-mono text-xs text-blue-600">{prop.type}</span>
-                <span className="font-medium">{prop.name}</span>
-              </motion.div>
+                prop={prop}
+                machineType={machineType}
+                onRename={onRenameProperty}
+              />
             ))}
           {machine.properties.filter(isPropertyVisible).length === 0 && (
             <div className="text-xs text-gray-400 italic">No visible properties</div>
@@ -416,6 +411,7 @@ function StateCard({
   onTogglePower,
   onRunJob,
   isRunning,
+  machineClasses,
 }: {
   machineType: MachineType;
   visibleProperties: Set<string>;
@@ -426,8 +422,9 @@ function StateCard({
   onTogglePower: () => void;
   onRunJob: () => void;
   isRunning: boolean;
+  machineClasses: Record<MachineType, MachineClass>;
 }) {
-  const machine = MACHINE_CLASSES[machineType];
+  const machine = machineClasses[machineType];
   const [serialNumber] = useState(
     machineType === "crane"
       ? `CR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -636,21 +633,23 @@ function BlueprintDialog({
   onClose,
   visibleProperties,
   visibleMethods,
+  machineClasses,
 }: {
   isOpen: boolean;
   onClose: () => void;
   visibleProperties: Record<MachineType, Set<string>>;
   visibleMethods: Record<MachineType, Set<string>>;
+  machineClasses: Record<MachineType, MachineClass>;
 }) {
   if (!isOpen) return null;
 
   const generateCSharpCode = () => {
-    const baseProps = MACHINE_CLASSES.base.properties
+    const baseProps = machineClasses.base.properties
       .filter((p) => visibleProperties.base.has(p.name))
       .map((p) => `    public ${p.type} ${p.name} { get; set; }`)
       .join("\n");
 
-    const baseMethods = MACHINE_CLASSES.base.methods
+    const baseMethods = machineClasses.base.methods
       .filter((m) => visibleMethods.base.has(m.name))
       .map((m) => {
         if (m.name === "RunJob") {
@@ -668,12 +667,12 @@ function BlueprintDialog({
       })
       .join("\n\n");
 
-    const craneProps = MACHINE_CLASSES.crane.properties
+    const craneProps = machineClasses.crane.properties
       .filter((p) => visibleProperties.crane.has(p.name) && !p.inherited)
       .map((p) => `    public ${p.type} ${p.name} { get; set; }`)
       .join("\n");
 
-    const craneMethods = MACHINE_CLASSES.crane.methods
+    const craneMethods = machineClasses.crane.methods
       .filter((m) => visibleMethods.crane.has(m.name) && !m.inherited)
       .map((m) => {
         if (m.name === "RunJob") {
@@ -694,12 +693,12 @@ function BlueprintDialog({
       })
       .join("\n\n");
 
-    const conveyorProps = MACHINE_CLASSES.conveyor.properties
+    const conveyorProps = machineClasses.conveyor.properties
       .filter((p) => visibleProperties.conveyor.has(p.name) && !p.inherited)
       .map((p) => `    public ${p.type} ${p.name} { get; set; }`)
       .join("\n");
 
-    const conveyorMethods = MACHINE_CLASSES.conveyor.methods
+    const conveyorMethods = machineClasses.conveyor.methods
       .filter((m) => visibleMethods.conveyor.has(m.name) && !m.inherited)
       .map((m) => {
         if (m.name === "RunJob") {
@@ -776,32 +775,32 @@ public class Program
   };
 
   const generateUMLDiagram = () => {
-    const baseProps = MACHINE_CLASSES.base.properties
+    const baseProps = machineClasses.base.properties
       .filter((p) => visibleProperties.base.has(p.name))
       .map((p) => `+${p.name}: ${p.type}`)
       .join("\n  ");
 
-    const baseMethods = MACHINE_CLASSES.base.methods
+    const baseMethods = machineClasses.base.methods
       .filter((m) => visibleMethods.base.has(m.name))
       .map((m) => `+${m.name}(): ${m.returnType}`)
       .join("\n  ");
 
-    const craneProps = MACHINE_CLASSES.crane.properties
+    const craneProps = machineClasses.crane.properties
       .filter((p) => visibleProperties.crane.has(p.name) && !p.inherited)
       .map((p) => `+${p.name}: ${p.type}`)
       .join("\n  ");
 
-    const craneMethods = MACHINE_CLASSES.crane.methods
+    const craneMethods = machineClasses.crane.methods
       .filter((m) => visibleMethods.crane.has(m.name) && !m.inherited)
       .map((m) => `+${m.name}(): ${m.returnType}`)
       .join("\n  ");
 
-    const conveyorProps = MACHINE_CLASSES.conveyor.properties
+    const conveyorProps = machineClasses.conveyor.properties
       .filter((p) => visibleProperties.conveyor.has(p.name) && !p.inherited)
       .map((p) => `+${p.name}: ${p.type}`)
       .join("\n  ");
 
-    const conveyorMethods = MACHINE_CLASSES.conveyor.methods
+    const conveyorMethods = machineClasses.conveyor.methods
       .filter((m) => visibleMethods.conveyor.has(m.name) && !m.inherited)
       .map((m) => `+${m.name}(): ${m.returnType}`)
       .join("\n  ");
@@ -915,6 +914,100 @@ Legend:
 }
 
 // ============================================
+// EDITABLE PROPERTY COMPONENT
+// ============================================
+
+function EditableProperty({
+  prop,
+  machineType,
+  onRename,
+}: {
+  prop: MachineProperty;
+  machineType: MachineType;
+  onRename?: (oldName: string, newName: string) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(prop.name);
+  const isBase = machineType === "base";
+  const canEdit = isBase && onRename;
+
+  const handleSubmit = () => {
+    if (editValue.trim() && editValue.trim() !== prop.name) {
+      onRename?.(prop.name, editValue.trim());
+    }
+    setIsEditing(false);
+    setEditValue(prop.name);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setEditValue(prop.name);
+    }
+  };
+
+  if (isEditing && canEdit) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        className="flex items-center gap-2 text-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span
+          className={`w-2 h-2 rounded-full ${
+            prop.inherited ? "bg-gray-400" : "bg-[#F7931E]"
+          }`}
+        />
+        <span className="font-mono text-xs text-blue-600">{prop.type}</span>
+        <input
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleSubmit}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="font-medium bg-white border-2 border-[#F7931E] px-1 py-0.5 rounded w-32 text-black focus:outline-none focus:ring-2 focus:ring-[#F7931E]"
+        />
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      key={prop.name}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      className={`flex items-center gap-2 text-sm ${prop.inherited ? "text-gray-600" : "text-black"}`}
+    >
+      <span
+        className={`w-2 h-2 rounded-full ${
+          prop.inherited ? "bg-gray-400" : "bg-[#F7931E]"
+        }`}
+      />
+      <span className="font-mono text-xs text-blue-600">{prop.type}</span>
+      <span
+        className={`font-medium ${canEdit ? "cursor-pointer hover:text-[#F7931E] hover:underline" : ""}`}
+        onClick={(e) => {
+          if (canEdit) {
+            e.stopPropagation();
+            setIsEditing(true);
+            setEditValue(prop.name);
+          }
+        }}
+        title={canEdit ? "Click to rename" : ""}
+      >
+        {prop.name}
+      </span>
+    </motion.div>
+  );
+}
+
+// ============================================
 // MAIN PAGE COMPONENT
 // ============================================
 
@@ -923,6 +1016,7 @@ export default function MachineHierarchy() {
   const [isClient, setIsClient] = useState(false);
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [isPanelExpanded, setIsPanelExpanded] = useState(true);
+  const [machineClasses, setMachineClasses] = useState<Record<MachineType, MachineClass>>(INITIAL_MACHINE_CLASSES);
 
   // Power state for each machine
   const [powerStates, setPowerStates] = useState({
@@ -967,6 +1061,67 @@ export default function MachineHierarchy() {
         newSet.add(propertyName);
       }
       return { ...prev, [machineType]: newSet };
+    });
+  };
+
+  // Rename a base class property and update all derived classes
+  const renameBaseProperty = (oldName: string, newName: string) => {
+    setMachineClasses((prev) => {
+      const newClasses = { ...prev };
+
+      // Update base class
+      newClasses.base = {
+        ...newClasses.base,
+        properties: newClasses.base.properties.map((p) =>
+          p.name === oldName ? { ...p, name: newName } : p
+        ),
+      };
+
+      // Update crane class (inherited properties with matching name)
+      newClasses.crane = {
+        ...newClasses.crane,
+        properties: newClasses.crane.properties.map((p) =>
+          p.name === oldName && p.inherited ? { ...p, name: newName } : p
+        ),
+      };
+
+      // Update conveyor class (inherited properties with matching name)
+      newClasses.conveyor = {
+        ...newClasses.conveyor,
+        properties: newClasses.conveyor.properties.map((p) =>
+          p.name === oldName && p.inherited ? { ...p, name: newName } : p
+        ),
+      };
+
+      return newClasses;
+    });
+
+    // Also update visibleProperties to use the new name
+    setVisibleProperties((prev) => {
+      const newVisible = { ...prev };
+
+      // Update base
+      if (newVisible.base.has(oldName)) {
+        newVisible.base = new Set(newVisible.base);
+        newVisible.base.delete(oldName);
+        newVisible.base.add(newName);
+      }
+
+      // Update crane (for inherited properties)
+      if (newVisible.crane.has(oldName)) {
+        newVisible.crane = new Set(newVisible.crane);
+        newVisible.crane.delete(oldName);
+        newVisible.crane.add(newName);
+      }
+
+      // Update conveyor (for inherited properties)
+      if (newVisible.conveyor.has(oldName)) {
+        newVisible.conveyor = new Set(newVisible.conveyor);
+        newVisible.conveyor.delete(oldName);
+        newVisible.conveyor.add(newName);
+      }
+
+      return newVisible;
     });
   };
 
@@ -1126,6 +1281,8 @@ export default function MachineHierarchy() {
                       allVisibleProperties={visibleProperties}
                       allVisibleMethods={visibleMethods}
                       isPowered={powerStates.base}
+                      machineClasses={machineClasses}
+                      onRenameProperty={renameBaseProperty}
                     />
                   </div>
 
@@ -1140,6 +1297,7 @@ export default function MachineHierarchy() {
                       allVisibleProperties={visibleProperties}
                       allVisibleMethods={visibleMethods}
                       isPowered={powerStates.crane}
+                      machineClasses={machineClasses}
                     />
                   </div>
 
@@ -1154,6 +1312,7 @@ export default function MachineHierarchy() {
                       allVisibleProperties={visibleProperties}
                       allVisibleMethods={visibleMethods}
                       isPowered={powerStates.conveyor}
+                      machineClasses={machineClasses}
                     />
                   </div>
                 </div>
@@ -1365,7 +1524,7 @@ export default function MachineHierarchy() {
                       <div className="border-2 border-black overflow-hidden mb-3">
                         <div 
                           className="px-3 py-2 flex items-center gap-2"
-                          style={{ backgroundColor: MACHINE_CLASSES.base.color }}
+                          style={{ backgroundColor: machineClasses.base.color }}
                         >
                           <div className="w-3 h-3 rounded-full bg-white" />
                           <span className="font-bold text-black">Machine (Base)</span>
@@ -1373,27 +1532,27 @@ export default function MachineHierarchy() {
                         <div className="p-2 bg-gray-50">
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Properties</div>
                           <div className="space-y-1 mb-2">
-                            {MACHINE_CLASSES.base.properties.map((prop) => (
+                            {machineClasses.base.properties.map((prop) => (
                               <ToggleItem
                                 key={prop.name}
                                 name={prop.name}
                                 description={prop.description}
                                 isVisible={visibleProperties.base.has(prop.name)}
                                 onToggle={() => toggleProperty("base", prop.name)}
-                                color={MACHINE_CLASSES.base.color}
+                                color={machineClasses.base.color}
                               />
                             ))}
                           </div>
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Methods</div>
                           <div className="space-y-1">
-                            {MACHINE_CLASSES.base.methods.map((method) => (
+                            {machineClasses.base.methods.map((method) => (
                               <ToggleItem
                                 key={method.name}
                                 name={method.name}
                                 description={method.description}
                                 isVisible={visibleMethods.base.has(method.name)}
                                 onToggle={() => toggleMethod("base", method.name)}
-                                color={MACHINE_CLASSES.base.color}
+                                color={machineClasses.base.color}
                               />
                             ))}
                           </div>
@@ -1409,7 +1568,7 @@ export default function MachineHierarchy() {
                         <div className="p-2 bg-blue-50">
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Properties</div>
                           <div className="space-y-1 mb-2">
-                            {MACHINE_CLASSES.crane.properties.map((prop) => (
+                            {machineClasses.crane.properties.map((prop) => (
                               <ToggleItem
                                 key={prop.name}
                                 name={prop.name}
@@ -1423,7 +1582,7 @@ export default function MachineHierarchy() {
                           </div>
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Methods</div>
                           <div className="space-y-1">
-                            {MACHINE_CLASSES.crane.methods.map((method) => (
+                            {machineClasses.crane.methods.map((method) => (
                               <ToggleItem
                                 key={method.name}
                                 name={method.name}
@@ -1448,7 +1607,7 @@ export default function MachineHierarchy() {
                         <div className="p-2 bg-green-50">
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Properties</div>
                           <div className="space-y-1 mb-2">
-                            {MACHINE_CLASSES.conveyor.properties.map((prop) => (
+                            {machineClasses.conveyor.properties.map((prop) => (
                               <ToggleItem
                                 key={prop.name}
                                 name={prop.name}
@@ -1462,7 +1621,7 @@ export default function MachineHierarchy() {
                           </div>
                           <div className="text-xs font-bold text-gray-500 uppercase mb-1">Methods</div>
                           <div className="space-y-1">
-                            {MACHINE_CLASSES.conveyor.methods.map((method) => (
+                            {machineClasses.conveyor.methods.map((method) => (
                               <ToggleItem
                                 key={method.name}
                                 name={method.name}
@@ -1528,6 +1687,7 @@ export default function MachineHierarchy() {
             onClose={() => setShowBlueprint(false)}
             visibleProperties={visibleProperties}
             visibleMethods={visibleMethods}
+            machineClasses={machineClasses}
           />
         )}
       </AnimatePresence>

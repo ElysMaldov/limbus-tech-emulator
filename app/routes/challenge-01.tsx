@@ -1964,67 +1964,69 @@ export default function Challenge01() {
   );
 }
 
-// C# Code for the CraneRobot class
-const csharpCode = `public class CraneRobot
+// C# Code for the ClawMachine class
+const csharpCode = `public class ClawMachine
 {
     // Properties
-    private bool IsPowered;
-    private string ClawPosition;
-    private bool IsHoldingItem;
+    private string SerialNumber;
+    private bool Power;
+    private string Position;
+    private bool IsHolding;
 
     // Constructor
-    public CraneRobot()
+    public ClawMachine()
     {
-        IsPowered = false;
-        ClawPosition = "Center";
-        IsHoldingItem = false;
+        SerialNumber = "CR-2024-0000";
+        Power = false;
+        Position = "Center";
+        IsHolding = false;
     }
 
     // Methods
     public void PowerOn()
     {
-        IsPowered = true;
+        Power = true;
         Console.WriteLine("Claw powered on");
     }
 
     public void PowerOff()
     {
-        IsPowered = false;
+        Power = false;
         Console.WriteLine("Claw powered off");
     }
 
     public void MoveLeft()
     {
-        if (IsPowered)
+        if (Power)
         {
-            ClawPosition = "Left";
+            Position = "Left";
             Console.WriteLine("Moving left to item zone");
         }
     }
 
     public void MoveRight()
     {
-        if (IsPowered)
+        if (Power)
         {
-            ClawPosition = "Right";
+            Position = "Right";
             Console.WriteLine("Moving right to drop zone");
         }
     }
 
     public void GrabItem()
     {
-        if (IsPowered && ClawPosition == "Left")
+        if (Power && Position == "Left")
         {
-            IsHoldingItem = true;
+            IsHolding = true;
             Console.WriteLine("Item grabbed");
         }
     }
 
     public void DropItem()
     {
-        if (IsPowered && IsHoldingItem)
+        if (Power && IsHolding)
         {
-            IsHoldingItem = false;
+            IsHolding = false;
             Console.WriteLine("Item dropped");
         }
     }
@@ -2057,7 +2059,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
         {/* Header */}
         <div className="bg-[#F7931E] border-b-2 border-black px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-black">
-            📋 Claw Machine Blueprint
+            📋 Claw Machine Class
           </h2>
           <button
             onClick={onClose}
@@ -2081,7 +2083,7 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                   {/* Class Name */}
                   <div className="bg-[#3c3836] border-b-2 border-white/30 p-3 text-center">
                     <span className="text-[#fabd2f] font-bold text-lg">
-                      CraneRobot
+                      ClawMachine
                     </span>
                   </div>
 
@@ -2091,9 +2093,10 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                       Properties
                     </div>
                     <div className="text-[#ebdbb2] space-y-1">
-                      <div>- IsPowered: bool</div>
-                      <div>- ClawPosition: string</div>
-                      <div>- IsHoldingItem: bool</div>
+                      <div>- SerialNumber: string</div>
+                      <div>- Power: bool</div>
+                      <div>- Position: string</div>
+                      <div>- IsHolding: bool</div>
                     </div>
                   </div>
 
