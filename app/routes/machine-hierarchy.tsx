@@ -114,6 +114,7 @@ function ClassBox({
   isPowered,
   machineClasses,
   onRenameProperty,
+  onRenameMethod,
 }: {
   machineType: MachineType;
   isSelected: boolean;
@@ -125,6 +126,7 @@ function ClassBox({
   isPowered: boolean;
   machineClasses: Record<MachineType, MachineClass>;
   onRenameProperty?: (oldName: string, newName: string) => void;
+  onRenameMethod?: (oldName: string, newName: string) => void;
 }) {
   const machine = machineClasses[machineType];
   const isBase = machineType === "base";
@@ -196,24 +198,12 @@ function ClassBox({
           {machine.methods
             .filter(isMethodVisible)
             .map((method) => (
-              <motion.div
+              <EditableMethod
                 key={method.name}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className={`flex items-center gap-2 text-sm ${method.inherited ? "text-gray-600" : "text-black"}`}
-              >
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    method.inherited ? "bg-gray-400" : method.implemented ? "bg-green-500" : "bg-purple-500"
-                  }`}
-                />
-                <span className="font-mono text-xs text-purple-600">{method.returnType}</span>
-                <span className="font-medium">{method.name}()</span>
-                {method.implemented && (
-                  <span className="text-[10px] bg-green-100 text-green-700 px-1 rounded">override</span>
-                )}
-              </motion.div>
+                method={method}
+                machineType={machineType}
+                onRename={onRenameMethod}
+              />
             ))}
           {machine.methods.filter(isMethodVisible).length === 0 && (
             <div className="text-xs text-gray-400 italic">No visible methods</div>
@@ -1008,6 +998,108 @@ function EditableProperty({
 }
 
 // ============================================
+// EDITABLE METHOD COMPONENT
+// ============================================
+
+function EditableMethod({
+  method,
+  machineType,
+  onRename,
+}: {
+  method: MachineMethod;
+  machineType: MachineType;
+  onRename?: (oldName: string, newName: string) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(method.name);
+  const isBase = machineType === "base";
+  const canEdit = isBase && onRename;
+
+  const handleSubmit = () => {
+    if (editValue.trim() && editValue.trim() !== method.name) {
+      onRename?.(method.name, editValue.trim());
+    }
+    setIsEditing(false);
+    setEditValue(method.name);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setEditValue(method.name);
+    }
+  };
+
+  if (isEditing && canEdit) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        className="flex items-center gap-2 text-sm"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span
+          className={`w-2 h-2 rounded-full ${
+            method.inherited ? "bg-gray-400" : method.implemented ? "bg-green-500" : "bg-purple-500"
+          }`}
+        />
+        <span className="font-mono text-xs text-purple-600">{method.returnType}</span>
+        <input
+          type="text"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleSubmit}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="font-medium bg-white border-2 border-[#F7931E] px-1 py-0.5 rounded w-32 text-black focus:outline-none focus:ring-2 focus:ring-[#F7931E]"
+        />
+        <span className="text-gray-500">()</span>
+        {method.implemented && (
+          <span className="text-[10px] bg-green-100 text-green-700 px-1 rounded">override</span>
+        )}
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      key={method.name}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -10 }}
+      className={`flex items-center gap-2 text-sm ${method.inherited ? "text-gray-600" : "text-black"}`}
+    >
+      <span
+        className={`w-2 h-2 rounded-full ${
+          method.inherited ? "bg-gray-400" : method.implemented ? "bg-green-500" : "bg-purple-500"
+        }`}
+      />
+      <span className="font-mono text-xs text-purple-600">{method.returnType}</span>
+      <span
+        className={`font-medium ${canEdit ? "cursor-pointer hover:text-[#F7931E] hover:underline" : ""}`}
+        onClick={(e) => {
+          if (canEdit) {
+            e.stopPropagation();
+            setIsEditing(true);
+            setEditValue(method.name);
+          }
+        }}
+        title={canEdit ? "Click to rename" : ""}
+      >
+        {method.name}
+      </span>
+      <span className="text-gray-500">()</span>
+      {method.implemented && (
+        <span className="text-[10px] bg-green-100 text-green-700 px-1 rounded">override</span>
+      )}
+    </motion.div>
+  );
+}
+
+// ============================================
 // MAIN PAGE COMPONENT
 // ============================================
 
@@ -1115,6 +1207,67 @@ export default function MachineHierarchy() {
       }
 
       // Update conveyor (for inherited properties)
+      if (newVisible.conveyor.has(oldName)) {
+        newVisible.conveyor = new Set(newVisible.conveyor);
+        newVisible.conveyor.delete(oldName);
+        newVisible.conveyor.add(newName);
+      }
+
+      return newVisible;
+    });
+  };
+
+  // Rename a base class method and update all derived classes
+  const renameBaseMethod = (oldName: string, newName: string) => {
+    setMachineClasses((prev) => {
+      const newClasses = { ...prev };
+
+      // Update base class
+      newClasses.base = {
+        ...newClasses.base,
+        methods: newClasses.base.methods.map((m) =>
+          m.name === oldName ? { ...m, name: newName } : m
+        ),
+      };
+
+      // Update crane class (inherited methods with matching name)
+      newClasses.crane = {
+        ...newClasses.crane,
+        methods: newClasses.crane.methods.map((m) =>
+          m.name === oldName && m.inherited ? { ...m, name: newName } : m
+        ),
+      };
+
+      // Update conveyor class (inherited methods with matching name)
+      newClasses.conveyor = {
+        ...newClasses.conveyor,
+        methods: newClasses.conveyor.methods.map((m) =>
+          m.name === oldName && m.inherited ? { ...m, name: newName } : m
+        ),
+      };
+
+      return newClasses;
+    });
+
+    // Also update visibleMethods to use the new name
+    setVisibleMethods((prev) => {
+      const newVisible = { ...prev };
+
+      // Update base
+      if (newVisible.base.has(oldName)) {
+        newVisible.base = new Set(newVisible.base);
+        newVisible.base.delete(oldName);
+        newVisible.base.add(newName);
+      }
+
+      // Update crane (for inherited methods)
+      if (newVisible.crane.has(oldName)) {
+        newVisible.crane = new Set(newVisible.crane);
+        newVisible.crane.delete(oldName);
+        newVisible.crane.add(newName);
+      }
+
+      // Update conveyor (for inherited methods)
       if (newVisible.conveyor.has(oldName)) {
         newVisible.conveyor = new Set(newVisible.conveyor);
         newVisible.conveyor.delete(oldName);
@@ -1283,6 +1436,7 @@ export default function MachineHierarchy() {
                       isPowered={powerStates.base}
                       machineClasses={machineClasses}
                       onRenameProperty={renameBaseProperty}
+                      onRenameMethod={renameBaseMethod}
                     />
                   </div>
 
@@ -1298,6 +1452,8 @@ export default function MachineHierarchy() {
                       allVisibleMethods={visibleMethods}
                       isPowered={powerStates.crane}
                       machineClasses={machineClasses}
+                      onRenameProperty={renameBaseProperty}
+                      onRenameMethod={renameBaseMethod}
                     />
                   </div>
 
@@ -1313,6 +1469,8 @@ export default function MachineHierarchy() {
                       allVisibleMethods={visibleMethods}
                       isPowered={powerStates.conveyor}
                       machineClasses={machineClasses}
+                      onRenameProperty={renameBaseProperty}
+                      onRenameMethod={renameBaseMethod}
                     />
                   </div>
                 </div>
