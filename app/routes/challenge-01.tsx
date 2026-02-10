@@ -1968,10 +1968,10 @@ export default function Challenge01() {
 const csharpCode = `public class ClawMachine
 {
     // Properties
-    private string SerialNumber;
-    private bool Power;
-    private string Position;
-    private bool IsHolding;
+    public string SerialNumber;
+    public bool Power;
+    public string Position;
+    public bool IsHolding;
 
     // Constructor
     public ClawMachine()
@@ -2093,10 +2093,10 @@ function BlueprintDialog({ isOpen, onClose }: BlueprintDialogProps) {
                       Properties
                     </div>
                     <div className="text-[#ebdbb2] space-y-1">
-                      <div>- SerialNumber: string</div>
-                      <div>- Power: bool</div>
-                      <div>- Position: string</div>
-                      <div>- IsHolding: bool</div>
+                      <div>+ SerialNumber: string</div>
+                      <div>+ Power: bool</div>
+                      <div>+ Position: string</div>
+                      <div>+ IsHolding: bool</div>
                     </div>
                   </div>
 
